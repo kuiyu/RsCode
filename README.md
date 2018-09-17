@@ -1,2 +1,2 @@
 # RsCode
-RsCode is .net core platform rapid development framework
+RsCode is .net core platform fast development framework
