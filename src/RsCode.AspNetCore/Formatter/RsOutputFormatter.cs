@@ -1,0 +1,121 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
+using RsCode.Exceptions;
+using System;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace RsCode.AspNetCore
+{
+    /// <summary>
+    /// webapi格式化响应数据
+    /// </summary>
+    public class RsOutputFormatter : TextOutputFormatter
+    {
+        string _dateFormat;
+        bool _CameCasePropertyName;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="DateFormat">默认格式 yyyy-Mm-dd HH:mm:ss</param>
+        /// <param name="CameCasePropertyName">是否使用驼峰命名规则,默认false</param>
+        public RsOutputFormatter(string DateFormat="yyyy-MM-dd HH:mm:ss",bool CameCasePropertyName=false)
+        {
+            _dateFormat = DateFormat;
+            _CameCasePropertyName = CameCasePropertyName;
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
+
+            SupportedEncodings.Add(Encoding.UTF8);
+            SupportedEncodings.Add(Encoding.Unicode);
+        }
+        //指定序列化的类型
+        protected override bool CanWriteType(Type type)
+        {
+            return base.CanWriteType(type);
+        }
+        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        {
+            var response = context.HttpContext.Response;
+
+            var resultInfo = new ReturnInfo() { 
+              Success=true,
+              code=response.StatusCode,
+              Msg="操作成功",
+              Result=context.Object
+            };
+            if (context.Object == null)
+            {
+                resultInfo.Success = false;
+                resultInfo.Result = null;
+            }
+            else
+            if(context.ObjectType.Name=="AppException")
+            {
+                resultInfo.Success = false;
+                resultInfo.Msg =context.Object==null?"":context.Object as string;
+                resultInfo.Result = null;
+            }
+
+            if(resultInfo.code!=200)
+            {
+                resultInfo.Success = false;
+            }
+
+
+            //Newtonsoft.Json.JsonSerializerSettings settings = new Newtonsoft.Json.JsonSerializerSettings();
+            //JsonConvert.DefaultSettings = new Func<JsonSerializerSettings>(()=> {
+            //    settings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
+            //    settings.DateFormatString = _dateFormat;
+            //    if(_CameCasePropertyName)
+            //    settings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(); 
+            //    return settings;
+            //});
+            //string s = Newtonsoft.Json.JsonConvert.SerializeObject(resultInfo,settings);
+            //var buffer = new StringBuilder();
+            //buffer.Append(s);
+            //await response.WriteAsync(buffer.ToString());
+
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                IgnoreNullValues = true,
+                WriteIndented = true,
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive= _CameCasePropertyName,
+                PropertyNamingPolicy= JsonNamingPolicy.CamelCase //小写开头
+            };
+            options.WriteIndented = true; 
+            
+            options.Converters.Add(new DateTimeConverter(_dateFormat));
+            string s = JsonSerializer.Serialize(resultInfo, options);
+            await response.WriteAsync(s, Encoding.UTF8);
+        }
+    }
+
+    class DataTimeJsonConverter:JsonConverter<DateTime>
+    {
+        string formater;
+        public DataTimeJsonConverter(string dateFormater= "yyyy-MM-dd HH:mm:ss")
+        {
+            formater = dateFormater;
+        }
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                if (DateTime.TryParse(reader.GetString(), out DateTime date))
+                    return date;
+            }
+            return reader.GetDateTime();
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString(formater));
+        }
+
+    }
+}

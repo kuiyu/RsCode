@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.3.2</Version>
+    <Company>河南软商网络科技有限公司</Company>
+    <Description>本地服务器存储服务</Description>
+    <Authors>Tony</Authors>
+    <PackageIcon>rscode64_64.png</PackageIcon>
+    <PackageReleaseNotes>本地服务器存储服务</PackageReleaseNotes>
+    <PackageTags>rscode upload file</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\build\rscode64_64.png" Link="rscode64_64.png">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Include="..\..\build\rscode64_64.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RsCode.Storage\RsCode.Storage.csproj" />
+  </ItemGroup>
+
+</Project>

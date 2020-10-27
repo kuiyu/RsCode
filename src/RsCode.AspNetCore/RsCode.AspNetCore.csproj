@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.4.4</Version>
+    <Authors>Tony</Authors>
+    <Company>河南软商网络科技有限公司</Company>
+    <PackageIcon>rscode64_64.png</PackageIcon>
+    <Description>https://rscode.cn</Description>
+    <Copyright>河南软商网络科技有限公司</Copyright>
+    <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
+    <PackageReleaseNotes>软商网络asp.net core项目开发工具包</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyVersion>1.4.4.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="rscode64_64.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.1.0" />
+    <PackageReference Include="Caching.CSRedis" Version="3.6.5" />
+    <PackageReference Include="CSRedisCore" Version="3.6.5" />
+    <PackageReference Include="EnyimMemcachedCore" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RsCode\RsCode.csproj" />
+  </ItemGroup>
+
+</Project>
