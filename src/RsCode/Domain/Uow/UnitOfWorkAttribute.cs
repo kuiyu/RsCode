@@ -23,8 +23,7 @@ namespace RsCode.Domain.Uow
 
         public string DbConnectionStringName { get; set; } = "DefaultConnection";
         
-        [FromServiceContext]
-        public ILogger log { get; set; }
+        
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
             var serviceType = context.ServiceMethod.DeclaringType;
@@ -46,26 +45,27 @@ namespace RsCode.Domain.Uow
                 catch (Exception ex)
                 {
                     db.AbortTransaction();
-                    string err = ex.Message;
-                    if (ex is AppException)
+                    var errMsg = "";
+                    int code = 500;
+                    if (ex.InnerException != null)
                     {
-                        err = ((AppException)ex).Message;
-                    }
-                    if (ex.InnerException!=null)
-                    {
-                        err = ex.InnerException.Message;
-                        if(ex.InnerException is AppException)
+                        if (ex.InnerException is AppException)
                         {
-                            err=((RsCode.AspNetCore.AppException)ex.InnerException).Message;
-                        } 
-                        
+                            code = (ex.InnerException as AppException).Status;
+                        }
+                        errMsg = ex.InnerException.Message;
                     }
-                    if(log!=null)
+                    else
                     {
-                        log.LogError(ex.StackTrace);
+                        if (ex is AppException)
+                        {
+                            code = (ex as AppException).Status;
+                        }
+                        errMsg = ((AppException)ex).Message;
                     }
 
-                    throw new AppException(err);
+
+                    throw new AppException(code, errMsg);
                 }
                 finally
                 {

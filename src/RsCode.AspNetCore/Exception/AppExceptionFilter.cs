@@ -12,9 +12,7 @@ namespace RsCode.AspNetCore
     {
         public int Order { get; set; } = int.MaxValue - 10;
 
-        [FromServiceContext]
-        public ILogger log{ get; set; }
-
+       
         public void OnActionExecuted(ActionExecutedContext context)
         {
             if(context.Exception!=null)
@@ -51,10 +49,7 @@ namespace RsCode.AspNetCore
                 }
             }
                
-            if(log!=null)
-            {
-                log.LogError(context.Exception.StackTrace);
-            }
+          
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
