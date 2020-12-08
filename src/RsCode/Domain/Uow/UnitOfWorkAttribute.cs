@@ -45,37 +45,24 @@ namespace RsCode.Domain.Uow
                 catch (Exception ex)
                 {
                     db.AbortTransaction();
-                    var errMsg = "";
-                    int code = 500;
+                  
                     if (ex.InnerException != null)
                     {
                         if (ex.InnerException is AppException)
-                        {
-                            code = (ex.InnerException as AppException).Status;
+                        {                          
+                            throw ex.InnerException as AppException;
                         }
-                        errMsg = ex.InnerException.Message;
                     }
                     else
                     {
                         if (ex is AppException)
                         {
-                            code = (ex as AppException).Status;
+                            throw ex as AppException; 
                         }
-                        errMsg = ((AppException)ex).Message;
                     }
-
-
-                    throw new AppException(code, errMsg);
+                    throw ex;
                 }
-                finally
-                {
-                    //if(db.Connection.State== System.Data.ConnectionState.Open)
-                    //{
-                    //    db.Connection.Close();
-                    //    db.CloseSharedConnection(); 
-                    //}
-                   //db.Dispose();
-                }
+                
             }
             else
             {

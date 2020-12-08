@@ -8,12 +8,22 @@ namespace RsCode.Exceptions
     public   class ReturnInfo
     {
         int _code = 200;
+        bool success;
 
         /// <summary>
         /// 操作成功状态
         /// </summary>
 
-        [JsonPropertyName("success")]public bool Success { get; set; }
+        [JsonPropertyName("success")]public bool Success { get {
+
+                if (code == 200) success = true;
+                else
+                    success = false;
+                return success;
+            } set {
+                success = value;
+            }
+        }
 
         /// <summary>
         /// 对应操作代码
@@ -25,10 +35,19 @@ namespace RsCode.Exceptions
                 _code = value;
             } }
 
+        string msg = "";
         /// <summary>
         /// 服务器返回的信息
         /// </summary>
-        [JsonPropertyName("msg")] public string Msg { get; set; } = "";
+        [JsonPropertyName("msg")] 
+        public string Msg {
+            get {
+               
+                return msg;
+            }
+            set {
+                msg = value;
+            } } 
 
         /// <summary>
         /// 这提供了一种服务器根据需要 将客户端重定向到另一个url的方法

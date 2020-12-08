@@ -52,31 +52,16 @@ namespace RsCode.AspNetCore
                 resultInfo.Result = null;
             }
             else
-            if(context.ObjectType.Name=="AppException")
+            if(context.ObjectType==typeof(ReturnInfo))
+            {
+                resultInfo = context.Object as ReturnInfo;
+            }
+            else if(context.ObjectType==typeof(AppException))
             {
                 resultInfo.Success = false;
                 resultInfo.Msg =context.Object==null?"":context.Object as string;
                 resultInfo.Result = null;
-            }
-
-            if(resultInfo.code!=200)
-            {
-                resultInfo.Success = false;
-            }
-
-
-            //Newtonsoft.Json.JsonSerializerSettings settings = new Newtonsoft.Json.JsonSerializerSettings();
-            //JsonConvert.DefaultSettings = new Func<JsonSerializerSettings>(()=> {
-            //    settings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-            //    settings.DateFormatString = _dateFormat;
-            //    if(_CameCasePropertyName)
-            //    settings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(); 
-            //    return settings;
-            //});
-            //string s = Newtonsoft.Json.JsonConvert.SerializeObject(resultInfo,settings);
-            //var buffer = new StringBuilder();
-            //buffer.Append(s);
-            //await response.WriteAsync(buffer.ToString());
+            } 
 
             var options = new JsonSerializerOptions()
             {

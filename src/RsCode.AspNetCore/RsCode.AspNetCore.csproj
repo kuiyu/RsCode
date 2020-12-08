@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.4.5</Version>
+    <Version>1.4.6</Version>
     <Authors>Tony</Authors>
     <Company>河南软商网络科技有限公司</Company>
     <PackageIcon>rscode64_64.png</PackageIcon>
