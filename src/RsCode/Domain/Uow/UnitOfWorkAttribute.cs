@@ -48,9 +48,13 @@ namespace RsCode.Domain.Uow
                 {
                     db.AbortTransaction();
 
-                    var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
-                    if(log!=null)
-                    log.LogError($"{ex.Message}\n{ex.StackTrace}");
+                    if(!(ex is AppException))
+                    {
+                        var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
+                        if (log != null)
+                            log.LogError($"{ex.Message}\n{ex.StackTrace}");
+                    }
+                   
                   
                     if (ex.InnerException != null)
                     {

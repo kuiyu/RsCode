@@ -39,7 +39,7 @@ namespace RsCode.AspNetCore
 
             if (e is AppException)
             {
-                log.LogError(JsonSerializer.Serialize(e as AppException));
+                //log.LogError(JsonSerializer.Serialize(e as AppException));
             }
             else
             {
