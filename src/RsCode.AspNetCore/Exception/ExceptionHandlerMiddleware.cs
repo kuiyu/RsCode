@@ -39,10 +39,15 @@ namespace RsCode.AspNetCore
 
             if (e is AppException)
             {
-
+                log.LogError(JsonSerializer.Serialize(e as AppException));
             }
             else
             {
+                if(e.InnerException!=null)
+                {
+                    log.LogError($"{e.InnerException.Message}\n{e.InnerException.StackTrace}");
+                }
+                else
                 log.LogError($"{e.Message}\n{e.StackTrace}");
             }
 
@@ -95,7 +100,7 @@ namespace RsCode.AspNetCore
             }
             else
             {
-                await context.Response.WriteAsync(e.Message).ConfigureAwait(false);
+                await context.Response.WriteAsync("应用程序错误，"+e.Message).ConfigureAwait(false);
             }
 
         }

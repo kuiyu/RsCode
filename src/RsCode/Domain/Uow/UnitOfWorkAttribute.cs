@@ -9,7 +9,8 @@ namespace RsCode.Domain.Uow
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Interface)]
     public sealed class UnitOfWorkAttribute : AbstractInterceptorAttribute
-    { 
+    {
+      
         public UnitOfWorkAttribute()
         {
 
@@ -26,6 +27,7 @@ namespace RsCode.Domain.Uow
         
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
+            
             var serviceType = context.ServiceMethod.DeclaringType;
             if (serviceType.FullName.EndsWith("Service") || serviceType.FullName.EndsWith("Repository"))
             { 
@@ -45,6 +47,10 @@ namespace RsCode.Domain.Uow
                 catch (Exception ex)
                 {
                     db.AbortTransaction();
+
+                    var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
+                    if(log!=null)
+                    log.LogError($"{ex.Message}\n{ex.StackTrace}");
                   
                     if (ex.InnerException != null)
                     {
@@ -60,6 +66,7 @@ namespace RsCode.Domain.Uow
                             throw ex as AppException; 
                         }
                     }
+
                     throw ex;
                 }
                 
