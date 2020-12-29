@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RsCode.Storage
 {
-    public class QiniuStorageService : IStorageProvider
+    public class QiniuStorageProvider : IStorageProvider
     {
         IHttpContextAccessor httpContext;
         QiniuOptions options;
@@ -20,7 +20,7 @@ namespace RsCode.Storage
         Zone zone;
         Config config;
         string uploadUrl = "";
-        public QiniuStorageService(
+        public QiniuStorageProvider(
             IOptionsSnapshot<QiniuOptions> _options,
             IHttpContextAccessor _httpContext)
         {
