@@ -10,12 +10,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Qiniu.CDN;
 using Qiniu.Http;
-using Qiniu.Storage;
+
 using Qiniu.Util;
 using RsCode.Storage.QiniuStorage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RsCode.Storage
@@ -28,10 +31,14 @@ namespace RsCode.Storage
         Zone zone;
         Config config;
         string uploadUrl = "";
+        QiniuHttpClient httpClient;
         public QiniuStorageProvider(
             IOptionsSnapshot<QiniuOptions> _options,
-            IHttpContextAccessor _httpContext)
+            IHttpContextAccessor _httpContext,
+            QiniuHttpClient _qiniuHttpClient
+            )
         {
+            httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
 
@@ -53,6 +60,8 @@ namespace RsCode.Storage
             {
                 zone = Zone.ZONE_US_North;
             }
+
+
             uploadUrl = zone.SrcUpHosts[1];
             httpContext = _httpContext;
 
@@ -131,116 +140,116 @@ namespace RsCode.Storage
 
         
 
-        /// <summary>
-        /// 上传文件
-        /// </summary>
-        /// <param name="filePath">本地文件路径</param>
-        /// <param name="key">新文件key</param>
-        /// <returns></returns>
-        public HttpResult UploadFile(string filePath,string key,bool IsUseHttps=false, string token=null)
-        {
+        ///// <summary>
+        ///// 上传文件
+        ///// </summary>
+        ///// <param name="filePath">本地文件路径</param>
+        ///// <param name="key">新文件key</param>
+        ///// <returns></returns>
+        //public HttpResult UploadFile(string filePath,string key,bool IsUseHttps=false, string token=null)
+        //{
 
-            Qiniu.Storage.Config config = new Qiniu.Storage.Config();
-            config.Zone = zone; 
-            config.UseHttps = IsUseHttps;
-            config.UseCdnDomains = true;
-            config.ChunkSize = ChunkUnit.U512K;
-            FormUploader target = new FormUploader(config);
+        //    Qiniu.Storage.Config config = new Qiniu.Storage.Config();
+        //    config.Zone = zone; 
+        //    config.UseHttps = IsUseHttps;
+        //    config.UseCdnDomains = true;
+        //    config.ChunkSize = ChunkUnit.U512K;
+        //    FormUploader target = new FormUploader(config);
            
-            if(string.IsNullOrEmpty(token))
-            {
-                token = GetUploadToken().Token;
-            }
-            var result = target.UploadFile(filePath, key, token, null);
+        //    if(string.IsNullOrEmpty(token))
+        //    {
+        //        token = GetUploadToken().Token;
+        //    }
+        //    var result = target.UploadFile(filePath, key, token, null);
             
-            return result;
-        }
+        //    return result;
+        //}
 
-        public HttpResult Upload(byte[] fileData, string saveKey, string token)
-        {
-            Qiniu.Storage.Config config = new Qiniu.Storage.Config();
-            config.Zone = zone;
+        //public HttpResult Upload(byte[] fileData, string saveKey, string token)
+        //{
+        //    Qiniu.Storage.Config config = new Qiniu.Storage.Config();
+        //    config.Zone = zone;
            
-            FormUploader formUploader = new FormUploader(config);
-            PutExtra putExtra = new PutExtra();
-            return formUploader.UploadData(fileData, saveKey, token, putExtra);
-        }
+        //    FormUploader formUploader = new FormUploader(config);
+        //    PutExtra putExtra = new PutExtra();
+        //    return formUploader.UploadData(fileData, saveKey, token, putExtra);
+        //}
 
-        public HttpResult Upload(string localFile, string saveKey, string token)
-        {
-            PutExtra putExtra = new PutExtra();
-            Qiniu.Storage.Config config = new Qiniu.Storage.Config();
-            config.Zone = zone;
-            //表单提交
-            UploadManager um = new UploadManager(config);
-            var result = um.UploadFile(localFile, saveKey, token, putExtra);
+        //public HttpResult Upload(string localFile, string saveKey, string token)
+        //{
+        //    PutExtra putExtra = new PutExtra();
+        //    Qiniu.Storage.Config config = new Qiniu.Storage.Config();
+        //    config.Zone = zone;
+        //    //表单提交
+        //    UploadManager um = new UploadManager(config);
+        //    var result = um.UploadFile(localFile, saveKey, token, putExtra);
 
-            return result;
-        }
+        //    return result;
+        //}
         #endregion
-        /// <summary>
-        /// 公开空间的文件下载
-        /// </summary>
-        /// <param name="key">云端文件key</param>
-        /// <returns>返回文件下载地址</returns>
-        public string CreatePublicshUrl(string key)
-        {
-            string domain =options. Domain;
-            string publicUrl = DownloadManager.CreatePublishUrl(domain, key);
-            return publicUrl;
-        }
+        ///// <summary>
+        ///// 公开空间的文件下载
+        ///// </summary>
+        ///// <param name="key">云端文件key</param>
+        ///// <returns>返回文件下载地址</returns>
+        //public string CreatePublicshUrl(string key)
+        //{
+        //    string domain =options. Domain;
+        //    string publicUrl = DownloadManager.CreatePublishUrl(domain, key);
+        //    return publicUrl;
+        //}
 
-        public string CreatePrivateUrl(string key,int ExpireInSeconds=3600)
-        {
+        //public string CreatePrivateUrl(string key,int ExpireInSeconds=3600)
+        //{
             
-            string domain = options.Domain;
-            string privateUrl = DownloadManager.CreatePrivateUrl(mac, domain, key, ExpireInSeconds);
-            return privateUrl;
-        }
+        //    string domain = options.Domain;
+        //    string privateUrl = DownloadManager.CreatePrivateUrl(mac, domain, key, ExpireInSeconds);
+        //    return privateUrl;
+        //}
         
 
 
-        /// <summary>
-        /// 查询某key是否存在
-        /// </summary>
-        /// <param name="bucket"></param>
-        /// <param name="key"></param>
-        /// <returns>如果存在返回Code=200,不存在返回Code=612</returns>
-        public StatResult Query(string bucket, string key)
-        { 
-            BucketManager bm = new BucketManager(mac,config);
-            StatResult result = bm.Stat(bucket, key);
-            return result;
-        }
+        ///// <summary>
+        ///// 查询某key是否存在
+        ///// </summary>
+        ///// <param name="bucket"></param>
+        ///// <param name="key"></param>
+        ///// <returns>如果存在返回Code=200,不存在返回Code=612</returns>
+        //public StatResult Query(string bucket, string key)
+        //{ 
+        //    BucketManager bm = new BucketManager(mac,config);
+        //    StatResult result = bm.Stat(bucket, key);
+        //    return result;
+        //}
 
-        /// <summary>
-        /// 批量查询
-        /// </summary>
-        /// <param name="batchOps">batch批处理请求的主体内容具有op=OP1&op=OP2&op=...这样的格式，其中op=OPS作为一个单位，用&符号相连</param>
-        public BatchResult BatchQuery(List<string> batchOps)
-        { 
-            BucketManager bm = new BucketManager(mac,config);
-            var result = bm.Batch(batchOps);
-            return result;
-        }
+        ///// <summary>
+        ///// 批量查询
+        ///// </summary>
+        ///// <param name="batchOps">batch批处理请求的主体内容具有op=OP1&op=OP2&op=...这样的格式，其中op=OPS作为一个单位，用&符号相连</param>
+        //public BatchResult BatchQuery(List<string> batchOps)
+        //{ 
+        //    BucketManager bm = new BucketManager(mac,config);
+        //    var result = bm.Batch(batchOps);
+        //    return result;
+        //}
 
-        /// <summary>
-        /// 删除指定的key
-        /// </summary>
-        /// <param name="bucket"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public HttpResult Delete(string bucket, string key)
-        {  
-            BucketManager bm = new BucketManager(mac,config);
-            var result = bm.Delete(bucket, key);
+        ///// <summary>
+        ///// 删除指定的key
+        ///// </summary>
+        ///// <param name="bucket"></param>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public HttpResult Delete(string bucket, string key)
+        //{  
+        //    BucketManager bm = new BucketManager(mac,config);
+        //    var result = bm.Delete(bucket, key);
 
-            if(result.Code==200)
-            {
-                RefreshUrls(new string[] { key });
-            }
-            return result;
-        }
+        //    if(result.Code==200)
+        //    {
+        //        RefreshUrls(new string[] { key });
+        //    }
+        //    return result;
+        //}
 
         /// <summary>
         /// 移动文件
@@ -250,17 +259,18 @@ namespace RsCode.Storage
         /// <param name="newKey">新文件路径</param>
         /// <returns></returns>
         public HttpResult Move(string bucket, string oldKey, string newKey)
-        { 
-            BucketManager bm = new BucketManager(mac,config);
+        {
+            //BucketManager bm = new BucketManager(mac,config);
 
-            // 是否设置强制覆盖
-            Boolean force = true;
-            HttpResult result = bm.Move(bucket, oldKey, bucket, newKey, force);
-            if(result.Code==200)
-            {
-                RefreshUrls(new string[] { oldKey });
-            }
-            return result;
+            //// 是否设置强制覆盖
+            //Boolean force = true;
+            //HttpResult result = bm.Move(bucket, oldKey, bucket, newKey, force);
+            //if(result.Code==200)
+            //{
+            //    RefreshUrls(new string[] { oldKey });
+            //}
+            //return result;
+            return null;
         }
 
 
@@ -287,34 +297,51 @@ namespace RsCode.Storage
 
         public async Task<UploadResult> UploadAsync()
         {
-            await Task.Run(() =>
-            {
-                UploadResult result = new UploadResult();
-                var request = httpContext.HttpContext.Request.Form;
-                string key = httpContext.HttpContext.Request.Form["key"];
-                var token = httpContext.HttpContext.Request.Form["token"];
-                var files = httpContext.HttpContext.Request.Form.Files;
+            //await Task.Run(() =>
+            //{
+            //    UploadResult result = new UploadResult();
+            //    var request = httpContext.HttpContext.Request.Form;
+            //    string key = httpContext.HttpContext.Request.Form["key"];
+            //    var token = httpContext.HttpContext.Request.Form["token"];
+            //    var files = httpContext.HttpContext.Request.Form.Files;
 
-                long size = files.Sum(f => f.Length); //统计所有文件的大小
+            //    long size = files.Sum(f => f.Length); //统计所有文件的大小
 
-                UploadManager uploadManager = new UploadManager(config);
-                PutExtra putExtra = new PutExtra();
+            //    UploadManager uploadManager = new UploadManager(config);
+            //    PutExtra putExtra = new PutExtra();
 
-                var ret=uploadManager.UploadStream(files.FirstOrDefault().OpenReadStream(), key, token, putExtra);
-                if(ret.Code==200)
-                {
-                    result.Key = key; 
-                }
-                return result;
-            });
+            //    var ret=uploadManager.UploadStream(files.FirstOrDefault().OpenReadStream(), key, token, putExtra);
+            //    if(ret.Code==200)
+            //    {
+            //        result.Key = key; 
+            //    }
+            //    return result;
+            //});
             return null;
         }
 
-        
+        public async Task<T>SendAsync<T>(StorageRequest request)
+            where T:StorageResponse
+        {
+            var method = request.RequestMethod();
+            var url = request.GetApiUrl();
+            if(method=="GET")
+            {
+                return await httpClient.GetAsync<T>(url);
+            }
+            if(method=="POST")
+            {
+                string s = JsonSerializer.Serialize(request, request.GetType());
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json"); 
+
+                var res = await httpClient.PostAsync<T>(url, httpContent);
+                return res;
+
+            }
+            return default(T);
+
+        }
 
         
-    }
-
-
-    
+    }  
 }

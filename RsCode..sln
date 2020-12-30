@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.Storage.LocalStorage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.Storage.QiniuStorage", "src\RsCode.Storage.QiniuStorage\RsCode.Storage.QiniuStorage.csproj", "{83CB53C0-FADC-48C0-A675-66D3A0E74372}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RsCode.Storage.Tests", "tests\RsCode.Storage.Tests\RsCode.Storage.Tests.csproj", "{4018983D-89AB-4A7F-81DC-77631FC0D3D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,12 +49,17 @@ Global
 		{83CB53C0-FADC-48C0-A675-66D3A0E74372}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83CB53C0-FADC-48C0-A675-66D3A0E74372}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83CB53C0-FADC-48C0-A675-66D3A0E74372}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0EC076FE-1424-40D1-B27E-7DF86B12123E} = {A1F1CC2D-DD98-4784-A2A7-36FF487F0476}
+		{4018983D-89AB-4A7F-81DC-77631FC0D3D1} = {A1F1CC2D-DD98-4784-A2A7-36FF487F0476}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E888CD95-C5BE-484E-A8A1-356835B130AD}

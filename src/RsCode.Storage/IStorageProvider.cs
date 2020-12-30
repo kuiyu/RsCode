@@ -37,6 +37,9 @@ namespace RsCode.Storage
 
         Task<UploadResult> UploadAsync();
 
-        
+        Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse;
+
+
+
     }
 }

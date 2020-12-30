@@ -6,13 +6,35 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BucketQueryRequest
+    /// <summary>
+    /// 获取Bucket列表
+    /// <see cref="https://developer.qiniu.com/kodo/3926/get-service#4"/>
+    /// </summary>
+    public class BucketQueryRequest:StorageRequest
     {
+        public BucketQueryRequest(string tags="")
+        {
+            Encodedtags = tags;
+        }
+        /// <summary>
+        /// 过滤空间的标签或标签值条件
+        /// </summary>
+        public string Encodedtags { get; set; }
+        public override string GetApiUrl()
+        {
+            string url= "/buckets";
+            if (!string.IsNullOrWhiteSpace(Encodedtags))
+            {
+              
+            }
+            return url;
+        }
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
     }
 }

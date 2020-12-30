@@ -23,6 +23,8 @@ namespace RsCode.Storage
             services.Configure<QiniuOptions>(configuration.GetSection("QiniuStorage"));
             
             services.AddScoped<IStorageProvider, QiniuStorageProvider>();
+
+            services.AddHttpClient<QiniuHttpClient>();
             
         }
     }

@@ -6,13 +6,9 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RsCode.Storage.QiniuStorage
+namespace RsCode.Storage
 {
-    public class BucketQueryResponse:StorageResponse
+    public class StorageResponse
     {
     }
 }
