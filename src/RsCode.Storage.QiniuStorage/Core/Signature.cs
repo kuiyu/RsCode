@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using System;
+using System.Collections.Generic;
 using System.IO;
-#if WINDOWS_UWP
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-#else
+using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
-#endif
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Qiniu.Util
+namespace RsCode.Storage.QiniuStorage.Core
 {
     /// <summary>
     /// 签名/加密
@@ -29,16 +30,76 @@ namespace Qiniu.Util
         }
 
 
+        public string Sign(string url,string method)
+        {
+            method = method.ToUpper();
+            Uri uri = new Uri(url);
+            string host = uri.Host; 
+            var scheme=uri.Scheme;
+           
+            string signingStr = $"{method} {uri.PathAndQuery}\nHost: {host}\n\n";
 
-        
+            var hashBytes = HMACSHA1Text(signingStr);
+            string encodedSign = Base64.UrlSafeBase64Encode(hashBytes);
+
+            string accessToken= $"{mac.AccessKey}:{encodedSign}";
+            return accessToken;
+        }
+
+        public async Task< string> SignRequestAsync(HttpRequestMessage httpRequest)
+        {
+            string method= httpRequest.Method.Method;
+            string host = httpRequest.RequestUri.Host;
+            string path = httpRequest.RequestUri.PathAndQuery; 
+            
+            string signingStr = $"{method} {path}\nHost: {host}";
+
+            string contentType = "";
+            IEnumerable<string> s;
+            if (httpRequest.Headers.TryGetValues("Content-Type", out s))
+            { 
+                contentType = s.FirstOrDefault();
+                signingStr += $"\nContent-Type: {contentType}";
+            }
+            signingStr += "\n\n";
+
+            if(httpRequest.Content!=null&& contentType != "application/octet-stream")
+            {
+                signingStr +=await httpRequest.Content.ReadAsStringAsync();
+            }
+
+            var hashBytes = HMACSHA1Text(signingStr);
+            string encodedSign = Base64.UrlSafeBase64Encode(hashBytes);
+
+            string accessToken = $"{mac.AccessKey}:{encodedSign}";
+            return accessToken;
+        }
 
 
 
+        /// <summary>
+        /// HMACSHA1加密
+        /// </summary>
+        /// <param name="text">要加密的原串</param>
+        ///<param name="key">私钥</param>
+        /// <returns></returns>
+        byte[] HMACSHA1Text(string text)
+        {
+            //HMACSHA1加密
+            HMACSHA1 hmacsha1 = new HMACSHA1();
+            hmacsha1.Key = Encoding.UTF8.GetBytes(mac.SecretKey);
+            byte[] dataBuffer = Encoding.UTF8.GetBytes(text);
+            byte[] hashBytes = hmacsha1.ComputeHash(dataBuffer);
+            var enText = new StringBuilder();
+            foreach (byte iByte in hashBytes)
+            {
+                enText.AppendFormat("{0:x2}", iByte);
+            }
+            string sign = enText.ToString();
+            return hashBytes;   
+        }
 
-
-
-
-
+       
 
 
 
@@ -55,7 +116,7 @@ namespace Qiniu.Util
             CryptographicBuffer.CopyToByteArray(signBuffer, out digest);
 #else
             HMACSHA1 hmac = new HMACSHA1(Encoding.UTF8.GetBytes(mac.SecretKey));
-            byte[] digest = hmac.ComputeHash(data);         
+            byte[] digest = hmac.ComputeHash(data);
 #endif
             return Base64.UrlSafeBase64Encode(digest);
         }
@@ -73,7 +134,7 @@ namespace Qiniu.Util
         /// <returns></returns>
         public string Sign(byte[] data)
         {
-            return string.Format("{0}:{1}", mac.AccessKey,encodedSign(data));
+            return string.Format("{0}:{1}", mac.AccessKey, encodedSign(data));
         }
 
         /// <summary>
@@ -129,18 +190,10 @@ namespace Qiniu.Util
                 {
                     buffer.Write(body, 0, body.Length);
                 }
-#if WINDOWS_UWP
-                var hma = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1);
-                var skBuffer = CryptographicBuffer.ConvertStringToBinary(mac.SecretKey, BinaryStringEncoding.Utf8);
-                var hmacKey = hma.CreateKey(skBuffer);
-                var dataBuffer = CryptographicBuffer.CreateFromByteArray(buffer.ToArray());
-                var signBuffer = CryptographicEngine.Sign(hmacKey, dataBuffer);
-                byte[] digest;
-                CryptographicBuffer.CopyToByteArray(signBuffer, out digest);
-#else
+ 
                 HMACSHA1 hmac = new HMACSHA1(Encoding.UTF8.GetBytes(mac.SecretKey));
                 byte[] digest = hmac.ComputeHash(buffer.ToArray());
-#endif
+ 
                 string digestBase64 = Base64.UrlSafeBase64Encode(digest);
                 return string.Format("{0}:{1}", mac.AccessKey, digestBase64);
             }

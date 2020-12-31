@@ -1,8 +1,14 @@
-using Qiniu.Util;
+
+using Microsoft.Extensions.Options;
 using RsCode.Storage.QiniuStorage;
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RsCode.Storage.Tests
@@ -10,19 +16,49 @@ namespace RsCode.Storage.Tests
     public class ServiceTest
     {
         IStorageProvider qiniu;
-        public ServiceTest(IEnumerable<IStorageProvider> storageProvider)
+        //QiniuHttpClient httpClient;
+        HttpClient httpClient;
+        QiniuOptions options;
+        public ServiceTest(IEnumerable<IStorageProvider> storageProvider
+            //,QiniuHttpClient _httpClient
+            ,HttpClient _httpClient,
+             IOptionsSnapshot<QiniuOptions> _options
+            )
         {
             qiniu = storageProvider.FirstOrDefault(s=>s.StorageName=="qiniu");
+            httpClient = _httpClient;
+            options = _options.Value;
         }
         [Fact]
-        public void GetBucket()
+        public void MangerToken()
         {
-            string ak = "";
-            string sk = "";
-            Mac mac = new Mac(ak, sk);
-           string token= Auth.CreateManageToken(mac, "http://rs.qbox.me/buckets");
+            string ak = "MY_ACCESS_KEY";
+            string sk = "MY_SECRET_KEY";
+            string url = "http://rs.qiniu.com/move/bmV3ZG9jczpmaW5kX21hbi50eHQ=/bmV3ZG9jczpmaW5kLm1hbi50eHQ=";
+            string method = "POST";
+            var signTool = new Signature(new Mac(ak, sk));
+            string accessToken = signTool.Sign(url, method);
 
-           var ret= qiniu.SendAsync<BucketQueryResponse>(new BucketQueryRequest());
+            Assert.Equal("MY_ACCESS_KEY:1uLvuZM6l6oCzZFqkJ6oI4oFMVQ=", accessToken);
+        }
+
+        [Fact]
+        public async Task MangerTokenRequest()
+        {
+            string url = "http://rs.qiniu.com/buckets";
+            var token=new Signature(new Mac(options.AccessKey, options.SecretKey)).Sign(url, "GET");
+            //httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Qiniu {token}");
+            httpClient.DefaultRequestHeaders.Add("Host", "rs.qiniu.com");
+            var ret =await httpClient.GetAsync(url); 
+
+
+
+           // var ret=await httpClient.GetAsync<BucketQueryResponse>("http://rs.qiniu.com/buckets");            
+
+            //var ret= await qiniu.SendAsync<BucketQueryResponse>(new BucketQueryRequest());
+
+             
         }
     }
 }

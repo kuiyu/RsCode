@@ -22,13 +22,15 @@ namespace RsCode.Storage.QiniuStorage
             Client = httpClient;
         }
         public void LoadHandler(QiniuHttpHandler handler)
-        {
+        {            
             Client = new HttpClient(handler);
+            
         }
 
         public async Task<T> GetAsync<T>(string url)
            where T : StorageResponse
         {
+           // Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
             using (var response = await Client.GetAsync(url))
             {
                 int statusCode = Convert.ToInt32(response.StatusCode);
@@ -44,7 +46,7 @@ namespace RsCode.Storage.QiniuStorage
                 {
                     var s = await response.Content.ReadAsStringAsync();
                     var t = JsonSerializer.Deserialize<T>(s);
-                    
+                     
                     return t;
                 }
 

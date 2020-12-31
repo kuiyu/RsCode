@@ -25,10 +25,10 @@ namespace RsCode.Storage.QiniuStorage
         public string Encodedtags { get; set; }
         public override string GetApiUrl()
         {
-            string url= "/buckets";
+            string url= "http://rs.qiniu.com/buckets";
             if (!string.IsNullOrWhiteSpace(Encodedtags))
             {
-              
+                url += Core.Base64.UrlSafeBase64Encode(Encodedtags);
             }
             return url;
         }

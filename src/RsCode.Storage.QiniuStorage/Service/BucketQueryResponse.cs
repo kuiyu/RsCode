@@ -9,10 +9,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
     public class BucketQueryResponse:StorageResponse
     {
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
+
+        [JsonPropertyName("code")]
+        public int HttpCode { get; set; }
+        public string[] Bucket { get; set; }
     }
 }

@@ -11,8 +11,9 @@ using Microsoft.Extensions.Options;
 using Qiniu.CDN;
 using Qiniu.Http;
 
-using Qiniu.Util;
+ 
 using RsCode.Storage.QiniuStorage;
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace RsCode.Storage
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
-
+            httpClient.LoadHandler(new QiniuHttpHandler(mac));
             //华东 ZONE_CN_East  华北 ZONE_CN_North 华南 ZONE_CN_South  北美 ZONE_US_North
             if (options.Zone== "ZONE_CN_East")
             {
@@ -70,66 +71,73 @@ namespace RsCode.Storage
         }
         public string StorageName { get; } = "qiniu";
 
+
+      
+
+
         #region 鉴权
         public TokenResult GetUploadToken(bool isClient = true)
         {
-            int uploadType = isClient?1:0;
-            int OutTime = options.UploadTokenExpireTime; //超时时间 单位秒
+            return null;
+            //int uploadType = isClient?1:0;
+            //int OutTime = options.UploadTokenExpireTime; //超时时间 单位秒
              
 
-            PutPolicy putPolicy = new PutPolicy();
-            putPolicy.Scope = options.Bucket;
-            putPolicy.SetExpires(OutTime);
+            //PutPolicy putPolicy = new PutPolicy();
+            //putPolicy.Scope = options.Bucket;
+            //putPolicy.SetExpires(OutTime);
 
-            string jstr = putPolicy.ToJsonString();
-            string token = Auth.CreateUploadToken(mac, jstr);
+            //string jstr = putPolicy.ToJsonString();
+            //string token = Auth.CreateUploadToken(mac, jstr);
 
 
-            TokenResult result = new TokenResult
-            {
-                UploadUrl = $"https://{config.Zone.SrcUpHosts[uploadType]}",
-                Domain = options.Domain,
-                Token = token
-            };
-            return result;
+            //TokenResult result = new TokenResult
+            //{
+            //    UploadUrl = $"https://{config.Zone.SrcUpHosts[uploadType]}",
+            //    Domain = options.Domain,
+            //    Token = token
+            //};
+            //return result;
         }
         public TokenResult GetDownloadToken(bool isClient = true)
         {
-            int OutTime = options.DownloadTokenExpireTime; //超时时间 单位秒
+            return null;
+            //int OutTime = options.DownloadTokenExpireTime; //超时时间 单位秒
             
-            PutPolicy putPolicy = new PutPolicy();
-            putPolicy.Scope = options.Bucket;
-            putPolicy.SetExpires(OutTime);
+            //PutPolicy putPolicy = new PutPolicy();
+            //putPolicy.Scope = options.Bucket;
+            //putPolicy.SetExpires(OutTime);
 
-            string url = "";
-            string jstr = putPolicy.ToJsonString();
-            string token = Auth.CreateDownloadToken(mac, url);
+            //string url = "";
+            //string jstr = putPolicy.ToJsonString();
+            //string token = Auth.CreateDownloadToken(mac, url);
 
-            TokenResult result = new TokenResult
-            {
-                Domain = options.Domain,
-                Token = token
-            };
-            return result;
+            //TokenResult result = new TokenResult
+            //{
+            //    Domain = options.Domain,
+            //    Token = token
+            //};
+            //return result;
         }
 
         public TokenResult GetManageToken(bool isClient = true)
         {
-            int OutTime = options.ManageTokenExpireTime; //超时时间 单位秒
+            return null;
+            //int OutTime = options.ManageTokenExpireTime; //超时时间 单位秒
             
 
-            PutPolicy putPolicy = new PutPolicy();
-            putPolicy.Scope = options.Bucket;
-            putPolicy.SetExpires(OutTime);
+            //PutPolicy putPolicy = new PutPolicy();
+            //putPolicy.Scope = options.Bucket;
+            //putPolicy.SetExpires(OutTime);
 
-            string jstr = putPolicy.ToJsonString();
-            string token = Auth.CreateManageToken(mac, jstr);
-            TokenResult result = new TokenResult
-            {
-                Domain = options.Domain,
-                Token = token
-            };
-            return result;
+            //string jstr = putPolicy.ToJsonString();
+            //string token = Auth.CreateManageToken(mac, jstr);
+            //TokenResult result = new TokenResult
+            //{
+            //    Domain = options.Domain,
+            //    Token = token
+            //};
+            //return result;
         }
         
 
@@ -284,16 +292,16 @@ namespace RsCode.Storage
         //    return result;
         //}
 
-        /// <summary>
-        /// 缓存刷新-刷新URL
-        /// </summary>
-        /// <param name="urls">要刷新的URL列表</param>
-        /// <returns>缓存刷新的结果</returns>
-        public HttpResult RefreshUrls(string[] urls)
-        {
-            CdnManager cdnManager = new CdnManager(mac);
-            return cdnManager.RefreshUrls(urls);
-        }
+        ///// <summary>
+        ///// 缓存刷新-刷新URL
+        ///// </summary>
+        ///// <param name="urls">要刷新的URL列表</param>
+        ///// <returns>缓存刷新的结果</returns>
+        //public HttpResult RefreshUrls(string[] urls)
+        //{
+        //    CdnManager cdnManager = new CdnManager(mac);
+        //    return cdnManager.RefreshUrls(urls);
+        //}
 
         public async Task<UploadResult> UploadAsync()
         {
@@ -326,7 +334,8 @@ namespace RsCode.Storage
             var method = request.RequestMethod();
             var url = request.GetApiUrl();
             if(method=="GET")
-            {
+            {                
+                httpClient.LoadHandler(new QiniuHttpHandler(mac));
                 return await httpClient.GetAsync<T>(url);
             }
             if(method=="POST")

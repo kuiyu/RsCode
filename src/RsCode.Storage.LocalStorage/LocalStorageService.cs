@@ -100,5 +100,10 @@ namespace RsCode.Storage.LocalStorage
                 UploadUrl = Options.UploadUrl
             };
         }
+
+        public Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse
+        {
+            throw new NotImplementedException();
+        }
     }
 }

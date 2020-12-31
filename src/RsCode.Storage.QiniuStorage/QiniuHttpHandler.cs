@@ -6,7 +6,10 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,21 +18,30 @@ namespace RsCode.Storage.QiniuStorage
 {
     public class QiniuHttpHandler: DelegatingHandler
     {
-        public QiniuHttpHandler()
+        Mac mac;
+        public QiniuHttpHandler(Mac _mac)
         {
+            mac = _mac;
             HttpClientHandler handler = new HttpClientHandler();
             InnerHandler = handler;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            //string contentType = "";
+            //IEnumerable<string> s;
+            //if(request.Headers.TryGetValues("Content-Type",out s))
+            //{
+            //    contentType = s.FirstOrDefault();
+            //}
+            //request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+             
+            request.Headers.Add("Host", request.RequestUri.Host);
 
-            request.Headers.Add("Authorization", "");
-            var data = await request.Content.ReadAsStringAsync();
-            request.Headers.Add("User-Agent", "RsCode.Storage.QiniuStorage/1.0"); 
-            request.Headers.Add("Content-Type", "application/json");
-            request.Headers.Add("Host","");
-       
+            string token =await new Signature(mac).SignRequestAsync(request); 
+
+            request.Headers.Add("Authorization", $"QBox {token}"); 
+            request.Headers.Add("User-Agent", "RsCode.Storage.QiniuStorage/1.0");  
             
             return await base.SendAsync(request, cancellationToken);
         }
