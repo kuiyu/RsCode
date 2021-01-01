@@ -14,13 +14,18 @@ namespace RsCode.Storage.QiniuStorage
 {
     public class MoveRequest:StorageRequest
     {
-        public MoveRequest(string encodedEntryUriSrc)
+        public MoveRequest(string encodedEntryUriSrc,string encodedEntryURIDest,bool force)
         {
-
+            EncodedEntryURISrc = encodedEntryUriSrc;
+            EncodedEntryURIDest = encodedEntryURIDest;
+            Force=force;
         }
+        bool Force;
+        string EncodedEntryURISrc;
+        string EncodedEntryURIDest;
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/move/<EncodedEntryURISrc>/<EncodedEntryURIDest>/force/<true|false> ";
+            return $"{Config.DefaultRsHost}/move/{EncodedEntryURISrc}/{EncodedEntryURIDest}/force/{Force.ToString()}";
         }
     }
 }

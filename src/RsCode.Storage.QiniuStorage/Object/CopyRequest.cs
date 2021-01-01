@@ -12,7 +12,20 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class CopyRequest
+   public class CopyRequest:StorageRequest
     {
+        public CopyRequest(string encodedEntryUriSrc, string encodedEntryURIDest, bool force)
+        {
+            EncodedEntryURISrc = encodedEntryUriSrc;
+            EncodedEntryURIDest = encodedEntryURIDest;
+            Force = force;
+        }
+        bool Force;
+        string EncodedEntryURISrc;
+        string EncodedEntryURIDest;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/copy/{EncodedEntryURISrc}/{EncodedEntryURIDest}/force/{Force.ToString()}";
+        }
     }
 }

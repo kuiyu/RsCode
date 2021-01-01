@@ -9,10 +9,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BlobTransferResponse
+    public class BlobTransferResponse:StorageResponse
     {
+        [JsonPropertyName("time")]
+        public string Time { get; set; }
+        [JsonPropertyName("values")]
+        public BolbTransferValue Values { get; set; }
+    }
+
+   
+
+    public class BolbTransferValue
+    {
+        [JsonPropertyName("size")]
+        public long Size { get; set; }
     }
 }

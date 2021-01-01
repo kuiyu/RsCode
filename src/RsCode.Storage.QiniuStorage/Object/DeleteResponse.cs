@@ -12,7 +12,8 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class DeleteResponse
+    public class DeleteResponse:StorageResponse
     {
+
     }
 }

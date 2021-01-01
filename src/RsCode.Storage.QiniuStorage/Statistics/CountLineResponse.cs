@@ -9,10 +9,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class CountLineResponse
+   public class CountLineResponse : StorageResponse
     {
+        /// <summary>
+        /// Unix 时间戳，单位为秒
+        /// </summary>
+        [JsonPropertyName("times")]
+        public long[] Times { get; set; }
+        /// <summary>
+        /// 存储量大小，单位为 Byte
+        /// </summary>
+        [JsonPropertyName("datas")]
+        public long[] Datas { get; set; }
     }
 }

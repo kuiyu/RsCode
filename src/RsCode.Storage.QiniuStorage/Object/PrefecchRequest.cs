@@ -12,7 +12,16 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class PrefecchRequest
+    public class PrefecchRequest:StorageRequest
     {
+        string EncodedEntryURI;
+        public PrefecchRequest(string encodedEntryURI)
+        {
+            EncodedEntryURI = encodedEntryURI;
+        }
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/prefetch/{EncodedEntryURI}";
+        }
     }
 }

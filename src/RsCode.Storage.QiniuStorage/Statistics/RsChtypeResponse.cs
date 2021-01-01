@@ -9,10 +9,24 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class RsChtypeResponse
+   public class RsChtypeResponse : StorageResponse
     {
+        [JsonPropertyName("time")]
+        public string Time { get; set; }
+        [JsonPropertyName("values")]
+        public RsChtypeValue Values { get; set; }
+    }
+
+  
+
+
+    public class RsChtypeValue
+    {
+        [JsonPropertyName("hits")]
+        public long Hits { get; set; }
     }
 }

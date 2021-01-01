@@ -1,18 +1,21 @@
-﻿/*
- * 项目:.Net项目开发工具库 
- * 协议:MIT License 2.0 
- * 作者:河南软商网络科技有限公司 
- * 项目己托管于  
- * github
-   https://github.com/kuiyu/RsCode.git
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class UploadPartResponse
+    public class UploadPartResponse:StorageResponse
     {
+        /// <summary>
+        /// 上传块内容的 etag ，用来标识块，completeMultipartUpload API 调用的时候作为参数进行文件合成
+        /// </summary>
+        [JsonPropertyName("etag")]
+        public string ETag { get; set; }
+        /// <summary>
+        /// 上传块内容的 md5
+        /// </summary>
+        [JsonPropertyName("md5")]
+        public string Md5 { get; set; }
     }
 }

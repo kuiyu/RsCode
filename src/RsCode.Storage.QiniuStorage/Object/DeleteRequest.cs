@@ -12,7 +12,20 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class DeleteRequest
+    /// <summary>
+    /// 删除指定资源。如果资源不存在，则返回错误码612。
+    /// <see cref="https://developer.qiniu.com/kodo/1257/delete"/>
+    /// </summary>
+    public class DeleteRequest:StorageRequest
     {
+        string EncodedEntryURI;
+        public DeleteRequest(string encodedEntryURI)
+        {
+            EncodedEntryURI = encodedEntryURI;
+        }
+        public override string GetApiUrl()
+        {
+             return $"{Config.DefaultRsHost}/delete/{EncodedEntryURI}";
+        }
     }
 }

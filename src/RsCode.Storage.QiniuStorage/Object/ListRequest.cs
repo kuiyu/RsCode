@@ -6,13 +6,27 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class ListRequest
+    public class ListRequest:StorageRequest
     {
+        public ListRequest(string bucket,string marker="",int limit=1000,string prefix="",string delimiter="")
+        {
+            Bucket = bucket;
+            Marker = marker;
+            Limit = limit;
+            UrlEncodedPrefix = prefix;
+            UrlEncodedDelimiter= delimiter;
+        }
+        string Bucket;
+        string Marker;
+        int Limit;
+        string UrlEncodedPrefix;
+        string UrlEncodedDelimiter;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/list?bucket={Bucket}&marker={Marker}&limit={Limit}&prefix={UrlEncodedPrefix}&delimiter={UrlEncodedDelimiter}";
+        }
     }
 }

@@ -6,13 +6,34 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class RsChtypeRequest
+    public class RsChtypeRequest:StorageRequest
     {
+        public RsChtypeRequest(string beginTime, string endTime, string bucket,Region region, string select = "size", string g = "day")
+        {
+            Select = select;
+            BeginTime = beginTime;
+            EndTime = endTime;
+            G = g;
+            Region = region.ToDescription();
+            Bucket = bucket;
+        }
+        string Select;
+        string BeginTime;
+        string EndTime;
+        string G;
+
+        string Bucket="";
+        string Region ;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultApiHost}/v6/count_archive?begin={BeginTime}&end={EndTime}&g={G}&select={Select}";
+        }
     }
 }

@@ -6,13 +6,44 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class SpaceArchiveRequest
+    /// <summary>
+    /// <see cref="https://developer.qiniu.com/kodo/6462/space-archive"/>
+    /// </summary>
+    public class SpaceArchiveRequest:StorageRequest
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="beginTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="region"></param>
+        /// <param name="g"></param>
+        public SpaceArchiveRequest(string bucket, string beginTime, string endTime, Region region, string g = "day")
+        {
+            Bucket = bucket;
+            BeginTime = beginTime;
+            EndTime = endTime;
+            G = g;
+            Region = region.ToDescription();
+        }
+        string Bucket;
+        string BeginTime;
+        string EndTime;
+        string G;
+        string Region;
+        int NoPredel = 1;
+        int OnlyPredel = 1;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultApiHost}/v6/count_line?begin={BeginTime}&end={EndTime}&g={G}&bucket={Bucket}&region={Region}";
+        }
     }
 }

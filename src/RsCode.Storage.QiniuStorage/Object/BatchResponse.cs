@@ -9,10 +9,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BatchResponse
+    public class BatchResponse:StorageResponse
     {
+        public BatchResult[] Result { get; set; }
+    }
+
+    public class BatchResult
+    {
+        [JsonPropertyName("code")]
+        public int HttpCode { get; set; }
+        [JsonPropertyName("data")]
+        public StorageResponse Data { get; set; }
     }
 }

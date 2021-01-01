@@ -12,7 +12,29 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BlobIoRequest
+   public class BlobIoRequest:StorageRequest
     {
+        public BlobIoRequest(string beginTime, string endTime, string bucket,string domain,int fType,string select, string g = "day")
+        {
+            Select = select;
+            BeginTime = beginTime;
+            EndTime = endTime;
+            G = g;
+            Domain = domain;
+            FileType = fType;
+            Bucket = bucket;
+        }
+        string Select;
+        string BeginTime;
+        string EndTime;
+        string G;
+        string Domain;
+        int FileType;
+        string Bucket;
+        
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultApiHost}/v6/count_archive?begin={BeginTime}&end={EndTime}&g={G}&select={Select}";
+        }
     }
 }
