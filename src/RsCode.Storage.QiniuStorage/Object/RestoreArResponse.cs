@@ -12,7 +12,7 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class RestoreArResponse
+   public class RestoreArResponse:StorageResponse
     {
     }
 }

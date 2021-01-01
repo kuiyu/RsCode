@@ -12,7 +12,21 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BucketTagGetRequest
+   public class BucketTagGetRequest:StorageRequest
     {
+        public BucketTagGetRequest(string bucket)
+        {
+            BucketName = bucket;
+        }
+        public string BucketName { get; set; }
+
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/bucketTagging?bucket={BucketName}";
+        }
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
     }
 }

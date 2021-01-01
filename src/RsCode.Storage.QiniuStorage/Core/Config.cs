@@ -15,7 +15,7 @@ namespace RsCode.Storage.QiniuStorage
         /// <summary>
         /// 默认高级资源管理域名
         /// </summary>
-        public static string DefaultRsHost = "rs.qiniu.com";
+        public static string DefaultRsHost = "http://rs.qiniu.com";
         /// <summary>
         /// 默认数据处理域名
         /// </summary>

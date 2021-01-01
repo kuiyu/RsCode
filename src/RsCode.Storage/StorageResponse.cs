@@ -6,9 +6,16 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using System.Text.Json.Serialization;
+
 namespace RsCode.Storage
 {
     public class StorageResponse
     {
+        [JsonPropertyName("code")]
+        public int HttpCode { get; set; }
+
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
     }
 }

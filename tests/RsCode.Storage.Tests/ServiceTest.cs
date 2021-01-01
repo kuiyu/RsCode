@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -43,22 +44,23 @@ namespace RsCode.Storage.Tests
         }
 
         [Fact]
-        public async Task MangerTokenRequest()
+        public async Task BucketList()
         {
-            string url = "http://rs.qiniu.com/buckets";
-            var token=new Signature(new Mac(options.AccessKey, options.SecretKey)).Sign(url, "GET");
-            //httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Qiniu {token}");
-            httpClient.DefaultRequestHeaders.Add("Host", "rs.qiniu.com");
-            var ret =await httpClient.GetAsync(url); 
+            // Qiniu.Storage.Config config = new Qiniu.Storage.Config(); 
+            // Qiniu.Storage.BucketManager bucketManager = new Qiniu.Storage.BucketManager(new Qiniu.Util.Mac(options.AccessKey, options.SecretKey), config);
+            //var  buckets= bucketManager.Buckets(true);          
 
+            var ret= await qiniu.SendAsync(new BucketQueryRequest());
+            if(ret.StatusCode== System.Net.HttpStatusCode.OK)
+            {
+                var buckets = JsonSerializer.Deserialize<string[]>(await ret.Content.ReadAsStringAsync());
+                
+                Assert.NotNull(buckets);
+            }
 
-
-           // var ret=await httpClient.GetAsync<BucketQueryResponse>("http://rs.qiniu.com/buckets");            
-
-            //var ret= await qiniu.SendAsync<BucketQueryResponse>(new BucketQueryRequest());
-
-             
         }
+
+
+
     }
 }

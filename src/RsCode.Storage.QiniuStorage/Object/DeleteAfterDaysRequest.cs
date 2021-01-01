@@ -12,7 +12,22 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class DeleteAfterDaysRequest
+    /// <summary>
+    /// 更新文件生命周期
+    /// <see cref="https://developer.qiniu.com/kodo/1732/update-file-lifecycle"/>
+    /// </summary>
+    public class DeleteAfterDaysRequest:StorageRequest
     {
+        public DeleteAfterDaysRequest(string encodedEntryURI,int deleteAfterDays)
+        {
+            EncodedEntryURI = encodedEntryURI;
+            DeleteAfterDays = deleteAfterDays;
+        }
+        string EncodedEntryURI;
+        int DeleteAfterDays;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/deleteAfterDays/{EncodedEntryURI}/{DeleteAfterDays}";
+        }
     }
 }

@@ -12,7 +12,24 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class ChgmRequest
+    public class ChgmRequest:StorageRequest
     {
+        string EncodedEntryURI;
+        string EncodedMimeType;
+        string meta_key;
+        string EncodedMetaValue;
+        string Encodedcond;
+        public ChgmRequest(string encodedEntryUri,string encodeMimeType,string metaKey,string encodedMetaValue,string encodedcond)
+        {
+            EncodedEntryURI = encodedEntryUri;
+            EncodedMimeType = encodeMimeType;
+            meta_key = metaKey;
+            EncodedMetaValue = encodedMetaValue;
+            Encodedcond = encodedcond;
+        }
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/chgm/{EncodedEntryURI}/mime/{EncodedMimeType}/x-qn-meta-{meta_key}/{EncodedMetaValue}/cond/{Encodedcond}";
+        }
     }
 }

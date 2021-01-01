@@ -12,7 +12,15 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class MoveRequest
+    public class MoveRequest:StorageRequest
     {
+        public MoveRequest(string encodedEntryUriSrc)
+        {
+
+        }
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/move/<EncodedEntryURISrc>/<EncodedEntryURIDest>/force/<true|false> ";
+        }
     }
 }

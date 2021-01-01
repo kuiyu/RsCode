@@ -12,7 +12,21 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BucketDomainRequest
+   public class BucketDomainRequest:StorageRequest
     {
+        public BucketDomainRequest(string bucketName)
+        {
+            BucketName = bucketName;
+        }
+         string BucketName { get; set; }
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/v6/domain/list?tbl={BucketName}";
+        }
+
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
     }
 }

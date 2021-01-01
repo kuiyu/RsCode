@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,6 @@ namespace RsCode.Storage
         Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse;
 
 
-
+        Task<HttpResponseMessage> SendAsync(StorageRequest request);
     }
 }

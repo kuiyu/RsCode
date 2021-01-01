@@ -12,22 +12,23 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class BucketTagRemoveRequest:StorageRequest
+    public class BucketTagPutRequest:StorageRequest
     {
-        public BucketTagRemoveRequest(string bucket)
+        public BucketTagPutRequest(string bucket,Dictionary<string,object>tags)
         {
             BucketName = bucket;
+            Tags = tags;
         }
-         string BucketName { get; set; }
+        public string BucketName {  get; set; }
+        public Dictionary<string,object> Tags { get; set; }
+
         public override string RequestMethod()
         {
-            return "DELETE";
+            return "PUT";
         }
-
         public override string GetApiUrl()
         {
             return $"{Config.DefaultRsHost}/bucketTagging?bucket={BucketName}";
         }
     }
-
 }

@@ -26,7 +26,10 @@ namespace RsCode.Storage.QiniuStorage
             Client = new HttpClient(handler);
             
         }
-
+        public async Task<HttpResponseMessage> GetAsync(string url) 
+        {
+            return await Client.GetAsync(url); 
+        }
         public async Task<T> GetAsync<T>(string url)
            where T : StorageResponse
         {
@@ -36,17 +39,24 @@ namespace RsCode.Storage.QiniuStorage
                 int statusCode = Convert.ToInt32(response.StatusCode);
                 if (statusCode == 200)
                 {
-                    //string s = await response.Content.ReadAsStringAsync(); 
-                    using (var responseStream = await response.Content.ReadAsStreamAsync())
+                    if(response.Content!=null)
                     {
-                        return await JsonSerializer.DeserializeAsync<T>(responseStream);
+                        var s = await response.Content.ReadAsStringAsync();
+                         return  JsonSerializer.Deserialize<T>(s);
+                    }else
+                    {
+                        StorageResponse storageResponse = new StorageResponse();
+                        storageResponse.HttpCode = statusCode;
+                        return storageResponse as T;
                     }
+                     
+                  
                 }
                 else
                 {
                     var s = await response.Content.ReadAsStringAsync();
                     var t = JsonSerializer.Deserialize<T>(s);
-                     
+                    t.HttpCode = statusCode;
                     return t;
                 }
 
@@ -62,19 +72,43 @@ namespace RsCode.Storage.QiniuStorage
                 int statusCode = Convert.ToInt32(response.StatusCode);
                 if (statusCode == 200)
                 {
-                    using (var responseStream = await response.Content.ReadAsStreamAsync())
+                    if (response.Content != null)
                     {
-                        return await JsonSerializer.DeserializeAsync<T>(responseStream);
+                        var s = await response.Content.ReadAsStringAsync();
+                        return JsonSerializer.Deserialize<T>(s);
+                    }
+                    else
+                    {
+                        StorageResponse storageResponse = new StorageResponse();
+                        storageResponse.HttpCode = statusCode;
+                        return storageResponse as T;
                     }
                 }
                 else
                 {
                     var s = await response.Content.ReadAsStringAsync();
                     var t = JsonSerializer.Deserialize<T>(s);
-                    
+                    t.HttpCode = statusCode;   
                     return t;
                 }
 
+            }
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(string url, HttpContent httpContent) 
+        {
+            using (httpContent)
+            using (var response = await Client.PostAsync(url, httpContent))
+            {
+                return response; 
+            }
+        }
+
+        public async Task<HttpResponseMessage> DeleteAsync(string url)
+        { 
+            using (var response = await Client.DeleteAsync(url))
+            {
+                return response;
             }
         }
     }

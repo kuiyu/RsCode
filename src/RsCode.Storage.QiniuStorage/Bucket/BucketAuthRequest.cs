@@ -12,7 +12,23 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BucketAuthRequest
+    /// <summary>
+    /// 设置 Bucket 访问权限
+    /// <see cref="https://developer.qiniu.com/kodo/3946/set-bucket-private"/>
+    /// </summary>
+    public class BucketAuthRequest:StorageRequest
     {
+        public BucketAuthRequest(string bucket,int _private)
+        {
+            BucketName= bucket;
+            Private = _private;
+        }
+        int Private;
+          string BucketName { get; set; }
+
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/private?bucket={BucketName}&private={Private}";
+        }
     }
 }

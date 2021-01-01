@@ -30,7 +30,7 @@ namespace RsCode.Storage
         QiniuOptions options;
         Mac mac;
         Zone zone;
-        Config config;
+      
         string uploadUrl = "";
         QiniuHttpClient httpClient;
         public QiniuStorageProvider(
@@ -66,8 +66,8 @@ namespace RsCode.Storage
             uploadUrl = zone.SrcUpHosts[1];
             httpContext = _httpContext;
 
-            config = new Config();
-            config.Zone = zone;
+           // config = new Config();
+           // config.Zone = zone;
         }
         public string StorageName { get; } = "qiniu";
 
@@ -331,26 +331,44 @@ namespace RsCode.Storage
         public async Task<T>SendAsync<T>(StorageRequest request)
             where T:StorageResponse
         {
+           var response= await SendAsync(request);
+            if(response.StatusCode== System.Net.HttpStatusCode.OK)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(json);
+            }
+            return null;
+        }
+
+        public async Task<HttpResponseMessage> SendAsync(StorageRequest request) 
+        {
             var method = request.RequestMethod();
             var url = request.GetApiUrl();
-            if(method=="GET")
-            {                
-                httpClient.LoadHandler(new QiniuHttpHandler(mac));
-                return await httpClient.GetAsync<T>(url);
-            }
-            if(method=="POST")
+            if (method == "GET")
             {
+                httpClient.LoadHandler(new QiniuHttpHandler(mac));
+                return await httpClient.GetAsync(url);
+            }
+            if (method == "POST")
+            {
+                httpClient.LoadHandler(new QiniuHttpHandler(mac));
                 string s = JsonSerializer.Serialize(request, request.GetType());
-                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json"); 
-
-                var res = await httpClient.PostAsync<T>(url, httpContent);
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
+               
+                var res = await httpClient.PostAsync(url, httpContent);
                 return res;
 
             }
-            return default(T);
+            if (method == "DELETE")
+            {
+                httpClient.LoadHandler(new QiniuHttpHandler(mac));
+              
+                var res = await httpClient.DeleteAsync(url);
+                return res;
+
+            }
+            return null;
 
         }
-
-        
     }  
 }

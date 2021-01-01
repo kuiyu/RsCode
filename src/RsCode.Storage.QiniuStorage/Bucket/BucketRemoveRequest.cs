@@ -6,13 +6,23 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class BucketRemoveRequest
+    /// <summary>
+    /// 本接口用于删除指定的 Bucket。
+    /// <see cref="https://developer.qiniu.com/kodo/1601/drop-bucket"/>
+    /// </summary>
+    public class BucketRemoveRequest:StorageRequest
     {
+        public BucketRemoveRequest(string bucket)
+        {
+            BucketName = bucket;
+        }
+         string BucketName { get; set; }
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/drop/{BucketName}";
+        }
     }
 }

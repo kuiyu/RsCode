@@ -12,7 +12,22 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class ChTypeRequest
+    /// <summary>
+    /// 修改文件存储类型
+    /// <see cref="https://developer.qiniu.com/kodo/3710/chtype"/>
+    /// </summary>
+    public class ChTypeRequest:StorageRequest
     {
+        public ChTypeRequest(string encodedEntryURI, int _type)
+        {
+            EncodedEntryURI = encodedEntryURI;
+            type = _type;
+        }
+        string EncodedEntryURI;
+        int type;
+        public override string GetApiUrl()
+        {
+            return $"{Config.DefaultRsHost}/chtype/{EncodedEntryURI}/type/{type}";
+        }
     }
 }

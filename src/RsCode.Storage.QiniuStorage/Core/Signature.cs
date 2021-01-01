@@ -50,29 +50,31 @@ namespace RsCode.Storage.QiniuStorage.Core
         {
             string method= httpRequest.Method.Method;
             string host = httpRequest.RequestUri.Host;
-            string path = httpRequest.RequestUri.PathAndQuery; 
-            
-            string signingStr = $"{method} {path}\nHost: {host}";
+            string pathAndQuery = httpRequest.RequestUri.PathAndQuery;
+            byte[] pathAndQueryBytes = Encoding.UTF8.GetBytes(pathAndQuery);
 
-            string contentType = "";
-            IEnumerable<string> s;
-            if (httpRequest.Headers.TryGetValues("Content-Type", out s))
-            { 
-                contentType = s.FirstOrDefault();
-                signingStr += $"\nContent-Type: {contentType}";
-            }
-            signingStr += "\n\n";
-
-            if(httpRequest.Content!=null&& contentType != "application/octet-stream")
+            byte[] body = null;
+            if (httpRequest.Content != null)
             {
-                signingStr +=await httpRequest.Content.ReadAsStringAsync();
+                body = await httpRequest.Content.ReadAsByteArrayAsync();
+             }
+            using (MemoryStream buffer = new MemoryStream())
+            {
+                buffer.Write(pathAndQueryBytes, 0, pathAndQueryBytes.Length);
+                buffer.WriteByte((byte)'\n');
+                if (body != null && body.Length > 0)
+                {
+                    buffer.Write(body, 0, body.Length);
+                }
+
+                HMACSHA1 hmac = new HMACSHA1(Encoding.UTF8.GetBytes(mac.SecretKey));
+                byte[] digest = hmac.ComputeHash(buffer.ToArray());
+
+                string digestBase64 = Base64.UrlSafeBase64Encode(digest);
+                return string.Format("{0}:{1}", mac.AccessKey, digestBase64);
             }
 
-            var hashBytes = HMACSHA1Text(signingStr);
-            string encodedSign = Base64.UrlSafeBase64Encode(hashBytes);
 
-            string accessToken = $"{mac.AccessKey}:{encodedSign}";
-            return accessToken;
         }
 
 
