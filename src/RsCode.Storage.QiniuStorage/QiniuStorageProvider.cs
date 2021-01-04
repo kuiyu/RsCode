@@ -8,15 +8,11 @@
  */
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Qiniu.CDN;
 using Qiniu.Http;
 
- 
+
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -29,41 +25,43 @@ namespace RsCode.Storage
         IHttpContextAccessor httpContext;
         QiniuOptions options;
         Mac mac;
-        Zone zone;
       
         string uploadUrl = "";
         QiniuHttpClient httpClient;
+
         public QiniuStorageProvider(
             IOptionsSnapshot<QiniuOptions> _options,
             IHttpContextAccessor _httpContext,
             QiniuHttpClient _qiniuHttpClient
+           
             )
         {
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
             httpClient.LoadHandler(new QiniuHttpHandler(mac));
+         
             //华东 ZONE_CN_East  华北 ZONE_CN_North 华南 ZONE_CN_South  北美 ZONE_US_North
-            if (options.Zone== "ZONE_CN_East")
-            {
-                zone = Zone.ZONE_CN_East;
+            //if (options.Zone== "ZONE_CN_East")
+            //{
+            //    zone = Zone.ZONE_CN_East;
                 
-            }
-            if (options.Zone == "ZONE_CN_North")
-            {
-                zone = Zone.ZONE_CN_North;
-            }
-            if (options.Zone == "ZONE_CN_South")
-            {
-                zone = Zone.ZONE_CN_South;
-            }
-            if (options.Zone == "ZONE_US_North")
-            {
-                zone = Zone.ZONE_US_North;
-            }
+            //}
+            //if (options.Zone == "ZONE_CN_North")
+            //{
+            //    zone = Zone.ZONE_CN_North;
+            //}
+            //if (options.Zone == "ZONE_CN_South")
+            //{
+            //    zone = Zone.ZONE_CN_South;
+            //}
+            //if (options.Zone == "ZONE_US_North")
+            //{
+            //    zone = Zone.ZONE_US_North;
+            //}
 
 
-            uploadUrl = zone.SrcUpHosts[1];
+           // uploadUrl = zone.SrcUpHosts[1];
             httpContext = _httpContext;
 
            // config = new Config();
@@ -344,14 +342,13 @@ namespace RsCode.Storage
         {
             var method = request.RequestMethod();
             var url = request.GetApiUrl();
+            httpClient.LoadHandler(new QiniuHttpHandler(mac));
             if (method == "GET")
             {
-                httpClient.LoadHandler(new QiniuHttpHandler(mac));
                 return await httpClient.GetAsync(url);
             }
             if (method == "POST")
             {
-                httpClient.LoadHandler(new QiniuHttpHandler(mac));
                 string s = JsonSerializer.Serialize(request, request.GetType());
                 HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
                
@@ -361,11 +358,8 @@ namespace RsCode.Storage
             }
             if (method == "DELETE")
             {
-                httpClient.LoadHandler(new QiniuHttpHandler(mac));
-              
                 var res = await httpClient.DeleteAsync(url);
                 return res;
-
             }
             return null;
 

@@ -33,8 +33,8 @@ namespace RsCode.Storage.QiniuStorage
         public async Task<T> GetAsync<T>(string url)
            where T : StorageResponse
         {
-           // Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
-            using (var response = await Client.GetAsync(url))
+         
+            using (var response = await GetAsync(url))
             {
                 int statusCode = Convert.ToInt32(response.StatusCode);
                 if (statusCode == 200)

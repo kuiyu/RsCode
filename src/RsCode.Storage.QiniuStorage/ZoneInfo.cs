@@ -12,6 +12,12 @@ namespace RsCode.Storage.QiniuStorage
         public int Ttl { get; set; }
         public Io Io { set; get; }
         public Up Up { set; get; }
+
+        public Rs Rs { get; set; }
+
+        public Rsf Rsf { get; set; }
+
+        public Api Api { get; set; }
     }
 
     internal class Io
@@ -30,6 +36,21 @@ namespace RsCode.Storage.QiniuStorage
         public UpDomain OldAcc { set; get; }
         public UpDomain Src { set; get; }
         public UpDomain OldSrc { set; get; }
+    }
+
+    internal class Rs
+    {
+        public UpDomain Acc { get; set; }
+    }
+
+    internal class Rsf
+    {
+        public UpDomain Acc { get; set; }
+    }
+
+    internal class Api
+    {
+        public UpDomain Acc { get; set; }
     }
     internal class UpDomain
     {

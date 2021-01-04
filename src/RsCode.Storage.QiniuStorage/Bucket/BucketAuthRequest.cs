@@ -6,6 +6,8 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using AspectCore.DependencyInjection;
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,18 +19,30 @@ namespace RsCode.Storage.QiniuStorage
     /// <see cref="https://developer.qiniu.com/kodo/3946/set-bucket-private"/>
     /// </summary>
     public class BucketAuthRequest:StorageRequest
-    {
-        public BucketAuthRequest(string bucket,int _private)
+    { 
+        [FromServiceContext]
+        public IZoneHelper zoneHelper { get; set; }
+        /// <summary>
+        /// 设置 Bucket 访问权限
+        /// </summary>
+        /// <param name="bucket">空间名称</param>
+        /// <param name="_private">0公开 1私有</param>
+        public BucketAuthRequest(string bucket, int _private)
         {
-            BucketName= bucket;
+           
+            BucketName = bucket;
             Private = _private;
         }
         int Private;
           string BucketName { get; set; }
 
+    
+
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/private?bucket={BucketName}&private={Private}";
+            var zone = zoneHelper.QueryZoneAsync(BucketName).GetAwaiter().GetResult();
+            string apiUrl = zone.ApiHost;
+            return $"{Config.DefaultApiHost}/private?bucket={BucketName}&private={Private}";
         }
     }
 }

@@ -21,7 +21,7 @@ namespace RsCode.Storage.QiniuStorage
          string BucketName { get; set; }
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/v6/domain/list?tbl={BucketName}";
+            return $"{Config.DefaultApiHost}/v6/domain/list?tbl={BucketName}";
         }
 
         public override string RequestMethod()

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AspectCore.DependencyInjection;
+using RsCode.Storage.QiniuStorage.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,7 +21,7 @@ namespace RsCode.Storage.QiniuStorage
         /// <summary>
         /// 默认数据处理域名
         /// </summary>
-        public static string DefaultApiHost = "api.qiniu.com";
+        public static string DefaultApiHost = "http://api.qiniu.com";
         /// <summary>
         /// 空间所在的区域(Zone)
         /// </summary>
@@ -45,95 +47,6 @@ namespace RsCode.Storage.QiniuStorage
         /// </summary>
         public int MaxRetryTimes = 3;
 
-        /// <summary>
-        /// 获取资源管理域名
-        /// </summary>
-        /// <param name="ak"></param>
-        /// <param name="bucket"></param>
-        /// <returns></returns>
-        public string RsHost(string ak, string bucket)
-        {
-            string scheme = UseHttps ? "https://" : "http://";
-            Zone z = this.Zone;
-            if (z == null)
-            {
-                z = ZoneHelper.QueryZone(ak, bucket);
-            }
-            return string.Format("{0}{1}", scheme, z.ServerUploadDomain);
-        }
-
-        /// <summary>
-        /// 获取资源列表域名
-        /// </summary>
-        /// <param name="ak"></param>
-        /// <param name="bucket"></param>
-        /// <returns></returns>
-        public string RsfHost(string ak, string bucket)
-        {
-            string scheme = UseHttps ? "https://" : "http://";
-            Zone z = this.Zone;
-            if (z == null)
-            {
-                z = ZoneHelper.QueryZone(ak, bucket);
-            }
-            return string.Format("{0}{1}", scheme, z.RsfHost);
-        }
-
-        /// <summary>
-        /// 获取数据处理域名
-        /// </summary>
-        /// <param name="ak"></param>
-        /// <param name="bucket"></param>
-        /// <returns></returns>
-        public string ApiHost(string ak, string bucket)
-        {
-            string scheme = UseHttps ? "https://" : "http://";
-            Zone z = this.Zone;
-            if (z == null)
-            {
-                z = ZoneHelper.QueryZone(ak, bucket);
-            }
-            return string.Format("{0}{1}", scheme, z.ApiHost);
-        }
-
-        /// <summary>
-        /// 获取资源抓取更新域名
-        /// </summary>
-        /// <param name="ak"></param>
-        /// <param name="bucket"></param>
-        /// <returns></returns>
-        public string IovipHost(string ak, string bucket)
-        {
-            string scheme = UseHttps ? "https://" : "http://";
-            Zone z = this.Zone;
-            if (z == null)
-            {
-                z = ZoneHelper.QueryZone(ak, bucket);
-            }
-            return string.Format("{0}{1}", scheme, z.IovipHost);
-        }
-
-        /// <summary>
-        /// 获取文件上传域名
-        /// </summary>
-        /// <param name="ak"></param>
-        /// <param name="bucket"></param>
-        /// <returns></returns>
-        public string UpHost(string ak, string bucket)
-        {
-            string scheme = UseHttps ? "https://" : "http://";
-            Zone z = this.Zone;
-            if (z == null)
-            {
-                z = ZoneHelper.QueryZone(ak, bucket);
-            }
-            string upHost = z.SrcUpHosts[0];
-            if (this.UseCdnDomains)
-            {
-                upHost = z.CdnUpHosts[0];
-            }
-
-            return string.Format("{0}{1}", scheme, upHost);
-        }
+        
     }
 }

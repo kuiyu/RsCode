@@ -6,11 +6,13 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using AspectCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Storage.QiniuStorage;
+using RsCode.Storage.QiniuStorage.Core;
 
 namespace RsCode.Storage
 {
@@ -25,7 +27,13 @@ namespace RsCode.Storage
             services.AddScoped<IStorageProvider, QiniuStorageProvider>();
 
             services.AddHttpClient<QiniuHttpClient>();
+
+            services.AddScoped<IZoneHelper, ZoneHelper>();
+
+            services.AddTransient<QiniuStorage.Config>();
+
             
+
         }
     }
 }
