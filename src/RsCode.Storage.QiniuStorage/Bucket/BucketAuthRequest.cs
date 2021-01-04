@@ -6,11 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using AspectCore.DependencyInjection;
 using RsCode.Storage.QiniuStorage.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
@@ -20,8 +16,7 @@ namespace RsCode.Storage.QiniuStorage
     /// </summary>
     public class BucketAuthRequest:StorageRequest
     { 
-        [FromServiceContext]
-        public IZoneHelper zoneHelper { get; set; }
+        
         /// <summary>
         /// 设置 Bucket 访问权限
         /// </summary>
@@ -33,16 +28,16 @@ namespace RsCode.Storage.QiniuStorage
             BucketName = bucket;
             Private = _private;
         }
-        int Private;
-          string BucketName { get; set; }
+        public int Private { get; set; }
 
+        public  string BucketName { get; set; } 
     
 
         public override string GetApiUrl()
-        {
-            var zone = zoneHelper.QueryZoneAsync(BucketName).GetAwaiter().GetResult();
-            string apiUrl = zone.ApiHost;
-            return $"{Config.DefaultApiHost}/private?bucket={BucketName}&private={Private}";
+        { 
+            var zone =new ZoneHelper().QueryZoneAsync(BucketName).GetAwaiter().GetResult();
+            string apiUrl = zone.RsHost;//.UcHost;
+            return $"{apiUrl}/private";
         }
     }
 }

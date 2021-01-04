@@ -13,6 +13,7 @@ using Qiniu.Http;
 
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
+using RsCode.Threading;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -39,33 +40,9 @@ namespace RsCode.Storage
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
-            httpClient.LoadHandler(new QiniuHttpHandler(mac));
-         
-            //华东 ZONE_CN_East  华北 ZONE_CN_North 华南 ZONE_CN_South  北美 ZONE_US_North
-            //if (options.Zone== "ZONE_CN_East")
-            //{
-            //    zone = Zone.ZONE_CN_East;
-                
-            //}
-            //if (options.Zone == "ZONE_CN_North")
-            //{
-            //    zone = Zone.ZONE_CN_North;
-            //}
-            //if (options.Zone == "ZONE_CN_South")
-            //{
-            //    zone = Zone.ZONE_CN_South;
-            //}
-            //if (options.Zone == "ZONE_US_North")
-            //{
-            //    zone = Zone.ZONE_US_North;
-            //}
-
-
-           // uploadUrl = zone.SrcUpHosts[1];
-            httpContext = _httpContext;
-
-           // config = new Config();
-           // config.Zone = zone;
+           
+            httpContext = _httpContext; 
+            
         }
         public string StorageName { get; } = "qiniu";
 
@@ -340,9 +317,18 @@ namespace RsCode.Storage
 
         public async Task<HttpResponseMessage> SendAsync(StorageRequest request) 
         {
+            CallContext<Mac>.SetData("qiniu_option",mac);
             var method = request.RequestMethod();
             var url = request.GetApiUrl();
-            httpClient.LoadHandler(new QiniuHttpHandler(mac));
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            {
+                url = $"http://{url}";
+            }
+
+            var qiniuRequest = request as QiniuStorageRequest;
+            var tokenType= qiniuRequest.GetTokenType(); 
+              
+            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
             if (method == "GET")
             {
                 return await httpClient.GetAsync(url);
@@ -351,6 +337,12 @@ namespace RsCode.Storage
             {
                 string s = JsonSerializer.Serialize(request, request.GetType());
                 HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
+                if(s=="{}")
+                {
+                    httpContent = null;
+                }
+                 
+                //HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/x-www-form-urlencoded");
                
                 var res = await httpClient.PostAsync(url, httpContent);
                 return res;
@@ -358,6 +350,7 @@ namespace RsCode.Storage
             }
             if (method == "DELETE")
             {
+              
                 var res = await httpClient.DeleteAsync(url);
                 return res;
             }

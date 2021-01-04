@@ -1,14 +1,7 @@
-﻿using RsCode.Storage.QiniuStorage.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace RsCode.Storage.QiniuStorage
+﻿namespace RsCode.Storage.QiniuStorage
 {
     /// <summary>
-    /// 目前已支持的区域：华东/华北/华南/北美
+    /// 区域
     /// </summary>
     public class Zone
     {
@@ -43,14 +36,14 @@ namespace RsCode.Storage.QiniuStorage
         /// CDN加速
         /// </summary>
         public string[] CdnUpHosts { set; get; }
- 
-     
-        
 
-         
-        
-        
 
-       
+        public string UcHost { get; set; }
+
+        public string RsHost { get; set; }
+
+
+
+
     }
 }

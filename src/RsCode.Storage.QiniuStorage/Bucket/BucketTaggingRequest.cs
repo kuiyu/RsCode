@@ -6,15 +6,13 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
+using RsCode.Storage.QiniuStorage.Core;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class BucketTagGetRequest:StorageRequest
+    public class BucketTaggingRequest:StorageRequest
     {
-        public BucketTagGetRequest(string bucket)
+        public BucketTaggingRequest(string bucket)
         {
             BucketName = bucket;
         }
@@ -22,7 +20,9 @@ namespace RsCode.Storage.QiniuStorage
 
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/bucketTagging?bucket={BucketName}";
+            var zone=new ZoneHelper().QueryZoneAsync(BucketName).GetAwaiter().GetResult();
+            var apiUrl =zone.UcHost;
+            return $"{apiUrl}/bucketTagging?bucket={BucketName}";
         }
         public override string RequestMethod()
         {

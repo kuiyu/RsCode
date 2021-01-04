@@ -47,6 +47,6 @@ namespace RsCode.Storage.QiniuStorage
         /// </summary>
         public int MaxRetryTimes = 3;
 
-        
+       
     }
 }

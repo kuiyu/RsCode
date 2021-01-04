@@ -5,7 +5,9 @@ using System;
 using System.IO;
 using AspectCore.Extensions.Hosting;
 using AspectCore.Extensions.DataAnnotations;
+using AspectCore.Configuration;
 using AspectCore.Extensions.DependencyInjection;
+using RsCode.Storage.QiniuStorage.Core;
 
 namespace RsCode.Storage.Tests
 {
@@ -17,7 +19,7 @@ namespace RsCode.Storage.Tests
         // 自定义 host 构建
         public void ConfigureHost(IHostBuilder hostBuilder)
         {
-            hostBuilder.UseServiceContext(o=>o.AddDataAnnotations())
+            hostBuilder
                 .ConfigureAppConfiguration(builder =>
                 {
                     // 注册配置 
@@ -29,8 +31,15 @@ namespace RsCode.Storage.Tests
                 {
                     // 注册自定义服务
                     services.AddQiniuStorage(context.Configuration);
-                    services.AddAspectServiceContext();
-                });
+
+                })
+                
+                .UseServiceContext(o=> 
+            {
+                var p = Predicates.ForNameSpace("RsCode.Storage.QiniuStorage.Core");
+                o.AddDataAnnotations(p);                
+            })
+                ;
 
         }
             

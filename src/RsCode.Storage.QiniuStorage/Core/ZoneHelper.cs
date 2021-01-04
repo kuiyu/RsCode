@@ -1,5 +1,7 @@
-﻿using System;
+﻿using RsCode.Threading;
+using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,16 +11,16 @@ namespace RsCode.Storage.QiniuStorage.Core
     /// <summary>
     /// Zone辅助类，查询及配置Zone
     /// </summary>
-    public class ZoneHelper:IZoneHelper
+    public class ZoneHelper
     {
-        QiniuHttpClient httpClient;
+         
         private static Dictionary<string, Zone> zoneCache = new Dictionary<string, Zone>();
         private static object rwLock = new object();   
-        QiniuOptions QiniuOptions;
-        public ZoneHelper(QiniuOptions qiniuOptions,QiniuHttpClient qiniuHttpClient)
+         
+        HttpClient httpClient;
+        public ZoneHelper()
         {
-            QiniuOptions = qiniuOptions;
-            httpClient = qiniuHttpClient;
+            httpClient = new HttpClient();
         }
 
         /// <summary>
@@ -29,8 +31,11 @@ namespace RsCode.Storage.QiniuStorage.Core
         public async Task<Zone> QueryZoneAsync(string bucket)
         {
             Zone zone = null;
-
-            string cacheKey = string.Format("{0}:{1}",QiniuOptions.AccessKey, bucket);
+            var options = CallContext<Mac>.GetData("qiniu_option");
+            string ak = options.AccessKey;
+            if (string.IsNullOrWhiteSpace(ak))
+                throw new Exception("Qiniu AccessKey Not Null");
+            string cacheKey = string.Format("{0}:{1}",ak, bucket);
 
             //check from cache
             lock (rwLock)
@@ -50,8 +55,9 @@ namespace RsCode.Storage.QiniuStorage.Core
 
             try
             {
-                string queryUrl = string.Format("https://uc.qbox.me/v2/query?ak={0}&bucket={1}", QiniuOptions.AccessKey, bucket);
+                string queryUrl = string.Format("https://uc.qbox.me/v2/query?ak={0}&bucket={1}", ak, bucket);
 
+                
                 var ret =await httpClient.GetAsync(queryUrl);
 
                 if (ret.StatusCode == System.Net.HttpStatusCode.OK)
@@ -67,7 +73,8 @@ namespace RsCode.Storage.QiniuStorage.Core
                         zone.RsfHost = zInfo.Rsf.Acc.Main[0];
                         zone.ApiHost = zInfo.Api.Acc.Main[0];
                         zone.ServerUploadDomain = zInfo.Rs.Acc.Main[0];
-
+                        zone.UcHost = zInfo.Uc.Acc.Main[0];
+                        zone.RsHost = zInfo.Rs.Acc.Main[0];
 
                         lock (rwLock)
                         {

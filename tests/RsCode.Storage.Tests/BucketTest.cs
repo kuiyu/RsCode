@@ -1,8 +1,6 @@
 ﻿using RsCode.Storage.QiniuStorage;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,7 +15,7 @@ namespace RsCode.Storage.Tests
         public BucketTest(IEnumerable<IStorageProvider> storageProviders)
         {
             qiniu = storageProviders.FirstOrDefault(c => c.StorageName=="qiniu");
-           
+         
         }
 
         [Fact]
@@ -45,12 +43,23 @@ namespace RsCode.Storage.Tests
                 Assert.NotNull(res);
             } 
         }
-
+     
+        //todo err401
+        //设置bucket访问权限
         [Fact]
         public async Task SetPrivateTest()
         { 
-            var ret = await qiniu.SendAsync(new BucketAuthRequest("www-hnrswl-com", 1));
+            var ret = await qiniu.SendAsync(new BucketAuthRequest("ttj-test", 1));
             Assert.Equal(200, (int)ret.StatusCode);
+        }
+
+        //查看空间标签
+        [Fact]
+        public async Task BucketTagging()
+        {
+            var ret = await qiniu.SendAsync<BucketTaggingResponse>(new BucketTaggingRequest("ttj-test"));
+            //  Assert.Equal(200, (int)ret.StatusCode);
+            Assert.NotNull(ret);
         }
     }
 }

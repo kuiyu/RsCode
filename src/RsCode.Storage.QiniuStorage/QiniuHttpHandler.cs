@@ -7,7 +7,9 @@
    https://github.com/kuiyu/RsCode.git
  */
 using RsCode.Storage.QiniuStorage.Core;
+using RsCode.Threading;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,30 +18,63 @@ namespace RsCode.Storage.QiniuStorage
     public class QiniuHttpHandler: DelegatingHandler
     {
         Mac mac;
-        public QiniuHttpHandler(Mac _mac)
-        {
-            mac = _mac;
+        Auth auth;
+        TokenType tokenType;
+        public QiniuHttpHandler(TokenType _tokenType)
+        { 
+            mac = CallContext<Mac>.GetData("qiniu_option");
             HttpClientHandler handler = new HttpClientHandler();
             InnerHandler = handler;
+            auth= new Auth(mac);
+            tokenType = _tokenType;
         }
+       
 
+        
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             request.Headers.Add("Host", request.RequestUri.Host);
             var requestUrl = request.RequestUri.AbsoluteUri;
             
-           string token=Auth.CreateManageToken(mac,requestUrl );
+            string token=GetToken(requestUrl );
+             
             if(request.Content!=null)
             {
-                var body = await request.Content.ReadAsByteArrayAsync();
-                token = Auth.CreateManageToken(mac, requestUrl,body);
+                string body = await request.Content.ReadAsStringAsync();
+                var data = Encoding.UTF8.GetBytes(body);
+                token = GetToken( requestUrl,data);  
             }
             request.Headers.Add("Authorization", token);
             request.Headers.Add("User-Agent", "RsCode.Storage.QiniuStorage/1.0");  
             
+            
             return await base.SendAsync(request, cancellationToken);
         }
 
+        string GetToken(string urlOrJsonstr,byte[] data=null)
+        {
+            if(tokenType==TokenType.Download)
+            {
+                return auth.CreateDownloadToken(urlOrJsonstr);
+            }
+            if (tokenType == TokenType.Manager)
+            {
+                return auth.CreateManageToken( urlOrJsonstr,data);
+            }
+            if(tokenType== TokenType.Upload)
+            {
+                return auth.CreateUploadToken(urlOrJsonstr);
+            }
+            if(tokenType==TokenType.StreamManage)
+            {
+                return auth.CreateStreamManageToken(urlOrJsonstr);
+            }
+            if(tokenType==TokenType.StreamPublish )
+            {
+                return auth.CreateStreamPublishToken(urlOrJsonstr);
+            }
+            throw new System.Exception("TokenType Error");
+        }
        
     }
 }
