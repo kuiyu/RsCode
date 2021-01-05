@@ -6,6 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,18 +17,34 @@ namespace RsCode.Storage.QiniuStorage
     /// 修改文件存储类型
     /// <see cref="https://developer.qiniu.com/kodo/3710/chtype"/>
     /// </summary>
-    public class ChTypeRequest:StorageRequest
+    public class ChTypeRequest:QiniuStorageRequest
     {
-        public ChTypeRequest(string encodedEntryURI, int _type)
+        /// <summary>
+        /// 修改文件存储类型
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="key"></param>
+        /// <param name="_type">0 表示标准存储；1 表示低频存储；2 表示归档存储</param>
+        public ChTypeRequest(string bucket,string key, int _type)
         {
-            EncodedEntryURI = encodedEntryURI;
+            Bucket=bucket;
+            EncodedEntryURI =Core.Base64.UrlSafeBase64Encode( key);
             type = _type;
+
         }
         string EncodedEntryURI;
         int type;
+        string Bucket;
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/chtype/{EncodedEntryURI}/type/{type}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/chtype/{EncodedEntryURI}/type/{type}";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

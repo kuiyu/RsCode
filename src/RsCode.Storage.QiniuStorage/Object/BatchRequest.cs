@@ -6,6 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,16 +17,25 @@ namespace RsCode.Storage.QiniuStorage
     /// 批量操作意指在单一请求中执行多次获取元信息、移动、复制、删除和解冻操作，极大提高资源管理效率。 其中，解冻操作仅针对归档存储文件有效。
     /// <see cref="https://developer.qiniu.com/kodo/1250/batch"/>
     /// </summary>
-    public class BatchRequest:StorageRequest
+    public class BatchRequest: QiniuStorageRequest
     {
-        public BatchRequest(List<string>ops)
+        public BatchRequest(string bucket, List<string>ops)
         {
+            Bucket = bucket;
             body = ops;
         }
-        List<string> body;
+        string Bucket;
+        public List<string> body { get; set; }
+      
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/batch";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/batch";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

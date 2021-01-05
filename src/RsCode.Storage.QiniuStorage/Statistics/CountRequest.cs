@@ -13,7 +13,7 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class CountRequest:StorageRequest
+   public class CountRequest: QiniuStorageRequest
     {
         public CountRequest(string bucket, string beginTime, string endTime, Region region, string g = "day")
         {
@@ -30,7 +30,13 @@ namespace RsCode.Storage.QiniuStorage
         string Region;
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultApiHost}/v6/count?begin={BeginTime}&end={EndTime}&g={G}&bucket={Bucket}&region={Region}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/v6/count?begin={BeginTime}&end={EndTime}&g={G}&bucket={Bucket}&region={Region}";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

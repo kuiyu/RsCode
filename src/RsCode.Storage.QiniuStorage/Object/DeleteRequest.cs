@@ -6,9 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
+using RsCode.Storage.QiniuStorage.Core;
 
 namespace RsCode.Storage.QiniuStorage
 {
@@ -16,16 +14,24 @@ namespace RsCode.Storage.QiniuStorage
     /// 删除指定资源。如果资源不存在，则返回错误码612。
     /// <see cref="https://developer.qiniu.com/kodo/1257/delete"/>
     /// </summary>
-    public class DeleteRequest:StorageRequest
+    public class DeleteRequest: QiniuStorageRequest
     {
+        string Bucket;
         string EncodedEntryURI;
-        public DeleteRequest(string encodedEntryURI)
+        public DeleteRequest(string bucket,string key)
         {
-            EncodedEntryURI = encodedEntryURI;
+            Bucket = bucket;
+            EncodedEntryURI = Base64.UrlSafeBase64Encode(key) ;
         }
         public override string GetApiUrl()
         {
-             return $"{Config.DefaultRsHost}/delete/{EncodedEntryURI}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/delete/{EncodedEntryURI}";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

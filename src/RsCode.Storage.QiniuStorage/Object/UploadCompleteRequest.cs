@@ -1,11 +1,16 @@
-﻿using System;
+﻿using RsCode.Storage.QiniuStorage.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class UploadCompleteRequest:StorageRequest
+    /// <summary>
+    /// 完成文件上传
+    /// <see cref="https://developer.qiniu.com/kodo/6368/complete-multipart-upload"/>
+    /// </summary>
+    public class UploadCompleteRequest: QiniuStorageRequest
     {
         /// <summary>
         /// 
@@ -15,11 +20,11 @@ namespace RsCode.Storage.QiniuStorage
         /// <param name="uploadId">在服务端申请的 MultipartUpload 任务 id</param>
         public UploadCompleteRequest(string bucket,string objectName,string uploadId)
         {
-            BucketName = bucket;
+            Bucket = bucket;
             EncodedObjectName = Core.Base64.UrlSafeBase64Encode(objectName);
             UploadId = uploadId;
         }
-        string BucketName;
+        string Bucket;
         string EncodedObjectName;
         string UploadId;
 
@@ -40,10 +45,15 @@ namespace RsCode.Storage.QiniuStorage
 
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultApiHost}/buckets/{BucketName}/objects/{EncodedObjectName}/uploads/{UploadId}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.ServerUploadDomain;
+            return $"{url}/buckets/{Bucket}/objects/{EncodedObjectName}/uploads/{UploadId}";
         }
 
-
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Upload;
+        }
     }
 
     public class PartInfo

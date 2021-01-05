@@ -6,26 +6,31 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class MoveRequest:StorageRequest
+    public class MoveRequest: QiniuStorageRequest
     {
-        public MoveRequest(string encodedEntryUriSrc,string encodedEntryURIDest,bool force)
+        public MoveRequest(string bucket,string entryUriSrc,string entryURIDest,bool force)
         {
-            EncodedEntryURISrc = encodedEntryUriSrc;
-            EncodedEntryURIDest = encodedEntryURIDest;
+            Bucket = bucket;
+            EncodedEntryURISrc = Core.Base64.UrlSafeBase64Encode(entryUriSrc);
+            EncodedEntryURIDest = Core.Base64.UrlSafeBase64Encode(EncodedEntryURIDest);  
             Force=force;
         }
+        string Bucket;
         bool Force;
         string EncodedEntryURISrc;
         string EncodedEntryURIDest;
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/move/{EncodedEntryURISrc}/{EncodedEntryURIDest}/force/{Force.ToString()}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/move/{EncodedEntryURISrc}/{EncodedEntryURIDest}/force/{Force.ToString()}";
         }
     }
 }
