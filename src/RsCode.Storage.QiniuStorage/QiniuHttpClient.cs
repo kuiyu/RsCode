@@ -117,12 +117,19 @@ namespace RsCode.Storage.QiniuStorage
             }
         }
 
-        public async Task<T> DeleteAsync<T>(string url)
+        public async Task<T> DeleteAsync<T>(string url) where T : StorageResponse
         {
             using (var response = await Client.DeleteAsync(url))
             {
-                var json =await  response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<T>(json); 
+                var s =await  response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(s) && s != "{}")
+                {
+                    return JsonSerializer.Deserialize<T>(s);
+                }
+                int statusCode = Convert.ToInt32(response.StatusCode);
+                var result = Activator.CreateInstance<T>();
+                result.HttpCode = statusCode;
+                return result;
             }
         }
     }
