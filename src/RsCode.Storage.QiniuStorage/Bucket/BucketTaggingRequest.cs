@@ -10,7 +10,7 @@ using RsCode.Storage.QiniuStorage.Core;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class BucketTaggingRequest:StorageRequest
+    public class BucketTaggingRequest:QiniuStorageRequest
     {
         public BucketTaggingRequest(string bucket)
         {
@@ -27,6 +27,11 @@ namespace RsCode.Storage.QiniuStorage
         public override string RequestMethod()
         {
             return "GET";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

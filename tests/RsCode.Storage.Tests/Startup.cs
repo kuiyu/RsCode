@@ -34,11 +34,11 @@ namespace RsCode.Storage.Tests
 
                 })
                 
-                .UseServiceContext(o=> 
-            {
-                var p = Predicates.ForNameSpace("RsCode.Storage.QiniuStorage.Core");
-                o.AddDataAnnotations(p);                
-            })
+            //    .UseServiceContext(o=> 
+            //{
+            //    var p = Predicates.ForNameSpace("RsCode.Storage.QiniuStorage.Core");
+            //    o.AddDataAnnotations(p);                
+            //})
                 ;
 
         }

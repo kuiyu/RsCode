@@ -306,13 +306,46 @@ namespace RsCode.Storage
         public async Task<T>SendAsync<T>(StorageRequest request)
             where T:StorageResponse
         {
-           var response= await SendAsync(request);
-            if(response.StatusCode== System.Net.HttpStatusCode.OK)
+            CallContext<Mac>.SetData("qiniu_option", mac);
+            var method = request.RequestMethod();
+            var url = request.GetApiUrl();
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
             {
-                var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<T>(json);
+                url = $"http://{url}";
+            }
+
+            var qiniuRequest = request as QiniuStorageRequest;
+            var tokenType = qiniuRequest.GetTokenType();
+
+            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
+            if (method == "GET")
+            {
+                return await httpClient.GetAsync<T>(url);
+            }
+            if (method == "POST")
+            {
+                string s = JsonSerializer.Serialize(request, request.GetType());
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
+                if (s == "{}")
+                {
+                    httpContent = null;
+                }
+
+                //HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/x-www-form-urlencoded");
+
+                var res = await httpClient.PostAsync<T>(url, httpContent);
+                return res;
+
+            }
+            if (method == "DELETE")
+            { 
+                var res = await httpClient.DeleteAsync<T>(url);
+                return res;
             }
             return null;
+
+
+             
         }
 
         public async Task<HttpResponseMessage> SendAsync(StorageRequest request) 

@@ -44,13 +44,14 @@ namespace RsCode.Storage.Tests
             } 
         }
      
-        //todo err401
+       
         //设置bucket访问权限
         [Fact]
         public async Task SetPrivateTest()
         { 
-            var ret = await qiniu.SendAsync(new BucketAuthRequest("ttj-test", 1));
-            Assert.Equal(200, (int)ret.StatusCode);
+            var ret = await qiniu.SendAsync<BucketAuthResponse>(new BucketAuthRequest("rsyunpan", 1));
+            Assert.Equal(200, ret.HttpCode);
+           // Assert.Equal(200, (int)ret.StatusCode);
         }
 
         //查看空间标签

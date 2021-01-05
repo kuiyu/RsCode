@@ -13,7 +13,7 @@ namespace RsCode.Storage.QiniuStorage
     /// 获取Bucket列表
     /// <see cref="https://developer.qiniu.com/kodo/3926/get-service#4"/>
     /// </summary>
-    public class BucketQueryRequest:StorageRequest
+    public class BucketQueryRequest:QiniuStorageRequest
     {
         public BucketQueryRequest(string tags="")
         {
@@ -35,6 +35,11 @@ namespace RsCode.Storage.QiniuStorage
         public override string RequestMethod()
         {
             return "GET";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

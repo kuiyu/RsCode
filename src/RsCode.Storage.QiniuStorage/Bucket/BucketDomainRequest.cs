@@ -12,7 +12,10 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class BucketDomainRequest:StorageRequest
+    /// <summary>
+    /// 
+    /// </summary>
+   public class BucketDomainRequest:QiniuStorageRequest
     {
         public BucketDomainRequest(string bucketName)
         {
@@ -27,6 +30,11 @@ namespace RsCode.Storage.QiniuStorage
         public override string RequestMethod()
         {
             return "GET";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

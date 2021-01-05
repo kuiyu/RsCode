@@ -13,7 +13,7 @@ namespace RsCode.Storage.QiniuStorage
     /// 本接口用于删除指定的 Bucket。
     /// <see cref="https://developer.qiniu.com/kodo/1601/drop-bucket"/>
     /// </summary>
-    public class BucketRemoveRequest:StorageRequest
+    public class BucketRemoveRequest:QiniuStorageRequest
     {
         public BucketRemoveRequest(string bucket)
         {
@@ -23,6 +23,10 @@ namespace RsCode.Storage.QiniuStorage
         public override string GetApiUrl()
         {
             return $"{Config.DefaultRsHost}/drop/{BucketName}";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

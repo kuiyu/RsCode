@@ -20,9 +20,10 @@ namespace RsCode.Storage.Tests
         [Fact]
         public async Task ChangeStatus()
         {
-            var url = "1197/wxSop/59420fc80a95a1f70f289afa9aea21c0.jpg";
-            var ret = await qiniu.SendAsync<ChStatusResponse>(new ChStatusRequest(url, 0));
-            Assert.NotNull(ret);
+            var url = "/note/project/logo/0rk1qechokcr.png";
+            var ret = await qiniu.SendAsync<ChStatusResponse>(new ChStatusRequest("res-rscode-cn", url,1));
+
+            Assert.Equal(200,ret.HttpCode);
         }
     }
 }

@@ -42,15 +42,16 @@ namespace RsCode.Storage.QiniuStorage
                     if(response.Content!=null)
                     {
                         var s = await response.Content.ReadAsStringAsync();
-                         return  JsonSerializer.Deserialize<T>(s);
-                    }else
-                    {
-                        StorageResponse storageResponse = new StorageResponse();
-                        storageResponse.HttpCode = statusCode;
-                        return storageResponse as T;
+                        if (!string.IsNullOrWhiteSpace(s) && s != "{}")
+                        {
+                            return JsonSerializer.Deserialize<T>(s);
+                        }
                     }
-                     
-                  
+                    var result = Activator.CreateInstance<T>();
+                    result.HttpCode = statusCode;
+                    return result;
+
+
                 }
                 else
                 {
@@ -75,14 +76,17 @@ namespace RsCode.Storage.QiniuStorage
                     if (response.Content != null)
                     {
                         var s = await response.Content.ReadAsStringAsync();
-                        return JsonSerializer.Deserialize<T>(s);
+
+                        if(!string.IsNullOrWhiteSpace(s)&&s!="{}")
+                        {
+                            return JsonSerializer.Deserialize<T>(s);
+                        } 
                     }
-                    else
-                    {
-                        StorageResponse storageResponse = new StorageResponse();
-                        storageResponse.HttpCode = statusCode;
-                        return storageResponse as T;
-                    }
+                      
+                        var result = Activator.CreateInstance<T>();
+                        result.HttpCode = statusCode; 
+                        return result;
+                    
                 }
                 else
                 {
@@ -100,6 +104,7 @@ namespace RsCode.Storage.QiniuStorage
             using (httpContent)
             using (var response = await Client.PostAsync(url, httpContent))
             {
+                string s = await response.Content.ReadAsStringAsync();
                 return response; 
             }
         }
@@ -109,6 +114,15 @@ namespace RsCode.Storage.QiniuStorage
             using (var response = await Client.DeleteAsync(url))
             {
                 return response;
+            }
+        }
+
+        public async Task<T> DeleteAsync<T>(string url)
+        {
+            using (var response = await Client.DeleteAsync(url))
+            {
+                var json =await  response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(json); 
             }
         }
     }

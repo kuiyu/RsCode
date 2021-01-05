@@ -14,7 +14,7 @@ namespace RsCode.Storage.QiniuStorage
     /// 设置 Bucket 访问权限
     /// <see cref="https://developer.qiniu.com/kodo/3946/set-bucket-private"/>
     /// </summary>
-    public class BucketAuthRequest:StorageRequest
+    public class BucketAuthRequest:QiniuStorageRequest
     { 
         
         /// <summary>
@@ -28,16 +28,21 @@ namespace RsCode.Storage.QiniuStorage
             BucketName = bucket;
             Private = _private;
         }
-        public int Private { get; set; }
+         int Private { get; set; }
 
-        public  string BucketName { get; set; } 
+           string BucketName { get; set; } 
     
 
         public override string GetApiUrl()
         { 
             var zone =new ZoneHelper().QueryZoneAsync(BucketName).GetAwaiter().GetResult();
-            string apiUrl = zone.RsHost;//.UcHost;
-            return $"{apiUrl}/private";
+            string apiUrl = zone.UcHost;
+            return $"{apiUrl}/private?bucket={BucketName}&private={Private}";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }
