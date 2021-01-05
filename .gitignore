@@ -305,3 +305,4 @@ __pycache__/
 OpenCover/
 upload
 Plugins
+/tests/RsCode.Storage.Tests/appsettings.json
