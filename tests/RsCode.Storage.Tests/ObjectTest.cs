@@ -16,6 +16,25 @@ namespace RsCode.Storage.Tests
         {
             qiniu = storageProviders.FirstOrDefault(c => c.StorageName == "qiniu");
         }
+
+        [Fact]
+        public async Task ListTest()
+        {
+            string bucket="ttj-test";
+            var ret = await qiniu.SendAsync<ListResponse>(new ListRequest(bucket));
+            Assert.Equal(200, ret.HttpCode);
+        }
+
+        [Fact]
+        public async Task DownFileTest()
+        {
+            string key = "1698/wxSop/0300602655adcfc96799c0e1d5e9d907.jpg";
+
+            var ret =  qiniu.CreateDownloadUrl("http://img0.tutaojin.net",key,10);
+            //cdn缓存时间优先于指定的有效时间
+            Assert.NotNull(ret);
+        }
+
         //修改文件状态
         [Fact]
         public async Task ChangeStatus()

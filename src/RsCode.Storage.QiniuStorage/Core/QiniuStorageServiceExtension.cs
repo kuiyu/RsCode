@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Storage.QiniuStorage;
+using RsCode.Storage.QiniuStorage.CDN;
 
 namespace RsCode.Storage
 {
@@ -24,9 +25,9 @@ namespace RsCode.Storage
             
             services.AddScoped<IStorageProvider, QiniuStorageProvider>();
 
-            services.AddHttpClient<QiniuHttpClient>(); 
-              
-      
+            services.AddHttpClient<QiniuHttpClient>();
+
+            services.AddScoped<ICdnManager, CdnManager>();
             
         }
     }

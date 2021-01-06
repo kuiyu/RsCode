@@ -16,7 +16,8 @@ namespace RsCode.Storage.QiniuStorage
     public class ListResponse:StorageResponse
     {
         /// <summary>
-        /// marker标记
+        /// 有剩余条目则返回非空字符串，作为下一次列举的参数传入。
+        ///如果没有剩余条目则返回空字符串。
         /// </summary>
         [JsonPropertyName("marker")]        
         public string Marker { get; set; }
@@ -52,7 +53,7 @@ namespace RsCode.Storage.QiniuStorage
         /// 文件大小(字节)
         /// </summary>
         [JsonPropertyName("fsize")]
-        public long Fsize { get; set; }
+        public long Filesize { get; set; }
 
         /// <summary>
         /// 文件MIME类型
@@ -60,14 +61,15 @@ namespace RsCode.Storage.QiniuStorage
         [JsonPropertyName("mimeType")]
         public string MimeType { get; set; }
 
-        /// <summary>
-        /// 上传时间
+        /// <summary> 
+        /// 上传时间，单位：100纳秒，其值去掉低七位即为Unix时间戳。
         /// </summary>
         [JsonPropertyName("putTime")]
         public long PutTime { get; set; }
 
         /// <summary>
         /// 文件存储类型
+        /// 资源的存储类型，2 表示归档存储，1 表示低频存储，0表示标准存储。
         /// </summary>
         [JsonPropertyName("type")]
         public int FileType { get; set; }
@@ -77,5 +79,11 @@ namespace RsCode.Storage.QiniuStorage
         /// </summary>
         [JsonPropertyName("endUser")]
         public string EndUser { get; set; }
+
+        [JsonPropertyName("md5")]
+        public string Md5 { get; set; }
+
+        [JsonPropertyName("status")]
+        public int Status { get; set; }
     }
 }

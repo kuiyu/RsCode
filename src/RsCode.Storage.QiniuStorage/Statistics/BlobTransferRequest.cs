@@ -13,10 +13,11 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class BlobTransferRequest:StorageRequest
+   public class BlobTransferRequest:QiniuStorageRequest
     {
-        public BlobTransferRequest( string beginTime, string endTime ,bool isOverSea,string taskId,string select="size",string g = "day")
+        public BlobTransferRequest(string bucket, string beginTime, string endTime ,bool isOverSea,string taskId,string select="size",string g = "day")
         {
+            Bucket = bucket;
             Select = select;
             BeginTime = beginTime;
             EndTime = endTime;
@@ -24,6 +25,7 @@ namespace RsCode.Storage.QiniuStorage
             IsOverSea = isOverSea;
             TaskId = taskId;
         }
+        string Bucket;
         string Select;
         string BeginTime;
         string EndTime;
@@ -33,7 +35,17 @@ namespace RsCode.Storage.QiniuStorage
         string TaskId = "";
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultApiHost}/v6/count_archive?begin={BeginTime}&end={EndTime}&g={G}&select={Select}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.ApiHost;
+            return $"{url}/v6/count_archive?begin={BeginTime}&end={EndTime}&g={G}&select={Select}";
+        }
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

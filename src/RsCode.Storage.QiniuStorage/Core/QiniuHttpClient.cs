@@ -44,14 +44,14 @@ namespace RsCode.Storage.QiniuStorage
                         var s = await response.Content.ReadAsStringAsync();
                         if (!string.IsNullOrWhiteSpace(s) && s != "{}")
                         {
-                            return JsonSerializer.Deserialize<T>(s);
+                            var res= JsonSerializer.Deserialize<T>(s);
+                            res.HttpCode = statusCode;
+                            return res;
                         }
                     }
                     var result = Activator.CreateInstance<T>();
                     result.HttpCode = statusCode;
-                    return result;
-
-
+                    return result; 
                 }
                 else
                 {
@@ -79,7 +79,9 @@ namespace RsCode.Storage.QiniuStorage
 
                         if(!string.IsNullOrWhiteSpace(s)&&s!="{}")
                         {
-                            return JsonSerializer.Deserialize<T>(s);
+                            var res= JsonSerializer.Deserialize<T>(s);
+                            res.HttpCode = statusCode;
+                            return res;
                         } 
                     }
                       
@@ -121,12 +123,15 @@ namespace RsCode.Storage.QiniuStorage
         {
             using (var response = await Client.DeleteAsync(url))
             {
+                int statusCode = Convert.ToInt32(response.StatusCode);
                 var s =await  response.Content.ReadAsStringAsync();
                 if (!string.IsNullOrWhiteSpace(s) && s != "{}")
                 {
-                    return JsonSerializer.Deserialize<T>(s);
+                    var res= JsonSerializer.Deserialize<T>(s);
+                    res.HttpCode = statusCode;
+                    return res;
                 }
-                int statusCode = Convert.ToInt32(response.StatusCode);
+                
                 var result = Activator.CreateInstance<T>();
                 result.HttpCode = statusCode;
                 return result;

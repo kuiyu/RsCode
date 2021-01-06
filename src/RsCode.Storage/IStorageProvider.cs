@@ -27,6 +27,13 @@ namespace RsCode.Storage
         /// <returns></returns>
         TokenResult GetDownloadToken(bool isClient = true);
 
+        /// <summary>
+        /// 创建下载Url
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <param name="key"></param>
+        /// <param name="expireInSeconds"></param>
+        string CreateDownloadUrl(string domain, string key, int expireInSeconds = 1800);
 
         /// <summary>
         /// 获取管理凭证

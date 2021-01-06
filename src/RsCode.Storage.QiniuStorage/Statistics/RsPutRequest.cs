@@ -12,7 +12,16 @@ using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    class RsPutRequest
+    public class RsPutRequest:QiniuStorageRequest
     {
+
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
+        }
     }
 }

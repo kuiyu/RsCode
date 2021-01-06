@@ -8,18 +8,16 @@
  */
 using RsCode.Storage.QiniuStorage.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class CountRequest: QiniuStorageRequest
+    public class CountRequest: QiniuStorageRequest
     {
-        public CountRequest(string bucket, string beginTime, string endTime, Region region, string g = "day")
+        public CountRequest(string bucket,DateTime beginTime,DateTime endTime, Region region, string g = "day")
         {
             Bucket = bucket;
-            BeginTime = beginTime;
-            EndTime = endTime;
+            BeginTime = beginTime.ToString("yyyyMMddHHmmss");
+            EndTime = endTime.ToString("yyyyMMddHHmmss");
             G = g;
             Region = region.ToDescription();
         }
@@ -31,12 +29,17 @@ namespace RsCode.Storage.QiniuStorage
         public override string GetApiUrl()
         {
             var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
-            var url = zone.RsHost;
+            var url = zone.ApiHost;
             return $"{url}/v6/count?begin={BeginTime}&end={EndTime}&g={G}&bucket={Bucket}&region={Region}";
         }
         public override TokenType GetTokenType()
         {
             return TokenType.Manager;
         }
+        public override string RequestMethod()
+        {
+            return "GET";
+        }
+       
     }
 }

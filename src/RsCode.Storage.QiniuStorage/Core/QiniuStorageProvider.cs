@@ -14,6 +14,7 @@ using Qiniu.Http;
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
 using RsCode.Threading;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -114,14 +115,14 @@ namespace RsCode.Storage
             //};
             //return result;
         }
-        
 
-       
+
+
         #endregion
 
         #region 上传
 
-        
+
 
         ///// <summary>
         ///// 上传文件
@@ -138,13 +139,13 @@ namespace RsCode.Storage
         //    config.UseCdnDomains = true;
         //    config.ChunkSize = ChunkUnit.U512K;
         //    FormUploader target = new FormUploader(config);
-           
+
         //    if(string.IsNullOrEmpty(token))
         //    {
         //        token = GetUploadToken().Token;
         //    }
         //    var result = target.UploadFile(filePath, key, token, null);
-            
+
         //    return result;
         //}
 
@@ -152,7 +153,7 @@ namespace RsCode.Storage
         //{
         //    Qiniu.Storage.Config config = new Qiniu.Storage.Config();
         //    config.Zone = zone;
-           
+
         //    FormUploader formUploader = new FormUploader(config);
         //    PutExtra putExtra = new PutExtra();
         //    return formUploader.UploadData(fileData, saveKey, token, putExtra);
@@ -170,6 +171,30 @@ namespace RsCode.Storage
         //    return result;
         //}
         #endregion
+
+        #region 下载
+         
+        public string CreateDownloadUrl(string domain,string key, int expireInSeconds = 3600)
+        { 
+            long deadline = UnixTimestamp.GetUnixTimestamp(expireInSeconds);
+            string publicUrl = $"{domain}/{Uri.EscapeUriString(key)}";
+            StringBuilder sb = new StringBuilder(publicUrl);
+            if (publicUrl.Contains("?"))
+            {
+                sb.AppendFormat("&e={0}", deadline);
+            }
+            else
+            {
+                sb.AppendFormat("?e={0}", deadline);
+            }
+
+            string token = Auth.CreateDownloadToken(mac, sb.ToString());
+            sb.AppendFormat("&token={0}", token);
+
+            return sb.ToString(); 
+           
+        }
+        #endregion
         ///// <summary>
         ///// 公开空间的文件下载
         ///// </summary>
@@ -182,14 +207,7 @@ namespace RsCode.Storage
         //    return publicUrl;
         //}
 
-        //public string CreatePrivateUrl(string key,int ExpireInSeconds=3600)
-        //{
-            
-        //    string domain = options.Domain;
-        //    string privateUrl = DownloadManager.CreatePrivateUrl(mac, domain, key, ExpireInSeconds);
-        //    return privateUrl;
-        //}
-        
+
 
 
         ///// <summary>

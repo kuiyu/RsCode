@@ -18,8 +18,8 @@ namespace RsCode.Storage.QiniuStorage
             Bucket = bucket;
             Marker = marker;
             Limit = limit;
-            UrlEncodedPrefix = prefix;
-            UrlEncodedDelimiter= delimiter;
+            UrlEncodedPrefix = string.IsNullOrWhiteSpace(prefix)?"": Core.Base64.UrlSafeBase64Encode( prefix);
+            UrlEncodedDelimiter=string.IsNullOrWhiteSpace( delimiter)?"":Core.Base64.UrlSafeBase64Encode(delimiter);
         }
         string Bucket;
         string Marker;
@@ -29,8 +29,26 @@ namespace RsCode.Storage.QiniuStorage
         public override string GetApiUrl()
         {
             var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
-            var url = zone.RsHost;
-            return $"{url}/list?bucket={Bucket}&marker={Marker}&limit={Limit}&prefix={UrlEncodedPrefix}&delimiter={UrlEncodedDelimiter}";
+            var url = zone.RsfHost;
+            string apiUrl= $"{url}/list?bucket={Bucket}&limit={Limit}";
+            if(string.IsNullOrWhiteSpace(Marker))
+            {
+                apiUrl += $"&market={Marker}";
+            }
+            if (string.IsNullOrWhiteSpace(UrlEncodedPrefix))
+            {
+                apiUrl += $"&prefix={UrlEncodedPrefix}";
+            }
+            if (string.IsNullOrWhiteSpace(UrlEncodedDelimiter))
+            {
+                apiUrl += $"&delimiter={UrlEncodedDelimiter}";
+            }
+            return apiUrl;
+        }
+
+        public override string RequestMethod()
+        {
+            return "GET";
         }
         public override TokenType GetTokenType()
         {
