@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace RsCode.Storage.LocalStorage
@@ -102,6 +103,16 @@ namespace RsCode.Storage.LocalStorage
         }
 
         public Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse
+        {
+            throw new NotImplementedException();
+        }
+
+        public string CreateDownloadUrl(string domain, string key, int expireInSeconds = 1800)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> SendAsync(StorageRequest request)
         {
             throw new NotImplementedException();
         }
