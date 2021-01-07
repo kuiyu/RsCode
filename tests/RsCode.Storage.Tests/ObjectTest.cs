@@ -20,8 +20,8 @@ namespace RsCode.Storage.Tests
         [Fact]
         public async Task ListTest()
         {
-            string bucket="rsyunpan";
-            var ret = await qiniu.SendAsync<ListResponse>(new ListRequest(bucket,"",1000, $"image"));
+            string bucket="ttj-test";
+            var ret = await qiniu.SendAsync<ListResponse>(new ListRequest(bucket,"",1000, $"1698/","/"));
             Assert.Equal(200, ret.HttpCode);
         }
 

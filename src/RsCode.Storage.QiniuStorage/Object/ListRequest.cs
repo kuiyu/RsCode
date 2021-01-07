@@ -16,6 +16,17 @@ namespace RsCode.Storage.QiniuStorage
 {
     public class ListRequest: QiniuStorageRequest
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="marker"></param>
+        /// <param name="limit"></param>
+        /// <param name="prefix"></param>
+        /// <param name="delimiter">分隔符，比如-或者/等等，可以模拟作为目录结构(参考下述示例)
+        ///  delimiter=/ prefix="" ，列出所有一级目录和根目录下文件  
+        ///  delimiter=/ prefix="aa/" 列出aa目录下的子目录和文件
+        /// </param>
         public ListRequest(string bucket,string marker="",int limit=1000,string prefix="",string delimiter="")
         {
             Bucket = bucket;
