@@ -8,6 +8,9 @@
  */
 
 using RsCode.Storage.QiniuStorage.Core;
+using System;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace RsCode.Storage.QiniuStorage
 {
@@ -18,8 +21,8 @@ namespace RsCode.Storage.QiniuStorage
             Bucket = bucket;
             Marker = marker;
             Limit = limit;
-            UrlEncodedPrefix = string.IsNullOrWhiteSpace(prefix)?"": Core.Base64.UrlSafeBase64Encode( prefix);
-            UrlEncodedDelimiter=string.IsNullOrWhiteSpace( delimiter)?"":Core.Base64.UrlSafeBase64Encode(delimiter);
+            UrlEncodedPrefix = string.IsNullOrWhiteSpace(prefix) ? "" : UrlEncoder.Default.Encode( prefix); 
+            UrlEncodedDelimiter=string.IsNullOrWhiteSpace( delimiter)?"": UrlEncoder.Default.Encode(delimiter);
         }
         string Bucket;
         string Marker;
@@ -31,18 +34,19 @@ namespace RsCode.Storage.QiniuStorage
             var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
             var url = zone.RsfHost;
             string apiUrl= $"{url}/list?bucket={Bucket}&limit={Limit}";
-            if(string.IsNullOrWhiteSpace(Marker))
+            if(!string.IsNullOrWhiteSpace(Marker))
             {
                 apiUrl += $"&market={Marker}";
             }
-            if (string.IsNullOrWhiteSpace(UrlEncodedPrefix))
+            if (!string.IsNullOrWhiteSpace(UrlEncodedPrefix))
             {
                 apiUrl += $"&prefix={UrlEncodedPrefix}";
             }
-            if (string.IsNullOrWhiteSpace(UrlEncodedDelimiter))
+            if (!string.IsNullOrWhiteSpace(UrlEncodedDelimiter))
             {
                 apiUrl += $"&delimiter={UrlEncodedDelimiter}";
             }
+           
             return apiUrl;
         }
 
