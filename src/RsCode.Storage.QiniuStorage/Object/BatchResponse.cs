@@ -6,16 +6,13 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class BatchResponse:StorageResponse
-    {
-        public BatchResult[] Result { get; set; }
+    public class BatchResponse :StorageResponse
+    { 
+        
     }
 
     public class BatchResult

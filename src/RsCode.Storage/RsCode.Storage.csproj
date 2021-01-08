@@ -7,11 +7,11 @@
     <Description>RsCode云存储业务</Description>
     <PackageReleaseNotes>RsCode云存储业务</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
-    <Version>1.3.3</Version>
+    <Version>1.3.4</Version>
     <PackageIconUrl></PackageIconUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
-    <AssemblyVersion>1.3.3.0</AssemblyVersion>
-    <FileVersion>1.3.3.0</FileVersion>
+    <AssemblyVersion>1.3.4.0</AssemblyVersion>
+    <FileVersion>1.3.4.0</FileVersion>
     <RepositoryUrl>https://github.com/kuiyu/RsCode.git</RepositoryUrl>
     <Copyright>河南软商网络科技有限公司</Copyright>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

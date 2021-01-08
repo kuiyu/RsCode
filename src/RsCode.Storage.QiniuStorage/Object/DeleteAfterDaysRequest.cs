@@ -16,11 +16,11 @@ namespace RsCode.Storage.QiniuStorage
     /// 更新文件生命周期
     /// <see cref="https://developer.qiniu.com/kodo/1732/update-file-lifecycle"/>
     /// </summary>
-    public class DeleteAfterDaysRequest:StorageRequest
+    public class DeleteAfterDaysRequest:QiniuStorageRequest
     {
-        public DeleteAfterDaysRequest(string encodedEntryURI,int deleteAfterDays)
+        public DeleteAfterDaysRequest(string key,int deleteAfterDays)
         {
-            EncodedEntryURI = encodedEntryURI;
+            EncodedEntryURI =Core.Base64.UrlSafeBase64Encode( key);
             DeleteAfterDays = deleteAfterDays;
         }
         string EncodedEntryURI;
@@ -28,6 +28,11 @@ namespace RsCode.Storage.QiniuStorage
         public override string GetApiUrl()
         {
             return $"{Config.DefaultRsHost}/deleteAfterDays/{EncodedEntryURI}/{DeleteAfterDays}";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

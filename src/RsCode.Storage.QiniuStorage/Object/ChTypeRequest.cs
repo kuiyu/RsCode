@@ -28,7 +28,7 @@ namespace RsCode.Storage.QiniuStorage
         public ChTypeRequest(string bucket,string key, int _type)
         {
             Bucket=bucket;
-            EncodedEntryURI =Core.Base64.UrlSafeBase64Encode( key);
+            EncodedEntryURI =Core.Base64.UrlSafeBase64Encode(bucket, key);
             type = _type;
 
         }

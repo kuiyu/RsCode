@@ -18,8 +18,8 @@ namespace RsCode.Storage.QiniuStorage
         public MoveRequest(string bucket,string entryUriSrc,string entryURIDest,bool force)
         {
             Bucket = bucket;
-            EncodedEntryURISrc = Core.Base64.UrlSafeBase64Encode(entryUriSrc);
-            EncodedEntryURIDest = Core.Base64.UrlSafeBase64Encode(EncodedEntryURIDest);  
+            EncodedEntryURISrc = Core.Base64.UrlSafeBase64Encode(bucket,entryUriSrc);
+            EncodedEntryURIDest = Core.Base64.UrlSafeBase64Encode(bucket,EncodedEntryURIDest);  
             Force=force;
         }
         string Bucket;

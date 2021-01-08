@@ -44,5 +44,33 @@ namespace RsCode.Storage.Tests
 
             Assert.Equal(200,ret.HttpCode);
         }
+
+        [Fact]
+        public async Task Stat()
+        {
+            string bucket = "ttj-test";
+            string key = "1698/wxSop/0efdd7d228ffe03d00530c05a73462f8.jpg";
+            var ret = await qiniu.SendAsync<StatResponse>(new StatRequest(bucket, key));
+        }
+
+        [Fact]
+        public async Task Batch()
+        {
+            string key1 = "1197/wxSop/59420fc80a95a1f70f289afa9aea21c0.jpg";
+            string key2 = "1698/wxSop/0300602655adcfc96799c0e1d5e9d907.jpg";
+            string bucket = "ttj-test";
+            List<QiniuStorageRequest> ops = new List<QiniuStorageRequest>(); 
+ 
+            var url = new StatRequest(bucket, key2).GetApiUrl();
+            var s = url.Substring(url.IndexOf('/'));
+            var url2 = new StatRequest(bucket, key1).GetApiUrl();
+            var s2 = url2.Substring(url2.IndexOf('/'));
+
+            ops.Add(new StatRequest(bucket, key1));
+            ops.Add(new StatRequest(bucket, key2)); 
+
+            var (ret,result) = await qiniu.SendAsync(new BatchRequest(bucket,ops)); 
+            
+        }
     }
 }

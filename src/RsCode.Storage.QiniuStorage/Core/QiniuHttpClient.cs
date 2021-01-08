@@ -7,6 +7,7 @@
    https://github.com/kuiyu/RsCode.git
  */
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -26,15 +27,16 @@ namespace RsCode.Storage.QiniuStorage
             Client = new HttpClient(handler);
             
         }
-        public async Task<HttpResponseMessage> GetAsync(string url) 
+        public async Task<(HttpResponseMessage,string)> GetAsync(string url) 
         {
-            return await Client.GetAsync(url); 
+            var res=await Client.GetAsync(url);
+            return (res, await res.Content.ReadAsStringAsync());
         }
         public async Task<T> GetAsync<T>(string url)
            where T : StorageResponse
         {
          
-            using (var response = await GetAsync(url))
+            using (var response = await Client.GetAsync(url))
             {
                 int statusCode = Convert.ToInt32(response.StatusCode);
                 if (statusCode == 200)
@@ -101,13 +103,14 @@ namespace RsCode.Storage.QiniuStorage
             }
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string url, HttpContent httpContent) 
+        public async Task<(HttpResponseMessage,string)> PostAsync(string url, HttpContent httpContent) 
         {
             using (httpContent)
             using (var response = await Client.PostAsync(url, httpContent))
             {
                 string s = await response.Content.ReadAsStringAsync();
-                return response; 
+                
+                return (response,s); 
             }
         }
 

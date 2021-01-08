@@ -21,7 +21,7 @@ namespace RsCode.Storage.QiniuStorage
         public DeleteRequest(string bucket,string key)
         {
             Bucket = bucket;
-            EncodedEntryURI = Base64.UrlSafeBase64Encode(key) ;
+            EncodedEntryURI = Base64.UrlSafeBase64Encode(bucket,key) ;
         }
         public override string GetApiUrl()
         {

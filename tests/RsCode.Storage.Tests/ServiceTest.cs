@@ -45,18 +45,10 @@ namespace RsCode.Storage.Tests
 
         [Fact]
         public async Task BucketList()
-        {
-            // Qiniu.Storage.Config config = new Qiniu.Storage.Config(); 
-            // Qiniu.Storage.BucketManager bucketManager = new Qiniu.Storage.BucketManager(new Qiniu.Util.Mac(options.AccessKey, options.SecretKey), config);
-            //var  buckets= bucketManager.Buckets(true);          
+        { 
 
-            var ret= await qiniu.SendAsync(new BucketQueryRequest());
-            if(ret.StatusCode== System.Net.HttpStatusCode.OK)
-            {
-                var buckets = JsonSerializer.Deserialize<string[]>(await ret.Content.ReadAsStringAsync());
-                
-                Assert.NotNull(buckets);
-            }
+            var (ret,buckets)= await qiniu.SendAsync(new BucketQueryRequest());
+            Assert.NotNull(buckets);
 
         }
 

@@ -10,6 +10,7 @@ using RsCode.Storage.QiniuStorage.Core;
 using RsCode.Threading;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,7 +42,14 @@ namespace RsCode.Storage.QiniuStorage
             if(request.Content!=null)
             {
                 string body = await request.Content.ReadAsStringAsync();
+                
                 var data = Encoding.UTF8.GetBytes(body);
+                 
+                if (request.Content.Headers.ContentType.MediaType== "application/x-www-form-urlencoded")
+                {
+                    
+                }
+                
                 token = GetToken( requestUrl,data);  
             }
             request.Headers.Add("Authorization", token);

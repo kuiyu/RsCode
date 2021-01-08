@@ -112,7 +112,7 @@ namespace RsCode.Storage.LocalStorage
             throw new NotImplementedException();
         }
 
-        public Task<HttpResponseMessage> SendAsync(StorageRequest request)
+        public Task<(HttpResponseMessage,string)> SendAsync(StorageRequest request)
         {
             throw new NotImplementedException();
         }

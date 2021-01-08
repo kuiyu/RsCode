@@ -48,6 +48,6 @@ namespace RsCode.Storage
         Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse;
 
 
-        Task<HttpResponseMessage> SendAsync(StorageRequest request);
+        Task<(HttpResponseMessage,string)> SendAsync(StorageRequest request);
     }
 }

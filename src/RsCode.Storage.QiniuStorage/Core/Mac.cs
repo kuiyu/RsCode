@@ -27,7 +27,8 @@ namespace RsCode.Storage.QiniuStorage.Core
         public Mac(string accessKey, string secretKey)
         {
             this.AccessKey = accessKey;
-            this.SecretKey = secretKey;
+            this.SecretKey = secretKey; 
+            
         }
     }
 }

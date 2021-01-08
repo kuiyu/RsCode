@@ -15,8 +15,8 @@ namespace RsCode.Storage.QiniuStorage
         public CopyRequest(string bucket,string entryUriSrc, string entryURIDest, bool force)
         {
             Bucket = bucket;
-            EncodedEntryURISrc = Core.Base64.UrlSafeBase64Encode(entryUriSrc);
-            EncodedEntryURIDest = Core.Base64.UrlSafeBase64Encode(entryURIDest);
+            EncodedEntryURISrc = Core.Base64.UrlSafeBase64Encode(bucket,entryUriSrc);
+            EncodedEntryURIDest = Core.Base64.UrlSafeBase64Encode(bucket,entryURIDest);
             Force = force;
         }
         string Bucket;

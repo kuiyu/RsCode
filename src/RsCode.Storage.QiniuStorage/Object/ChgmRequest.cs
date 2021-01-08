@@ -29,7 +29,7 @@ namespace RsCode.Storage.QiniuStorage
         {
             Bucket = bucket;
 
-            EncodedEntryURI = Core.Base64.UrlSafeBase64Encode(key);
+            EncodedEntryURI = Core.Base64.UrlSafeBase64Encode(bucket,key);
             EncodedMimeType = Core.Base64.UrlSafeBase64Encode(mimeType);
             meta_key = metaKey;
             EncodedMetaValue =Core.Base64.UrlSafeBase64Encode(metaValue);

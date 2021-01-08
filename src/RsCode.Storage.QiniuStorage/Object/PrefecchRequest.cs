@@ -6,22 +6,32 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class PrefecchRequest:StorageRequest
+    public class PrefecchRequest:QiniuStorageRequest
     {
         string EncodedEntryURI;
-        public PrefecchRequest(string encodedEntryURI)
+        string Bucket;
+        public PrefecchRequest(string bucket,string url)
         {
-            EncodedEntryURI = encodedEntryURI;
+            Bucket = bucket;
+            EncodedEntryURI =Core.Base64.UrlSafeBase64Encode(bucket,url);
         }
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/prefetch/{EncodedEntryURI}";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.IovipHost;
+            return $"{url}/prefetch/{EncodedEntryURI}";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

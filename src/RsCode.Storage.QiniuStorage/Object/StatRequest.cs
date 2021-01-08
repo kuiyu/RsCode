@@ -20,7 +20,7 @@ namespace RsCode.Storage.QiniuStorage
         public StatRequest(string bucket,string key)
         {
             Bucket = bucket;
-            EncodedEntryURI = Core.Base64.UrlSafeBase64Encode(key);
+            EncodedEntryURI = Core.Base64.UrlSafeBase64Encode(bucket,key);
         }
         string EncodedEntryURI;
         string Bucket;
@@ -38,5 +38,9 @@ namespace RsCode.Storage.QiniuStorage
         {
             return TokenType.Manager;
         }
+
+       
     }
+
+    
 }

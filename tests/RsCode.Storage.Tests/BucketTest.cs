@@ -22,21 +22,21 @@ namespace RsCode.Storage.Tests
         public async Task BucketCreate()
         {
             
-           var ret= await qiniu.SendAsync(new BucketCreateRequest(tmpBucket));
+           var (ret,s)= await qiniu.SendAsync(new BucketCreateRequest(tmpBucket));
             Assert.Equal(200, (int)ret.StatusCode);
         }
 
         [Fact]
         public async Task BucketRemove()
         {
-            var ret = await qiniu.SendAsync(new BucketRemoveRequest(tmpBucket));
+            var (ret, s) = await qiniu.SendAsync(new BucketRemoveRequest(tmpBucket));
             Assert.Equal(200, (int)ret.StatusCode);
         }
         //获取 Bucket 空间域名
         [Fact]
         public async Task BucketDomain()
         {
-            var ret = await qiniu.SendAsync(new BucketDomainRequest("res-rscode-cn"));
+            var (ret, s) = await qiniu.SendAsync(new BucketDomainRequest("res-rscode-cn"));
             if((int)ret.StatusCode==200)
             {
                 string[] res = JsonSerializer.Deserialize<string[]>(await ret.Content.ReadAsStringAsync());

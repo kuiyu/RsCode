@@ -1,11 +1,12 @@
-﻿using System;
+﻿using RsCode.Storage.QiniuStorage.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage.Object
 {
-   public class SisyphusFetchRequest:StorageRequest
+   public class SisyphusFetchRequest:QiniuStorageRequest
     {
         /// <summary>
         /// 需要抓取的url,支持设置多个用于高可用,以';'分隔,当指定多个url时可以在前一个url抓取失败时重试下一个
@@ -81,7 +82,14 @@ namespace RsCode.Storage.QiniuStorage.Object
 
         public override string GetApiUrl()
         {
-            return $"{Config.DefaultRsHost}/sisyphus/fetch";
+            var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
+            var url = zone.RsHost;
+            return $"{url}/sisyphus/fetch";
+        }
+
+        public override TokenType GetTokenType()
+        {
+            return TokenType.Manager;
         }
     }
 }

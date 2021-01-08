@@ -41,7 +41,7 @@ namespace RsCode.Storage
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
-           
+            CallContext<Mac>.SetData("qiniu_option",mac);
             httpContext = _httpContext; 
             
         }
@@ -252,27 +252,7 @@ namespace RsCode.Storage
         //    return result;
         //}
 
-        /// <summary>
-        /// 移动文件
-        /// </summary>
-        /// <param name="bucket"></param>
-        /// <param name="oldKey">原文件路径</param>
-        /// <param name="newKey">新文件路径</param>
-        /// <returns></returns>
-        public HttpResult Move(string bucket, string oldKey, string newKey)
-        {
-            //BucketManager bm = new BucketManager(mac,config);
-
-            //// 是否设置强制覆盖
-            //Boolean force = true;
-            //HttpResult result = bm.Move(bucket, oldKey, bucket, newKey, force);
-            //if(result.Code==200)
-            //{
-            //    RefreshUrls(new string[] { oldKey });
-            //}
-            //return result;
-            return null;
-        }
+         
 
 
         //public HttpResult Rename(string bucket, string oldkey, string newKey)
@@ -343,13 +323,19 @@ namespace RsCode.Storage
             if (method == "POST")
             {
                 string s = JsonSerializer.Serialize(request, request.GetType());
-                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
+                string contentType = qiniuRequest.ContentType();
+                
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
                 if (s == "{}")
                 {
                     httpContent = null;
                 }
 
-                //HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/x-www-form-urlencoded");
+                if (contentType == "application/x-www-form-urlencoded")
+                {                    
+                     
+                    httpContent = qiniuRequest.FormContent();
+                }
 
                 var res = await httpClient.PostAsync<T>(url, httpContent);
                 return res;
@@ -366,7 +352,7 @@ namespace RsCode.Storage
              
         }
 
-        public async Task<HttpResponseMessage> SendAsync(StorageRequest request) 
+        public async Task<(HttpResponseMessage,string)> SendAsync(StorageRequest request) 
         {
             CallContext<Mac>.SetData("qiniu_option",mac);
             var method = request.RequestMethod();
@@ -377,8 +363,8 @@ namespace RsCode.Storage
             }
 
             var qiniuRequest = request as QiniuStorageRequest;
-            var tokenType= qiniuRequest.GetTokenType(); 
-              
+            var tokenType= qiniuRequest.GetTokenType();
+            string contentType = qiniuRequest.ContentType();
             httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
             if (method == "GET")
             {
@@ -387,15 +373,20 @@ namespace RsCode.Storage
             if (method == "POST")
             {
                 string s = JsonSerializer.Serialize(request, request.GetType());
-                HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/json");
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
                 if(s=="{}")
                 {
                     httpContent = null;
                 }
-                 
-                //HttpContent httpContent = new StringContent(s, Encoding.UTF8, "application/x-www-form-urlencoded");
-               
+
+                if (contentType == "application/x-www-form-urlencoded")
+                {
+
+                    httpContent = qiniuRequest.FormContent();
+                }
+
                 var res = await httpClient.PostAsync(url, httpContent);
+                
                 return res;
 
             }
@@ -403,10 +394,12 @@ namespace RsCode.Storage
             {
               
                 var res = await httpClient.DeleteAsync(url);
-                return res;
+                return (res,"");
             }
-            return null;
+            return (null,null);
 
         }
+
+        
     }  
 }

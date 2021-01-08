@@ -9,6 +9,7 @@
 using RsCode.Storage.QiniuStorage.Core;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
@@ -19,14 +20,27 @@ namespace RsCode.Storage.QiniuStorage
     /// </summary>
     public class BatchRequest: QiniuStorageRequest
     {
-        public BatchRequest(string bucket, List<string>ops)
+        public BatchRequest(string bucket,List<QiniuStorageRequest> ops)
+             
         {
             Bucket = bucket;
-            body = ops;
+        
+            List<KeyValuePair<string, string>> formData = new List<KeyValuePair<string, string>>();
+            foreach (var item in ops)
+            {
+                var url = item.GetApiUrl();
+                url = url.Substring(url.IndexOf('/'));    
+
+                formData.Add(new KeyValuePair<string, string>("op", url));
+            }
+            var test = Core.Base64.UrlSafeBase64Encode(Encoding.UTF8.GetBytes("?bucket=ttj-test\u0026limit=100\u0026prefix=1698%2FwxSop%2F0300602655adcfc96799c0e1d5e9d907.jpg"));
+            formData.Add(new KeyValuePair<string, string>("op", $"/list/{test}"));
+            _formContent = new FormUrlEncodedContent(formData);
         }
         string Bucket;
-        public List<string> body { get; set; }
-      
+        public string body { get; set; }
+
+         
         public override string GetApiUrl()
         {
             var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
@@ -37,5 +51,18 @@ namespace RsCode.Storage.QiniuStorage
         {
             return TokenType.Manager;
         }
+
+        public override string ContentType()
+        {
+            return "application/x-www-form-urlencoded";
+        }
+
+        FormUrlEncodedContent _formContent;
+        public override FormUrlEncodedContent FormContent()
+        {
+            return _formContent;
+        }
     }
+
+   
 }
