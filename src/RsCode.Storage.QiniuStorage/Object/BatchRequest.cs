@@ -33,8 +33,7 @@ namespace RsCode.Storage.QiniuStorage
 
                 formData.Add(new KeyValuePair<string, string>("op", url));
             }
-            var test = Core.Base64.UrlSafeBase64Encode(Encoding.UTF8.GetBytes("?bucket=ttj-test\u0026limit=100\u0026prefix=1698%2FwxSop%2F0300602655adcfc96799c0e1d5e9d907.jpg"));
-            formData.Add(new KeyValuePair<string, string>("op", $"/list/{test}"));
+           
             _formContent = new FormUrlEncodedContent(formData);
         }
         string Bucket;

@@ -6,13 +6,10 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.Storage.QiniuStorage
 {
-   public class MoveResponse:StorageResponse
+    public class MoveResponse:QiniuStorageResponse
     {
     }
 }

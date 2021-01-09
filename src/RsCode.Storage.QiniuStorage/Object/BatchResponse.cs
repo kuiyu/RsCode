@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace RsCode.Storage.QiniuStorage
 {
-    public class BatchResponse :StorageResponse
+    public class BatchResponse :QiniuStorageResponse
     { 
         
     }
