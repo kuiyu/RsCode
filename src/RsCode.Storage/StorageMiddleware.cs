@@ -26,37 +26,7 @@ namespace RsCode.Storage
                 storageName = storageName.ToString().ToLower();
                 action = action.ToString().ToLower();
                 var storageProvider = provider.FirstOrDefault(p => p.StorageName == storageName);
-                if (action == "uptoken")
-                {
-                    var token = storageProvider.GetUploadToken();
-                    var result = JsonSerializer.Serialize(token);
-                    if(!context.Response.HasStarted)
-                    {
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(result);
-                    }
-                    
-                }
-                if (action == "downtoken")
-                {
-                    var token = storageProvider.GetDownloadToken();
-                    var result = JsonSerializer.Serialize(token);
-                    if (!context.Response.HasStarted)
-                    {
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(result);
-                    }
-                }
-                if (action == "managetoken")
-                {
-                    var token = storageProvider.GetManageToken();
-                    var result = JsonSerializer.Serialize(token);
-                    if (!context.Response.HasStarted)
-                    {
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(result);
-                    }
-                }
+ 
 
                 if(action=="upload")
                 {

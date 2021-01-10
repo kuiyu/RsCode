@@ -15,10 +15,10 @@ namespace RsCode.Storage.QiniuStorage.CDN
     /// 另请参阅 http://developer.qiniu.com/article/index.html#fusion-api-handbook
     /// 关于时间戳防盗链可参阅 https://support.qiniu.com/question/195128
     /// </summary>
-    public class CdnManager:ICdnManager
+    public class CdnManager : ICdnManager
     {
-        
-        private Auth auth; 
+
+        private Auth auth;
         QiniuHttpClient httpClient;
         /// <summary>
         /// 初始化
@@ -28,11 +28,11 @@ namespace RsCode.Storage.QiniuStorage.CDN
         {
             Mac mac = CallContext<Mac>.GetData("qiniu_option");
             auth = new Auth(mac);
-             
+
             httpClient = _qiniuHttpClient;
         }
-         
-      
+
+
 
         /// <summary>
         /// 缓存刷新-刷新URL和URL目录
@@ -46,10 +46,10 @@ namespace RsCode.Storage.QiniuStorage.CDN
             RefreshResult result = new RefreshResult();
 
             try
-            {              
-                string body =JsonSerializer.Serialize( request);
+            {
+                string body = JsonSerializer.Serialize(request);
                 HttpContent httpContent = new StringContent(body);
-                var hr =await httpClient.PostAsync<RefreshResult>(new RefreshRequest().GetApiUrl(),httpContent);
+                var hr = await httpClient.PostAsync<RefreshResult>(new RefreshRequest().GetApiUrl(), httpContent);
                 result.Shadow(hr);
             }
             catch (Exception ex)
@@ -105,10 +105,10 @@ namespace RsCode.Storage.QiniuStorage.CDN
 
             try
             {
-              
-                string body = request.ToJsonStr(); 
 
-                var hr =await httpClient.PostAsync<PrefetchResult>(request.GetApiUrl(), new StringContent(body)); 
+                string body = request.ToJsonStr();
+
+                var hr = await httpClient.PostAsync<PrefetchResult>(request.GetApiUrl(), new StringContent(body));
                 result.Shadow(hr);
             }
             catch (Exception ex)
@@ -151,10 +151,10 @@ namespace RsCode.Storage.QiniuStorage.CDN
 
             try
             {
-                
-                string body = request.ToJsonStr();  
-              
-                var hr =await httpClient.PostAsync<BandwidthResult>(request.GetApiUrl(), new StringContent(body));
+
+                string body = request.ToJsonStr();
+
+                var hr = await httpClient.PostAsync<BandwidthResult>(request.GetApiUrl(), new StringContent(body));
                 result.Shadow(hr);
             }
             catch (Exception ex)
@@ -197,9 +197,9 @@ namespace RsCode.Storage.QiniuStorage.CDN
 
             try
             {
-               
-                string body = request.ToJsonStr();  
-                
+
+                string body = request.ToJsonStr();
+
                 var hr = await httpClient.PostAsync<FluxResult>(request.GetApiUrl(), new StringContent(body));
                 result.Shadow(hr);
             }
@@ -238,7 +238,7 @@ namespace RsCode.Storage.QiniuStorage.CDN
 
             try
             {
-               
+
                 string body = request.ToJsonStr();
 
                 var hr = await httpClient.PostAsync<LogListResult>(request.GetApiUrl(), new StringContent(body));

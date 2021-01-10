@@ -6,11 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Qiniu.Http;
-
-
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
 using RsCode.Threading;
@@ -24,7 +20,7 @@ namespace RsCode.Storage
 {
     public class QiniuStorageProvider : IStorageProvider
     {
-        IHttpContextAccessor httpContext;
+       
         QiniuOptions options;
         Mac mac;
       
@@ -32,93 +28,156 @@ namespace RsCode.Storage
         QiniuHttpClient httpClient;
 
         public QiniuStorageProvider(
-            IOptionsSnapshot<QiniuOptions> _options,
-            IHttpContextAccessor _httpContext,
-            QiniuHttpClient _qiniuHttpClient
-           
+            IOptionsSnapshot<QiniuOptions> _options, 
+            QiniuHttpClient _qiniuHttpClient 
             )
         {
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
             CallContext<Mac>.SetData("qiniu_option",mac);
-            httpContext = _httpContext; 
+          
             
         }
         public string StorageName { get; } = "qiniu";
 
-
-      
-
-
-        #region 鉴权
-        public TokenResult GetUploadToken(bool isClient = true)
+        public async Task<(HttpResponseMessage, string)> SendAsync(StorageRequest request)
         {
-            return null;
-            //int uploadType = isClient?1:0;
-            //int OutTime = options.UploadTokenExpireTime; //超时时间 单位秒
-             
+            CallContext<Mac>.SetData("qiniu_option", mac);
+            var method = request.RequestMethod();
+            var url = request.GetApiUrl();
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            {
+                url = $"http://{url}";
+            }
 
-            //PutPolicy putPolicy = new PutPolicy();
-            //putPolicy.Scope = options.Bucket;
-            //putPolicy.SetExpires(OutTime);
+            var qiniuRequest = request as QiniuStorageRequest;
+            var tokenType = qiniuRequest.GetTokenType();
+            string contentType = qiniuRequest.ContentType();
+            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
+            if (method == "GET")
+            {
+                return await httpClient.GetAsync(url);
+            }
+            if (method == "POST")
+            {
+                string s = JsonSerializer.Serialize(request, request.GetType());
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
+                if (s == "{}")
+                {
+                    httpContent = null;
+                }
 
-            //string jstr = putPolicy.ToJsonString();
-            //string token = Auth.CreateUploadToken(mac, jstr);
+                if (contentType == "application/x-www-form-urlencoded")
+                {
 
+                    httpContent = qiniuRequest.FormContent();
+                }
 
-            //TokenResult result = new TokenResult
-            //{
-            //    UploadUrl = $"https://{config.Zone.SrcUpHosts[uploadType]}",
-            //    Domain = options.Domain,
-            //    Token = token
-            //};
-            //return result;
-        }
-        public TokenResult GetDownloadToken(bool isClient = true)
-        {
-            return null;
-            //int OutTime = options.DownloadTokenExpireTime; //超时时间 单位秒
-            
-            //PutPolicy putPolicy = new PutPolicy();
-            //putPolicy.Scope = options.Bucket;
-            //putPolicy.SetExpires(OutTime);
+                var res = await httpClient.PostAsync(url, httpContent);
 
-            //string url = "";
-            //string jstr = putPolicy.ToJsonString();
-            //string token = Auth.CreateDownloadToken(mac, url);
+                return res;
 
-            //TokenResult result = new TokenResult
-            //{
-            //    Domain = options.Domain,
-            //    Token = token
-            //};
-            //return result;
-        }
+            }
+            if (method == "DELETE")
+            {
 
-        public TokenResult GetManageToken(bool isClient = true)
-        {
-            return null;
-            //int OutTime = options.ManageTokenExpireTime; //超时时间 单位秒
-            
+                var res = await httpClient.DeleteAsync(url);
+                return (res, "");
+            }
+            return (null, null);
 
-            //PutPolicy putPolicy = new PutPolicy();
-            //putPolicy.Scope = options.Bucket;
-            //putPolicy.SetExpires(OutTime);
-
-            //string jstr = putPolicy.ToJsonString();
-            //string token = Auth.CreateManageToken(mac, jstr);
-            //TokenResult result = new TokenResult
-            //{
-            //    Domain = options.Domain,
-            //    Token = token
-            //};
-            //return result;
         }
 
+        public async Task<T> SendAsync<T>(StorageRequest request)
+         where T : StorageResponse
+        {
+            CallContext<Mac>.SetData("qiniu_option", mac);
+            var method = request.RequestMethod();
+            var url = request.GetApiUrl();
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            {
+                url = $"http://{url}";
+            }
+
+            var qiniuRequest = request as QiniuStorageRequest;
+            var tokenType = qiniuRequest.GetTokenType();
+
+            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
+            if (method == "GET")
+            {
+                return await httpClient.GetAsync<T>(url);
+            }
+            if (method == "POST")
+            {
+                string s = JsonSerializer.Serialize(request, request.GetType());
+                string contentType = qiniuRequest.ContentType();
+
+                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
+                if (s == "{}")
+                {
+                    httpContent = null;
+                }
+
+                if (contentType == "application/x-www-form-urlencoded")
+                {
+
+                    httpContent = qiniuRequest.FormContent();
+                }
+
+                var res = await httpClient.PostAsync<T>(url, httpContent);
+                return res;
+
+            }
+            if (method == "DELETE")
+            {
+                var res = await httpClient.DeleteAsync<T>(url);
+                return res;
+            }
+            return null;
 
 
-        #endregion
+
+        }
+        public string GetUploadToken(string key,DateTime expiresTime)
+        {
+            //只允许上传指定key文件，key存在时不覆盖 insertOnly =1
+            //只允许上传指定前缀文件，存在时不覆盖 isPrefixalScope =1
+
+            PutPolicy putPolicy = new PutPolicy();
+            putPolicy.Scope = key;
+            int exprieSeconds=(int)(expiresTime - DateTime.Now).TotalSeconds;
+            putPolicy.SetExpires(exprieSeconds);
+            putPolicy.isPrefixalScope = 1;
+            putPolicy.InsertOnly = 1;
+            string jstr = putPolicy.ToJsonString();
+            string token = Auth.CreateUploadToken(mac, jstr);
+            return token;
+        }
+
+        public string CreateDownloadUrl(string url, int expireInSeconds = 3600)
+        {
+            long deadline = UnixTimestamp.GetUnixTimestamp(expireInSeconds);
+            string publicUrl = Uri.EscapeUriString(url);
+            StringBuilder sb = new StringBuilder(publicUrl);
+            if (publicUrl.Contains("?"))
+            {
+                sb.AppendFormat("&e={0}", deadline);
+            }
+            else
+            {
+                sb.AppendFormat("?e={0}", deadline);
+            }
+
+            string token = Auth.CreateDownloadToken(mac, sb.ToString());
+            sb.AppendFormat("&token={0}", token);
+
+            return sb.ToString();
+
+        }
+
+
+
 
         #region 上传
 
@@ -172,109 +231,8 @@ namespace RsCode.Storage
         //}
         #endregion
 
-        #region 下载
-         
-        public string CreateDownloadUrl(string domain,string key, int expireInSeconds = 3600)
-        { 
-            long deadline = UnixTimestamp.GetUnixTimestamp(expireInSeconds);
-            string publicUrl = $"{domain}/{Uri.EscapeUriString(key)}";
-            StringBuilder sb = new StringBuilder(publicUrl);
-            if (publicUrl.Contains("?"))
-            {
-                sb.AppendFormat("&e={0}", deadline);
-            }
-            else
-            {
-                sb.AppendFormat("?e={0}", deadline);
-            }
-
-            string token = Auth.CreateDownloadToken(mac, sb.ToString());
-            sb.AppendFormat("&token={0}", token);
-
-            return sb.ToString(); 
-           
-        }
-        #endregion
-        ///// <summary>
-        ///// 公开空间的文件下载
-        ///// </summary>
-        ///// <param name="key">云端文件key</param>
-        ///// <returns>返回文件下载地址</returns>
-        //public string CreatePublicshUrl(string key)
-        //{
-        //    string domain =options. Domain;
-        //    string publicUrl = DownloadManager.CreatePublishUrl(domain, key);
-        //    return publicUrl;
-        //}
 
 
-
-
-        ///// <summary>
-        ///// 查询某key是否存在
-        ///// </summary>
-        ///// <param name="bucket"></param>
-        ///// <param name="key"></param>
-        ///// <returns>如果存在返回Code=200,不存在返回Code=612</returns>
-        //public StatResult Query(string bucket, string key)
-        //{ 
-        //    BucketManager bm = new BucketManager(mac,config);
-        //    StatResult result = bm.Stat(bucket, key);
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// 批量查询
-        ///// </summary>
-        ///// <param name="batchOps">batch批处理请求的主体内容具有op=OP1&op=OP2&op=...这样的格式，其中op=OPS作为一个单位，用&符号相连</param>
-        //public BatchResult BatchQuery(List<string> batchOps)
-        //{ 
-        //    BucketManager bm = new BucketManager(mac,config);
-        //    var result = bm.Batch(batchOps);
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// 删除指定的key
-        ///// </summary>
-        ///// <param name="bucket"></param>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public HttpResult Delete(string bucket, string key)
-        //{  
-        //    BucketManager bm = new BucketManager(mac,config);
-        //    var result = bm.Delete(bucket, key);
-
-        //    if(result.Code==200)
-        //    {
-        //        RefreshUrls(new string[] { key });
-        //    }
-        //    return result;
-        //}
-
-         
-
-
-        //public HttpResult Rename(string bucket, string oldkey, string newKey)
-        //{
-        //    Qiniu.Storage.Config config = new Qiniu.Storage.Config();
-        //    
-        //    BucketManager bm = new BucketManager(mac,config);
-        //    var result = bm.Rename(bucket, oldkey, newKey);
-             
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// 缓存刷新-刷新URL
-        ///// </summary>
-        ///// <param name="urls">要刷新的URL列表</param>
-        ///// <returns>缓存刷新的结果</returns>
-        //public HttpResult RefreshUrls(string[] urls)
-        //{
-        //    CdnManager cdnManager = new CdnManager(mac);
-        //    return cdnManager.RefreshUrls(urls);
-        //}
 
         public async Task<UploadResult> UploadAsync()
         {
@@ -301,105 +259,9 @@ namespace RsCode.Storage
             return null;
         }
 
-        public async Task<T>SendAsync<T>(StorageRequest request)
-            where T:StorageResponse
-        {
-            CallContext<Mac>.SetData("qiniu_option", mac);
-            var method = request.RequestMethod();
-            var url = request.GetApiUrl();
-            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
-            {
-                url = $"http://{url}";
-            }
+     
 
-            var qiniuRequest = request as QiniuStorageRequest;
-            var tokenType = qiniuRequest.GetTokenType();
-
-            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
-            if (method == "GET")
-            {
-                return await httpClient.GetAsync<T>(url);
-            }
-            if (method == "POST")
-            {
-                string s = JsonSerializer.Serialize(request, request.GetType());
-                string contentType = qiniuRequest.ContentType();
-                
-                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
-                if (s == "{}")
-                {
-                    httpContent = null;
-                }
-
-                if (contentType == "application/x-www-form-urlencoded")
-                {                    
-                     
-                    httpContent = qiniuRequest.FormContent();
-                }
-
-                var res = await httpClient.PostAsync<T>(url, httpContent);
-                return res;
-
-            }
-            if (method == "DELETE")
-            { 
-                var res = await httpClient.DeleteAsync<T>(url);
-                return res;
-            }
-            return null;
-
-
-             
-        }
-
-        public async Task<(HttpResponseMessage,string)> SendAsync(StorageRequest request) 
-        {
-            CallContext<Mac>.SetData("qiniu_option",mac);
-            var method = request.RequestMethod();
-            var url = request.GetApiUrl();
-            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
-            {
-                url = $"http://{url}";
-            }
-
-            var qiniuRequest = request as QiniuStorageRequest;
-            var tokenType= qiniuRequest.GetTokenType();
-            string contentType = qiniuRequest.ContentType();
-            httpClient.LoadHandler(new QiniuHttpHandler(tokenType));
-            if (method == "GET")
-            {
-                return await httpClient.GetAsync(url);
-            }
-            if (method == "POST")
-            {
-                string s = JsonSerializer.Serialize(request, request.GetType());
-                HttpContent httpContent = new StringContent(s, Encoding.UTF8, contentType);
-                if(s=="{}")
-                {
-                    httpContent = null;
-                }
-
-                if (contentType == "application/x-www-form-urlencoded")
-                {
-
-                    httpContent = qiniuRequest.FormContent();
-                }
-
-                var res = await httpClient.PostAsync(url, httpContent);
-                
-                return res;
-
-            }
-            if (method == "DELETE")
-            {
-              
-                var res = await httpClient.DeleteAsync(url);
-                return (res,"");
-            }
-            return (null,null);
-
-        }
-
+      
         
     }  
 }

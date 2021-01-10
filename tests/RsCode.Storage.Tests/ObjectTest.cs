@@ -29,8 +29,8 @@ namespace RsCode.Storage.Tests
         public async Task DownFileTest()
         {
             string key = "1698/wxSop/0300602655adcfc96799c0e1d5e9d907.jpg";
-
-            var ret =  qiniu.CreateDownloadUrl("http://img0.tutaojin.net",key,10);
+            var url = "" + key;
+            var ret =  qiniu.CreateDownloadUrl(url,10);
             //cdn缓存时间优先于指定的有效时间
             Assert.NotNull(ret);
         }

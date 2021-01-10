@@ -36,5 +36,6 @@ namespace RsCode.Storage.QiniuStorage
         {
             return TokenType.Manager;
         }
+        
     }
 }

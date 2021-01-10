@@ -1,7 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ * 项目:.Net项目开发工具库 
+ * 协议:MIT License 2.0 
+ * 作者:河南软商网络科技有限公司 
+ * 项目己托管于  
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RsCode.Storage
@@ -12,35 +18,26 @@ namespace RsCode.Storage
         /// 云存储名称
         /// </summary>
         string StorageName { get; }
-
         /// <summary>
         /// 获取上传token
         /// </summary>
-        /// <param name="IsClient">是否是客户端上传</param>
+        /// <param name="key">bucket或 bucket:key</param>
+        /// <param name="expiresTime"></param>
         /// <returns></returns>
-        TokenResult GetUploadToken(bool isClient = true);
+        string GetUploadToken(string key, DateTime expiresTime);
+
 
         /// <summary>
-        /// 获取下载凭证
+        /// 获取下载地址
         /// </summary>
-        /// <param name="Bucket"></param>
-        /// <returns></returns>
-        TokenResult GetDownloadToken(bool isClient = true);
-
-        /// <summary>
-        /// 创建下载Url
-        /// </summary>
-        /// <param name="domain"></param>
-        /// <param name="key"></param>
+        /// <param name="url"></param>
         /// <param name="expireInSeconds"></param>
-        string CreateDownloadUrl(string domain, string key, int expireInSeconds = 1800);
-
-        /// <summary>
-        /// 获取管理凭证
-        /// </summary>
-        /// <param name="Bucket"></param>
         /// <returns></returns>
-        TokenResult GetManageToken(bool isClient = true);
+        string CreateDownloadUrl(string url, int expireInSeconds = 3600);
+
+   
+
+        
 
 
         Task<UploadResult> UploadAsync();

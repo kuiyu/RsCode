@@ -36,12 +36,14 @@ namespace RsCode.Storage.Tests
         [Fact]
         public async Task BucketDomain()
         {
-            var (ret, s) = await qiniu.SendAsync(new BucketDomainRequest("res-rscode-cn"));
+            var (ret, s) = await qiniu.SendAsync(new BucketDomainRequest("rsyunpan"));
             if((int)ret.StatusCode==200)
             {
                 string[] res = JsonSerializer.Deserialize<string[]>(await ret.Content.ReadAsStringAsync());
                 Assert.NotNull(res);
-            } 
+            }
+
+            
         }
      
        
