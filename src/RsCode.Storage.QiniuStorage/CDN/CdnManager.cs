@@ -76,9 +76,9 @@ namespace RsCode.Storage.QiniuStorage.CDN
         /// </summary>
         /// <param name="urls">要刷新的URL列表</param>
         /// <returns>缓存刷新的结果</returns>
-        public RefreshResult RefreshUrls(List<string> urls)
+        public async Task<RefreshResult> RefreshUrls(List<string> urls)
         {
-            return RefreshUrlsAndDirs(urls, null).GetAwaiter().GetResult();
+            return await RefreshUrlsAndDirs(urls, null);
         }
 
         /// <summary>
@@ -86,9 +86,9 @@ namespace RsCode.Storage.QiniuStorage.CDN
         /// </summary>
         /// <param name="dirs">要刷新的URL目录列表</param>
         /// <returns>缓存刷新的结果</returns>
-        public RefreshResult RefreshDirs(List<string> dirs)
+        public async Task<RefreshResult> RefreshDirs(List<string> dirs)
         {
-            return RefreshUrlsAndDirs(null, dirs).GetAwaiter().GetResult();
+            return await RefreshUrlsAndDirs(null, dirs);
         }
 
         /// <summary>
