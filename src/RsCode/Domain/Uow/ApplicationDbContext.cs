@@ -11,7 +11,7 @@ namespace RsCode.Domain.Uow
         
         IEnumerable<IDatabase> databases;
         IConfiguration Configuration { get; }
-        public IDatabase Current { get; set; } 
+        public IDatabase Current { get;  set; } 
 
         public ApplicationDbContext(IEnumerable<IDatabase> _databases)
         { 
@@ -39,10 +39,11 @@ namespace RsCode.Domain.Uow
             {              
                 db = databases.FirstOrDefault(x => x.ConnectionString == connStr);
             }
-            if (db != null)
-            {
-                CallContext<IDatabase>.SetData(connStr, db);       
-            }
+            if(db==null)
+                throw new System.Exception("ConnectionString not fund");
+           
+            CallContext<IDatabase>.SetData(connStr, db);       
+           
             Current = db;
             return db;
         }

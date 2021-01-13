@@ -30,48 +30,57 @@ namespace RsCode.Domain.Uow
             
             var serviceType = context.ServiceMethod.DeclaringType;
             if (serviceType.FullName.EndsWith("Service") || serviceType.FullName.EndsWith("Repository"))
-            { 
+            {
                 var dbContext = context.ServiceProvider.Resolve<IApplicationDbContext>();
-                var db= dbContext.Current; 
-
+                var db = dbContext.Current;
+                var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
                 try
-                {                  
-                    using (db)
+                { 
+                    if(db.Connection==null)
                     {
                         await db.OpenSharedConnectionAsync();
+                    }                    
+                        
                         await db.BeginTransactionAsync();
                         await context.Invoke(next);
                         db.CompleteTransaction();
-                    } 
+ 
                 }
                 catch (Exception ex)
                 {
                     db.AbortTransaction();
 
-                    if(!(ex is AppException))
-                    {
-                        var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
-                        if (log != null)
-                            log.LogError($"{ex.Message}\n{ex.StackTrace}");
-                    }
-                   
-                  
+                     
                     if (ex.InnerException != null)
-                    {
+                    { 
                         if (ex.InnerException is AppException)
-                        {                          
+                        {
                             throw ex.InnerException as AppException;
+                        }else
+                        {
+                           if (log != null)
+                            log.LogError($"{ex.InnerException.Message}\n{ex.InnerException.StackTrace}");
                         }
                     }
                     else
                     {
+                      
                         if (ex is AppException)
                         {
-                            throw ex as AppException; 
+                            throw ex as AppException;
+                        }
+                        else
+                        {
+                            if (log != null)
+                                log.LogError($"{ex.Message}\n{ex.StackTrace}");
                         }
                     }
 
                     throw ex;
+                }
+                finally
+                {
+                    db.CloseSharedConnection();
                 }
                 
             }
