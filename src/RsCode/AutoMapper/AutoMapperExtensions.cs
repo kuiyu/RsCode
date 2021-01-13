@@ -64,6 +64,7 @@ namespace System
             var sourceType = GetType(source);
             var destinationType = GetType(destination);
             var map = GetMap(sourceType, destinationType);
+            
             if (map != null)
                 return Mapper.Map(source, destination);
             lock (Sync)
@@ -131,7 +132,16 @@ namespace System
                 Mapper.Initialize(config => {
                     ClearConfig();
                     foreach (var item in maps)
-                        config.CreateMap(item.SourceType, item.DestinationType);
+                    {
+                          config.CreateMap(item.SourceType, item.DestinationType)
+                        //.ForMember(item.DestinationType.Name,
+                        //dest=> {
+                        //    dest.Ignore();
+                        //})
+                        ;
+                         
+                    }
+                        
                     config.CreateMap(sourceType, destinationType);
                 });
             }
