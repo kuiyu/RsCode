@@ -28,67 +28,68 @@ namespace RsCode.Domain.Uow
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {            
             var serviceType = context.ServiceMethod.DeclaringType;
-              context.Invoke(next);
+             // context.Invoke(next);
             //if (serviceType.FullName.EndsWith("Service") || serviceType.FullName.EndsWith("Repository"))
             //{
-            //    var dbContext = context.ServiceProvider.Resolve<IApplicationDbContext>();
-            //    var db = dbContext.Current;
-            //    var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
-            //    try
-            //    { 
-            //        if(db.Connection==null)
-            //        {
-            //            await db.OpenSharedConnectionAsync();
-            //        }                    
-                        
-            //            await db.BeginTransactionAsync();
-            //            await context.Invoke(next);
-            //            db.CompleteTransaction();
- 
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        db.AbortTransaction(); 
-                     
-            //        if (ex.InnerException != null)
-            //        { 
-            //            if (ex.InnerException is AppException)
-            //            {
-            //                throw ex.InnerException as AppException;
-            //            }else
-            //            {
-            //               if (log != null)
-            //                log.LogError($"{ex.InnerException.Message}\n{ex.InnerException.StackTrace}");
-            //            }
-            //        }
-            //        else
-            //        {
-                      
-            //            if (ex is AppException)
-            //            {
-            //                throw ex as AppException;
-            //            }
-            //            else
-            //            {
-            //                if (log != null)
-            //                    log.LogError($"{ex.Message}\n{ex.StackTrace}");
-            //            }
-            //        }
+                var dbContext = context.ServiceProvider.Resolve<IApplicationDbContext>();
+                var db = dbContext.Current;
+                var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
+                try
+                {
+                    if (db.Connection == null)
+                    {
+                        await db.OpenSharedConnectionAsync();
+                    }
 
-            //        throw ex;
-            //    }
-            //    finally
-            //    {
-            //        db.CloseSharedConnection();
-            //    }
-                
-            //}
-            //else
-            //{
-            //    await context.Invoke(next);
-            //    return;
-            //}
-        }
+                    await db.BeginTransactionAsync();
+                    await context.Invoke(next);
+                    db.CompleteTransaction();
+
+                }
+                catch (Exception ex)
+                {
+                    db.AbortTransaction();
+
+                    if (ex.InnerException != null)
+                    {
+                        if (ex.InnerException is AppException)
+                        {
+                            throw ex.InnerException as AppException;
+                        }
+                        else
+                        {
+                            if (log != null)
+                                log.LogError($"{ex.InnerException.Message}\n{ex.InnerException.StackTrace}");
+                        }
+                    }
+                    else
+                    {
+
+                        if (ex is AppException)
+                        {
+                            throw ex as AppException;
+                        }
+                        else
+                        {
+                            if (log != null)
+                                log.LogError($"{ex.Message}\n{ex.StackTrace}");
+                        }
+                    }
+
+                    throw ex;
+                }
+                finally
+                {
+                    db.CloseSharedConnection();
+                }
+
+                //}
+                //else
+                //{
+                //    await context.Invoke(next);
+                //    return;
+                //}
+            }
 
         internal UnitOfWorkOptions CreateOptions()
         {
