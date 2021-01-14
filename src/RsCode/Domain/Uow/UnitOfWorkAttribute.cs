@@ -26,69 +26,68 @@ namespace RsCode.Domain.Uow
         
         
         public override async Task Invoke(AspectContext context, AspectDelegate next)
-        {
-            
+        {            
             var serviceType = context.ServiceMethod.DeclaringType;
-            if (serviceType.FullName.EndsWith("Service") || serviceType.FullName.EndsWith("Repository"))
-            {
-                var dbContext = context.ServiceProvider.Resolve<IApplicationDbContext>();
-                var db = dbContext.Current;
-                var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
-                try
-                { 
-                    if(db.Connection==null)
-                    {
-                        await db.OpenSharedConnectionAsync();
-                    }                    
+              context.Invoke(next);
+            //if (serviceType.FullName.EndsWith("Service") || serviceType.FullName.EndsWith("Repository"))
+            //{
+            //    var dbContext = context.ServiceProvider.Resolve<IApplicationDbContext>();
+            //    var db = dbContext.Current;
+            //    var log = context.ServiceProvider.Resolve<ILogger<UnitOfWorkAttribute>>();
+            //    try
+            //    { 
+            //        if(db.Connection==null)
+            //        {
+            //            await db.OpenSharedConnectionAsync();
+            //        }                    
                         
-                        await db.BeginTransactionAsync();
-                        await context.Invoke(next);
-                        db.CompleteTransaction();
+            //            await db.BeginTransactionAsync();
+            //            await context.Invoke(next);
+            //            db.CompleteTransaction();
  
-                }
-                catch (Exception ex)
-                {
-                    db.AbortTransaction();
-
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        db.AbortTransaction(); 
                      
-                    if (ex.InnerException != null)
-                    { 
-                        if (ex.InnerException is AppException)
-                        {
-                            throw ex.InnerException as AppException;
-                        }else
-                        {
-                           if (log != null)
-                            log.LogError($"{ex.InnerException.Message}\n{ex.InnerException.StackTrace}");
-                        }
-                    }
-                    else
-                    {
+            //        if (ex.InnerException != null)
+            //        { 
+            //            if (ex.InnerException is AppException)
+            //            {
+            //                throw ex.InnerException as AppException;
+            //            }else
+            //            {
+            //               if (log != null)
+            //                log.LogError($"{ex.InnerException.Message}\n{ex.InnerException.StackTrace}");
+            //            }
+            //        }
+            //        else
+            //        {
                       
-                        if (ex is AppException)
-                        {
-                            throw ex as AppException;
-                        }
-                        else
-                        {
-                            if (log != null)
-                                log.LogError($"{ex.Message}\n{ex.StackTrace}");
-                        }
-                    }
+            //            if (ex is AppException)
+            //            {
+            //                throw ex as AppException;
+            //            }
+            //            else
+            //            {
+            //                if (log != null)
+            //                    log.LogError($"{ex.Message}\n{ex.StackTrace}");
+            //            }
+            //        }
 
-                    throw ex;
-                }
-                finally
-                {
-                    db.CloseSharedConnection();
-                }
+            //        throw ex;
+            //    }
+            //    finally
+            //    {
+            //        db.CloseSharedConnection();
+            //    }
                 
-            }
-            else
-            {
-                await context.Invoke(next);
-                return;
-            }
+            //}
+            //else
+            //{
+            //    await context.Invoke(next);
+            //    return;
+            //}
         }
 
         internal UnitOfWorkOptions CreateOptions()
