@@ -15,7 +15,7 @@ namespace RsCode.Domain.Uow
          
             services.ConfigureDynamicProxy(config =>
             { 
-                config.Interceptors.AddTyped<UnitOfWorkAttribute>(new AspectPredicate[] { Predicates.ForService("*Repository"), Predicates.ForService("*Service") });
+              //  config.Interceptors.AddTyped<UnitOfWorkAttribute>(new AspectPredicate[] { Predicates.ForService("*Repository"), Predicates.ForService("*Service") });
             }); 
         }
 
