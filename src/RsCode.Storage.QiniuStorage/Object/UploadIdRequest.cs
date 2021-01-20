@@ -26,7 +26,7 @@ namespace RsCode.Storage.QiniuStorage
         public override string GetApiUrl()
         {
             var zone = new ZoneHelper().QueryZoneAsync(Bucket).GetAwaiter().GetResult();
-            var url = zone.ServerUploadDomain;
+            var url = zone.SrcUpHosts[0];
             return $"{url}/buckets/{Bucket}/objects/{EncodedObjectName}/uploads";
         }
         public override TokenType GetTokenType()

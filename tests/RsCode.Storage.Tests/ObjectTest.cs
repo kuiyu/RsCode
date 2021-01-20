@@ -18,6 +18,15 @@ namespace RsCode.Storage.Tests
         }
 
         [Fact]
+        public async Task UploadIdTest()
+        {
+            string bucket = "ttj-test";
+            string key = "test/test";
+            var ret=await qiniu.SendAsync<UploadIdResponse>(new UploadIdRequest(bucket, key));
+            Assert.NotNull(ret.UploadId);
+        }
+
+        [Fact]
         public async Task ListTest()
         {
             string bucket="ttj-test";

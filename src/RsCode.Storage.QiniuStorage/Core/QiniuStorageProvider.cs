@@ -68,9 +68,8 @@ namespace RsCode.Storage
                     httpContent = null;
                 }
 
-                if (contentType == "application/x-www-form-urlencoded")
-                {
-
+                if (contentType == "application/x-www-form-urlencoded"||contentType== "multipart/form-data")
+                { 
                     httpContent = qiniuRequest.FormContent();
                 }
 

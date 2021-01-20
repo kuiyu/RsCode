@@ -44,13 +44,18 @@ namespace RsCode.Storage.QiniuStorage
                 string body = await request.Content.ReadAsStringAsync();
                 
                 var data = Encoding.UTF8.GetBytes(body);
-                 
+                token = GetToken(requestUrl, data);
+
                 if (request.Content.Headers.ContentType.MediaType== "application/x-www-form-urlencoded")
                 {
                     
                 }
+                if(request.Content.Headers.ContentType.MediaType== "multipart/form-data")
+                {
+                    
+                }
                 
-                token = GetToken( requestUrl,data);  
+                
             }
             request.Headers.Add("Authorization", token);
             request.Headers.Add("User-Agent", "RsCode.Storage.QiniuStorage/1.0");  

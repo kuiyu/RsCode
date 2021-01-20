@@ -19,5 +19,10 @@ namespace RsCode.Storage.QiniuStorage
         {
             return null;
         }
+
+        public virtual MultipartFormDataContent RequestForm()
+        {
+            return null;
+        }
     }
 }
