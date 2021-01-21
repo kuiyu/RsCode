@@ -10,9 +10,14 @@
     <Description>https://rscode.cn</Description>
     <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>1.5.0</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>.\RsCode.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
