@@ -116,5 +116,15 @@ namespace RsCode.Storage.LocalStorage
         {
             throw new NotImplementedException();
         }
+
+        public string GetUploadToken(string key, DateTime expiresTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string CreateDownloadUrl(string url, int expireInSeconds = 3600)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
