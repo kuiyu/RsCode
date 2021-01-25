@@ -1,10 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿/*
+ * 项目：.net开发基础工具类
+ * 作者：河南软商网络科技有限公司
+ * * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+using Microsoft.Extensions.DependencyInjection;
 using PetaPoco;
+using RsCode.DI;
 using RsCode.Domain.Repositories;
 using System.Collections.Generic;
 
 
-namespace RsCode.DI
+namespace RsCode
 {
 
 

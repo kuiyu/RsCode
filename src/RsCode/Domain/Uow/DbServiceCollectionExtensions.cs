@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PetaPoco;
 using PetaPoco.Core;
+using RsCode.Domain.Uow;
 using System;
 
-namespace RsCode.Domain.Uow
+namespace RsCode
 {
     public static class DbServiceCollectionExtensions
     {

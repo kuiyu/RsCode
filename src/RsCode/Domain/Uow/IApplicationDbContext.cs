@@ -10,7 +10,7 @@
  */
 using PetaPoco;
 
-namespace RsCode.Domain.Uow
+namespace RsCode
 {
     public interface IApplicationDbContext:RsCode.DI.ITransientDependency
     {

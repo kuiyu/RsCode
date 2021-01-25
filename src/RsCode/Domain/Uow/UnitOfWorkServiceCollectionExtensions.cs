@@ -1,10 +1,10 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using AspectCore.Extensions.DependencyInjection;
-using AspectCore.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using RsCode.Domain.Uow;
 
-namespace RsCode.Domain.Uow
+namespace RsCode
 {
     public static class UnitOfWorkServiceCollectionExtensions
     { 

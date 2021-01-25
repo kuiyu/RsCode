@@ -449,7 +449,7 @@
             接口实现的自定义别名
             </summary>
         </member>
-        <member name="M:RsCode.DI.ServicesExtensions.AutoRegister(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
+        <member name="M:RsCode.ServicesExtensions.AutoRegister(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
             <summary>
             自动注入指定名称的程序集，仅适用于
             继承IScopedDependency的 接口的实现
@@ -471,14 +471,6 @@
             <param name="connName">默认值为DefaultConnection</param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.Domain.Uow.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,PetaPoco.IMapper)">
-            <summary>
-            
-            </summary>
-            <typeparam name="TDatabaseProvider"></typeparam>
-            <param name="services"></param>
-            <param name="connString">数据库连接字符串</param>
-        </member>
         <member name="M:RsCode.Domain.Uow.OneToManyRelator`2.#ctor(System.String,System.String)">
             <summary>
             
@@ -499,6 +491,14 @@
             <summary>
             连接字符串名称
             </summary>
+        </member>
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,PetaPoco.IMapper)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TDatabaseProvider"></typeparam>
+            <param name="services"></param>
+            <param name="connString">数据库连接字符串</param>
         </member>
         <member name="T:RsCode.Exceptions.ReturnInfo">
             <summary>
