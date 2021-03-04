@@ -114,7 +114,7 @@ namespace RsCode.Config
              
             string jsonFileFullPath = Path.Combine(root, JsonFile);
             if (!File.Exists(jsonFileFullPath))
-                throw new ArgumentException("not find " + JsonFile);
+                throw new ArgumentException("not find " + jsonFileFullPath);
 
             if (jsonFilePath != jsonFileFullPath)
             {

@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace RsCode.Helper
+namespace RsCode
 {
 	public class SecureHelper
 	{

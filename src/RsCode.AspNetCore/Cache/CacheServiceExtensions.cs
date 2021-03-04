@@ -6,7 +6,7 @@ using RsCode.Cache;
 
 using System;
 
-namespace RsCode.AspNetCore.Cache
+namespace RsCode
 {
     public static class CacheServiceExtensions
     {

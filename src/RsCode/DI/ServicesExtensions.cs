@@ -9,10 +9,8 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Microsoft.Extensions.DependencyInjection;
-using PetaPoco;
 using RsCode.DI;
 using RsCode.Domain.Repositories;
-using System.Collections.Generic;
 
 
 namespace RsCode
@@ -22,7 +20,7 @@ namespace RsCode
 
     public static class ServicesExtensions
     {
-        public static Dictionary<string, IDatabaseBuildConfiguration> DbConfigs;
+        //public static Dictionary<string, IDatabaseBuildConfiguration> DbConfigs;
 
         
         /// <summary>

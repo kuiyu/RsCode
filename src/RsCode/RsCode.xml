@@ -265,6 +265,12 @@
             <param name="key"></param>
             <returns></returns>
         </member>
+        <member name="T:RsCode.ChannelContainer`1">
+            <summary>
+            线程通道容器
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
         <member name="M:RsCode.Config.AppConfig.Exists(System.String,System.String)">
             <summary>
             检查节点是否存在
@@ -592,7 +598,7 @@
             <param name="CharList">All char want to generate.</param>
             <param name="CodeLength">Code lenght.</param>
         </member>
-        <member name="M:RsCode.Helper.SecureHelper.AESDecrypt(System.String,System.String)">
+        <member name="M:RsCode.SecureHelper.AESDecrypt(System.String,System.String)">
             <summary>
             解密
             </summary>
@@ -600,7 +606,7 @@
             <param name="decryptKey">解密使用的key</param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.Helper.SecureHelper.AESEncrypt(System.String,System.String)">
+        <member name="M:RsCode.SecureHelper.AESEncrypt(System.String,System.String)">
             <summary>
             加密
             </summary>

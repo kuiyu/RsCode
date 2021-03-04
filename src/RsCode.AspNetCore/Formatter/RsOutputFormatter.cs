@@ -1,4 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*
+ * 项目:.Net项目开发工具库 
+ * 协议:MIT License 2.0 
+ * 作者:河南软商网络科技有限公司 
+ * 项目己托管于  
+ * github
+   https://github.com/kuiyu/RsCode.git
+   gitee
+   https://gitee.com/rswl/RsCode.git
+ */
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using RsCode.Exceptions;

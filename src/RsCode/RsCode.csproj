@@ -4,14 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>1.5.0.0</AssemblyVersion>
-    <FileVersion>1.5.0.0</FileVersion>
+    <AssemblyVersion>1.5.1.0</AssemblyVersion>
+    <FileVersion>1.5.1.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>https://rscode.cn</Description>
     <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.5.0</Version>
+    <Version>1.5.1</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
@@ -44,6 +44,7 @@
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

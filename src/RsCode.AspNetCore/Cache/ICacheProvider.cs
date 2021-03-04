@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RsCode.Cache;
 using RsCode.DI;
 
-namespace RsCode.Cache
+namespace RsCode
 {
     /// <summary>
     /// 缓存接口定义
