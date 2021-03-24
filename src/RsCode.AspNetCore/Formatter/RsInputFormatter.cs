@@ -54,7 +54,8 @@ namespace RsCode.AspNetCore
             catch (Exception ex)
             {
                 var logger = context.HttpContext.RequestServices.Resolve<ILogger<RsInputFormatter>>();
-                logger.LogDebug("传参" + s + " 转换错误" + ex.Message);
+
+                logger?.LogError("传参" + s + " 转换错误" + ex.Message);
                 return await InputFormatterResult.FailureAsync();
             }
 

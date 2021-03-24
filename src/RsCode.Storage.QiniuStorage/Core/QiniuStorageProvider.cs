@@ -26,17 +26,18 @@ namespace RsCode.Storage
       
         string uploadUrl = "";
         QiniuHttpClient httpClient;
-
+        ZoneHelper zoneHelper;
         public QiniuStorageProvider(
             IOptionsSnapshot<QiniuOptions> _options, 
-            QiniuHttpClient _qiniuHttpClient 
+            QiniuHttpClient _qiniuHttpClient ,
+            ZoneHelper _zoneHelper
             )
         {
             httpClient = _qiniuHttpClient;
             options = _options.Value;
             mac = new Mac(options.AccessKey, options.SecretKey);
             CallContext<Mac>.SetData("qiniu_option",mac);
-          
+            zoneHelper = _zoneHelper;
             
         }
         public string StorageName { get; } = "qiniu";
@@ -144,7 +145,7 @@ namespace RsCode.Storage
             //只允许上传指定前缀文件，存在时不覆盖 isPrefixalScope =1
 
             PutPolicy putPolicy = new PutPolicy();
-            putPolicy.Scope = key;
+            putPolicy.Scope =$"{options.Bucket}:{key}";
             int exprieSeconds=(int)(expiresTime - DateTime.Now).TotalSeconds;
             putPolicy.SetExpires(exprieSeconds);
             putPolicy.isPrefixalScope = 1;
@@ -152,6 +153,20 @@ namespace RsCode.Storage
             string jstr = putPolicy.ToJsonString();
             string token = Auth.CreateUploadToken(mac, jstr);
             return token;
+        }
+
+        public async Task< TokenResult> GetUploadTokenInfoAsync(string key,DateTime expiresTime)
+        {
+            var token = GetUploadToken(key, expiresTime);
+            var zone = await zoneHelper.QueryZoneAsync(mac, options.Bucket);
+            var upHost = zone.SrcUpHosts[0];
+            TokenResult result = new TokenResult
+            { 
+                UploadUrl = $"https://{upHost}",
+                Domain = options.Domain,
+                Token = token
+            };
+            return result;
         }
 
         public string CreateDownloadUrl(string url, int expireInSeconds = 3600)

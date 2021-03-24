@@ -46,22 +46,13 @@ namespace RsCode.AspNetCore
         {
             if (e == null) return;
 
-            if (e is AppException)
+            Exception exception = e;
+            if (e.InnerException!=null)
             {
-                //log.LogError(JsonSerializer.Serialize(e as AppException));
+                exception = e.InnerException;
             }
-            else
-            {
-                if(e.InnerException!=null)
-                {
-                    log.LogError($"{e.InnerException.Message}\n{e.InnerException.StackTrace}");
-                }
-                else
-                log.LogError($"{e.Message}\n{e.StackTrace}");
-            }
-
-
-            await WriteExceptionAsync(context, e).ConfigureAwait(false);
+             
+            await WriteExceptionAsync(context, exception).ConfigureAwait(false);
         }
 
         private async Task WriteExceptionAsync(HttpContext context, Exception e)
@@ -74,19 +65,17 @@ namespace RsCode.AspNetCore
 
 
             AppException appException = null;
-            if (e.InnerException is AppException)
+            if (e is AppException)
             {
-                appException = e.InnerException as AppException;
-            }
-            else
+                appException = e as AppException;
+            }else
             {
-                if (e is AppException)
-                {
-                    appException = e.InnerException as AppException;
-                }
+                log.LogError($"{e.Message}\n{e.StackTrace}");
             }
+             
             if (appException != null)
             {
+                
                 context.Response.ContentType = "application/json";
                 ReturnInfo returnInfo = new ReturnInfo()
                 {

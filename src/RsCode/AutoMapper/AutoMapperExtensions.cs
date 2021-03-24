@@ -16,6 +16,7 @@
 using AutoMapper;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace System
@@ -65,8 +66,12 @@ namespace System
             var destinationType = GetType(destination);
             var map = GetMap(sourceType, destinationType);
             
+
             if (map != null)
+            {  
                 return Mapper.Map(source, destination);
+            }
+            
             lock (Sync)
             {
                 map = GetMap(sourceType, destinationType);
@@ -76,6 +81,8 @@ namespace System
             }
             return Mapper.Map(source, destination);
         }
+
+        
 
         /// <summary>
         /// 获取类型
@@ -99,7 +106,7 @@ namespace System
         private static TypeMap GetMap(Type sourceType, Type destinationType)
         {
             try
-            {
+            { 
                 return Mapper.Configuration.FindTypeMapFor(sourceType, destinationType);
             }
             catch (InvalidOperationException)
@@ -121,6 +128,7 @@ namespace System
 
 
 
+
         /// <summary>
         /// 初始化映射配置
         /// </summary>
@@ -128,18 +136,17 @@ namespace System
         {
             try
             {
+               
                 var maps = Mapper.Configuration.GetAllTypeMaps();
+                 
                 Mapper.Initialize(config => {
                     ClearConfig();
                     foreach (var item in maps)
                     {
                           config.CreateMap(item.SourceType, item.DestinationType)
                         //.ForMember(item.DestinationType.Name,
-                        //dest=> {
-                        //    dest.Ignore();
-                        //})
-                        ;
-                         
+                        //dest => dest.Ignore() )
+                        ; 
                     }
                         
                     config.CreateMap(sourceType, destinationType);
@@ -171,6 +178,19 @@ namespace System
         public static List<TDestination> MapToList<TDestination>(this System.Collections.IEnumerable source)
         {
             return MapTo<List<TDestination>>(source);
+        }
+
+         static IMappingExpression<TSource, TDestination> IgnoreAllNonExisting<TSource, TDestination>(this IMappingExpression<TSource, TDestination> expression)
+        {
+            var sourceType = typeof(TSource);
+            var destinationType = typeof(TDestination);
+            var existingMaps = Mapper.Configuration.GetAllTypeMaps().First(x => x.SourceType.Equals(sourceType)
+                && x.DestinationType.Equals(destinationType));
+            foreach (var property in existingMaps.GetUnmappedPropertyNames())
+            {
+                expression.ForMember(property, opt => opt.Ignore());
+            }
+            return expression;
         }
     }
 }

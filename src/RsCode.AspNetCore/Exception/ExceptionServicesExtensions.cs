@@ -13,6 +13,7 @@ namespace RsCode.AspNetCore
         /// <param name="services"></param>
         public static void AddExceptionFilter(this IServiceCollection services)
         {
+            
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = (actionContext) =>

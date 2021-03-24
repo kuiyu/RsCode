@@ -22,6 +22,11 @@ namespace RsCode.Storage.QiniuStorage.Core
         {
             httpClient = new HttpClient();
         }
+        public async Task<Zone> QueryZoneAsync(Mac mac,string bucket)
+        {
+             CallContext<Mac>.SetData("qiniu_option",mac);
+           return  await QueryZoneAsync(bucket);
+        }
 
         /// <summary>
         /// 从uc.qbox.me查询得到回复后，解析出upHost,然后根据upHost确定Zone

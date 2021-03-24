@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using RsCode.AspNetCore.XSS;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RsCode.AspNetCore.XSS
+namespace RsCode.AspNetCore
 {
     public class AntiXSSAttribute : Attribute, IActionFilter
     {
@@ -16,7 +17,10 @@ namespace RsCode.AspNetCore.XSS
        
         public void OnActionExecuted(ActionExecutedContext context)
         {
-
+            //取消204 预检请求
+            //context.HttpContext.Request.Headers.Add("Access-Control-Allow-Headers", "*");
+            //context.HttpContext.Request.Headers.Add("Access-Control-Allow-Methods", "*");
+            //context.HttpContext.Request.Headers.Add("Access-Control-Max-Age", new Microsoft.Extensions.Primitives.StringValues("24*60*60"));
         }
 
         //在调用Action方法之前调用

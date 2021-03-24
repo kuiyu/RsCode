@@ -35,9 +35,9 @@ namespace RsCode.Storage
         /// <returns></returns>
         string CreateDownloadUrl(string url, int expireInSeconds = 3600);
 
-   
 
-        
+
+        Task<TokenResult> GetUploadTokenInfoAsync(string key, DateTime expiresTime);
 
 
         Task<UploadResult> UploadAsync();

@@ -48,8 +48,6 @@ namespace RsCode.Domain.Uow
                 }
                 catch (Exception ex)
                 {
-                    db.AbortTransaction();
-
                     if (ex.InnerException != null)
                     {
                         if (ex.InnerException is AppException)
@@ -75,7 +73,8 @@ namespace RsCode.Domain.Uow
                                 log.LogError($"{ex.Message}\n{ex.StackTrace}");
                         }
                     }
-
+                   
+                       db.AbortTransaction();
                     throw ex;
                 }
                 finally
