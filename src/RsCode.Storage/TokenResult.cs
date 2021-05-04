@@ -23,5 +23,7 @@ namespace RsCode.Storage
 
         [JsonPropertyName("upload_url")]
         public string UploadUrl { get; set; }
+        [JsonPropertyName("key")]
+        public string Key { get; set; }
     }
 }

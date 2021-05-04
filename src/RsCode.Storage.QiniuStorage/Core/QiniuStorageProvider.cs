@@ -11,6 +11,8 @@ using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
 using RsCode.Threading;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -21,27 +23,31 @@ namespace RsCode.Storage
     public class QiniuStorageProvider : IStorageProvider
     {
        
-        QiniuOptions options;
+        List<StorageOptions> storageOptions;
         Mac mac;
-      
-        string uploadUrl = "";
-        QiniuHttpClient httpClient;
+        StorageOptions storageOption;
+         QiniuHttpClient httpClient;
         ZoneHelper zoneHelper;
         public QiniuStorageProvider(
-            IOptionsSnapshot<QiniuOptions> _options, 
+            IOptionsSnapshot<List<StorageOptions>> _options, 
             QiniuHttpClient _qiniuHttpClient ,
             ZoneHelper _zoneHelper
             )
         {
             httpClient = _qiniuHttpClient;
-            options = _options.Value;
-            mac = new Mac(options.AccessKey, options.SecretKey);
-            CallContext<Mac>.SetData("qiniu_option",mac);
+            storageOptions = _options.Value; 
             zoneHelper = _zoneHelper;
             
         }
         public string StorageName { get; } = "qiniu";
 
+        public StorageOptions UseBucket(string bucket)
+        {
+            storageOption = storageOptions.FirstOrDefault(c=>c.Bucket==bucket&&c.Name==StorageName);
+            mac = new Mac(storageOption.AccessKey, storageOption.SecretKey);
+            CallContext<Mac>.SetData("qiniu_option", mac);
+            return storageOption;
+        }
         public async Task<(HttpResponseMessage, string)> SendAsync(StorageRequest request)
         {
             CallContext<Mac>.SetData("qiniu_option", mac);
@@ -145,7 +151,7 @@ namespace RsCode.Storage
             //只允许上传指定前缀文件，存在时不覆盖 isPrefixalScope =1
 
             PutPolicy putPolicy = new PutPolicy();
-            putPolicy.Scope =$"{options.Bucket}:{key}";
+            putPolicy.Scope =$"{storageOption.Bucket}:{key}";
             int exprieSeconds=(int)(expiresTime - DateTime.Now).TotalSeconds;
             putPolicy.SetExpires(exprieSeconds);
             putPolicy.isPrefixalScope = 1;
@@ -158,13 +164,14 @@ namespace RsCode.Storage
         public async Task< TokenResult> GetUploadTokenInfoAsync(string key,DateTime expiresTime)
         {
             var token = GetUploadToken(key, expiresTime);
-            var zone = await zoneHelper.QueryZoneAsync(mac, options.Bucket);
+            var zone = await zoneHelper.QueryZoneAsync(mac, storageOption.Bucket);
             var upHost = zone.SrcUpHosts[0];
             TokenResult result = new TokenResult
             { 
                 UploadUrl = $"https://{upHost}",
-                Domain = options.Domain,
-                Token = token
+                Domain = storageOption.Domain,
+                Token = token,
+                Key=key
             };
             return result;
         }

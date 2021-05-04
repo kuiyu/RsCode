@@ -35,6 +35,7 @@ namespace RsCode.Storage.QiniuStorage
 
         public override string GetApiUrl()
         { 
+          
             var zone =new ZoneHelper().QueryZoneAsync(BucketName).GetAwaiter().GetResult();
             string apiUrl = zone.UcHost;
             return $"{apiUrl}/private?bucket={BucketName}&private={Private}";

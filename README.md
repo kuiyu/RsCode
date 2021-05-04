@@ -1,7 +1,10 @@
 # RsCode
-RsCode is .net core platform fast development framework
+.net平台快速开发工具库，助力您的.net开发
 
-How to use ? 
+## 环境：
+.net core3.1 以上
+
+## 安装：
 ```
 PM> Install-Package RsCode -Version 1.5.0
 ```
@@ -11,6 +14,8 @@ asp.net core
 PM> Install-Package RsCode.AspNetCore -Version 1.5.0
 ```
 
-Wiki(https://github.com/kuiyu/RsCode/wiki)
+## 文档：
+[https://rscode.cn](https:/rscode.cn)
 
-![微信公众号](https://res.rscode.cn/logo/weixin.jpg "微信扫码关注软商网络微信公众号")
+
+QQ交流群 <a target="_blank" href="https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt=".net core交流群" title=".net core交流群"></a>

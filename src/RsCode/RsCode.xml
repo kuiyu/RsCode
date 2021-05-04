@@ -265,6 +265,19 @@
             <param name="key"></param>
             <returns></returns>
         </member>
+        <member name="T:System.PropertyValue`1">
+            <summary>
+            属性值
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:System.PropertyValue`1.Get(System.String)">
+            <summary>
+            获取属性值
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="T:RsCode.ChannelContainer`1">
             <summary>
             线程通道容器

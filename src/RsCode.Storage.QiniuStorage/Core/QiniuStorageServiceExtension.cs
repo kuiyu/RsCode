@@ -14,14 +14,15 @@ using RsCode.Storage;
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.CDN;
 using RsCode.Storage.QiniuStorage.Core;
+using System.Collections.Generic;
 
 public static class QiniuStorageServiceExtension
     {
         public static void AddQiniuStorage(this IServiceCollection services, IConfiguration configuration,int ExpireSeconds=600)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<QiniuOptions>();
-            services.Configure<QiniuOptions>(configuration.GetSection("QiniuStorage"));
+            services.AddScoped<List<StorageOptions>>();
+            services.Configure<List<StorageOptions>>(configuration.GetSection("Storage"));
             
             services.AddScoped<IStorageProvider, QiniuStorageProvider>();
 

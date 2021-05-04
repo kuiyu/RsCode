@@ -42,6 +42,8 @@ namespace RsCode.Storage
 
         Task<UploadResult> UploadAsync();
 
+        StorageOptions UseBucket(string bucket);
+
         Task<T> SendAsync<T>(StorageRequest request) where T : StorageResponse;
 
 

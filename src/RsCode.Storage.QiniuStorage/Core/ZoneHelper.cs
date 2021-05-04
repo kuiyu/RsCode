@@ -12,11 +12,11 @@ namespace RsCode.Storage.QiniuStorage.Core
     /// Zone辅助类，查询及配置Zone
     /// </summary>
     public class ZoneHelper
-    {
-         
+    { 
         private static Dictionary<string, Zone> zoneCache = new Dictionary<string, Zone>();
-        private static object rwLock = new object();   
-         
+        private static object rwLock = new object();
+ 
+        
         HttpClient httpClient;
         public ZoneHelper()
         {
@@ -27,7 +27,7 @@ namespace RsCode.Storage.QiniuStorage.Core
              CallContext<Mac>.SetData("qiniu_option",mac);
            return  await QueryZoneAsync(bucket);
         }
-
+        
         /// <summary>
         /// 从uc.qbox.me查询得到回复后，解析出upHost,然后根据upHost确定Zone
         /// </summary>
@@ -37,6 +37,9 @@ namespace RsCode.Storage.QiniuStorage.Core
         {
             Zone zone = null;
             var options = CallContext<Mac>.GetData("qiniu_option");
+            if (options == null)
+                throw new Exception("please first call UseBucket()");
+
             string ak = options.AccessKey;
             if (string.IsNullOrWhiteSpace(ak))
                 throw new Exception("Qiniu AccessKey Not Null");
