@@ -1,4 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿/*
+ * RsCode
+ * 
+ * RsCode is .net core platform rapid development framework
+ * Apache License 2.0
+ * 
+ * 作者：lrj
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+
+using Microsoft.Extensions.Configuration;
 using PetaPoco;
 using RsCode.Threading;
 using System.Collections.Generic;
@@ -6,13 +22,22 @@ using System.Linq;
 
 namespace RsCode.Domain.Uow
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ApplicationDbContext : IApplicationDbContext
     { 
         
         IEnumerable<IDatabase> databases;
         IConfiguration Configuration { get; }
+        /// <summary>
+        /// 当前数据库连接
+        /// </summary>
         public IDatabase Current { get;  set; } 
-
+        /// <summary>
+        /// 数据库连接
+        /// </summary>
+        /// <param name="_databases"></param>
         public ApplicationDbContext(IEnumerable<IDatabase> _databases)
         { 
             databases = _databases;

@@ -188,21 +188,6 @@
             <param name="value">要获取描述信息的枚举值。</param>
             <returns>枚举值的描述信息。</returns>
         </member>
-        <member name="M:System.HttpHelper.HttpGetAsync(System.String,System.Text.Encoding)">
-            <summary>
-            使用Get方法获取字符串结果（没有加入Cookie）
-            </summary>
-            <param name="url"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.HttpHelper.HttpGet(System.String,System.Text.Encoding)">
-            <summary>
-            Http Get 同步方法
-            </summary>
-            <param name="url"></param>
-            <param name="encoding"></param>
-            <returns></returns>
-        </member>
         <member name="M:System.HttpHelper.HttpPostAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.Text.Encoding,System.Int32)">
             <summary>
             POST 异步
@@ -239,6 +224,13 @@
             <param name="postStream"></param>
             <param name="encoding"></param>
             <param name="timeOut"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.HttpHelper.GetUrlParam(System.Object)">
+            <summary>
+            拼接地址栏参数
+            </summary>
+            <param name="obj">含有JsonPropertyName标记属性的对象</param>
             <returns></returns>
         </member>
         <member name="M:System.Text.Json.JsonHelper.JsonSerialize(System.Object)">
@@ -278,11 +270,16 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="T:RsCode.ChannelContainer`1">
+        <member name="T:RsCode.Config.AppConfig">
             <summary>
-            线程通道容器
+            
             </summary>
-            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:RsCode.Config.AppConfig.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="config"></param>
         </member>
         <member name="M:RsCode.Config.AppConfig.Exists(System.String,System.String)">
             <summary>
@@ -298,14 +295,6 @@
             </summary>
         </member>
         <member name="M:RsCode.Config.AppSettings.Exists(System.String,System.String)">
-            <summary>
-            检查节点是否存在
-            </summary>
-            <param name="key"></param>
-            <param name="JsonFilePath"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.Config.AppSettings`1.Exists(System.String,System.String)">
             <summary>
             检查节点是否存在
             </summary>
@@ -483,6 +472,22 @@
             实体
             </summary>
         </member>
+        <member name="T:RsCode.Domain.Uow.ApplicationDbContext">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RsCode.Domain.Uow.ApplicationDbContext.Current">
+            <summary>
+            当前数据库连接
+            </summary>
+        </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor(System.Collections.Generic.IEnumerable{PetaPoco.IDatabase})">
+            <summary>
+            数据库连接
+            </summary>
+            <param name="_databases"></param>
+        </member>
         <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetDatabase(System.String)">
             <summary>
             指定数据库连接字符串key,获取数据库配置
@@ -519,32 +524,72 @@
             <param name="services"></param>
             <param name="connString">数据库连接字符串</param>
         </member>
-        <member name="T:RsCode.Exceptions.ReturnInfo">
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{PetaPoco.Database})">
+            <summary>
+            添加数据库
+            </summary>
+            <param name="services"></param>
+            <param name="func"></param>
+        </member>
+        <member name="T:RsCode.RsCodeMapper">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:RsCode.AspNetCore.AppException">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RsCode.AspNetCore.AppException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:RsCode.AspNetCore.AppException.#ctor(System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="status"></param>
+            <param name="msg"></param>
+        </member>
+        <member name="P:RsCode.AspNetCore.AppException.Status">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RsCode.AspNetCore.AppException.Message">
+            <summary>
+            响应消息
+            </summary>
+        </member>
+        <member name="T:RsCode.ReturnInfo">
             <summary>
             响应客户端的信息
             </summary>
         </member>
-        <member name="P:RsCode.Exceptions.ReturnInfo.Success">
+        <member name="P:RsCode.ReturnInfo.Success">
             <summary>
             操作成功状态
             </summary>
         </member>
-        <member name="P:RsCode.Exceptions.ReturnInfo.code">
+        <member name="P:RsCode.ReturnInfo.code">
             <summary>
             对应操作代码
             </summary>
         </member>
-        <member name="P:RsCode.Exceptions.ReturnInfo.Msg">
+        <member name="P:RsCode.ReturnInfo.Msg">
             <summary>
             服务器返回的信息
             </summary>
         </member>
-        <member name="P:RsCode.Exceptions.ReturnInfo.TargetUrl">
+        <member name="P:RsCode.ReturnInfo.TargetUrl">
             <summary>
             这提供了一种服务器根据需要 将客户端重定向到另一个url的方法
             </summary>
         </member>
-        <member name="P:RsCode.Exceptions.ReturnInfo.Result">
+        <member name="P:RsCode.ReturnInfo.Result">
             <summary>
             服务器返回的数据对像
             </summary>
@@ -611,6 +656,27 @@
             <param name="CharList">All char want to generate.</param>
             <param name="CodeLength">Code lenght.</param>
         </member>
+        <member name="T:RsCode.Helper.XmlHelper">
+            <summary>
+            xml helper
+            </summary>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.DeserializeFromXML(System.Type,System.String)">
+            <summary>
+            xml转对象
+            </summary>
+            <param name="type"></param>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.SerializeToXml(System.Object,System.String)">
+            <summary>
+            xml序列化
+            </summary>
+            <param name="obj"></param>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
         <member name="M:RsCode.SecureHelper.AESDecrypt(System.String,System.String)">
             <summary>
             解密
@@ -627,26 +693,85 @@
             <param name="encryptKey">加密使用的key</param>
             <returns></returns>
         </member>
-        <member name="T:RsCode.Threading.CallContext`1">
+        <member name="M:RsCode.VerifyCodeHelper.CreateNumberVerifyCode(System.Int32)">
+            <summary>
+            1.数字验证码
+            </summary>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.VerifyCodeHelper.CreateAbcVerifyCode(System.Int32)">
+            <summary>
+            2.字母验证码
+            </summary>
+            <param name="length">字符长度</param>
+            <returns>验证码字符</returns>
+        </member>
+        <member name="M:RsCode.VerifyCodeHelper.CreateMixVerifyCode(System.Int32)">
+            <summary>
+            3.混合验证码
+            </summary>
+            <param name="length">字符长度</param>
+            <returns>验证码字符</returns>
+        </member>
+        <member name="M:RsCode.VerifyCodeHelper.CreateVerifyCodeAsync(RsCode.VerifyCodeHelper.VerifyCodeType)">
+            <summary>
+            产生验证码（随机产生4-6位）
+            </summary>
+            <param name="type">验证码类型：数字，字符，符合</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.VerifyCodeHelper.CreateBitmapByImgVerifyCode(System.String,System.Int32,System.Int32)">
+            <summary>
+            验证码图片 => Bitmap
+            </summary>
+            <param name="verifyCode">验证码</param>
+            <param name="width">宽</param>
+            <param name="height">高</param>
+            <returns>Bitmap</returns>
+        </member>
+        <member name="M:RsCode.VerifyCodeHelper.CreateByteByImgVerifyCode(System.String,System.Int32,System.Int32)">
+            <summary>
+            验证码图片 => byte[]
+            </summary>
+            <param name="verifyCode">验证码</param>
+            <param name="width">宽</param>
+            <param name="height">高</param>
+            <returns>byte[]</returns>
+        </member>
+        <member name="T:RsCode.CallContext`1">
             <summary>
             可用于跨线程保存数据
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:RsCode.Threading.CallContext`1.SetData(System.String,`0)">
+        <member name="M:RsCode.CallContext`1.SetData(System.String,`0)">
             <summary>
             Stores a given object and associates it with the specified name.
             </summary>
             <param name="name">The name with which to associate the new item in the call context.</param>
             <param name="data">The object to store in the call context.</param>
         </member>
-        <member name="M:RsCode.Threading.CallContext`1.GetData(System.String)">
+        <member name="M:RsCode.CallContext`1.GetData(System.String)">
             <summary>
             Retrieves an object with the specified name from the <see cref="!:CallContext"/>.
             </summary>
             <typeparam name="T">The type of the data being retrieved. Must match the type used when the <paramref name="name"/> was set via <see cref="!:SetData&lt;T&gt;(string, T)"/>.</typeparam>
             <param name="name">The name of the item in the call context.</param>
             <returns>The object in the call context associated with the specified name, or a default value for <typeparamref name="T"/> if none is found.</returns>
+        </member>
+        <member name="T:RsCode.ChannelHelper`1">
+            <summary>
+            线程通道容器
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:RsCode.ChannelHelper`1.GetChannel(System.Int32)">
+            <summary>
+            获取通道
+            </summary>
+            <param name="capacity">通道可存储的最大条目数。</param>
+            <returns></returns>
         </member>
         <member name="T:Rswl.RsaHelper.RsaKeyConvert">
             <summary>
@@ -1780,6 +1905,29 @@
             <summary>
             The style attribute is empty
             </summary>
+        </member>
+        <member name="T:WorkQueue">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:WorkQueue.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:WorkQueue.#ctor(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="thread"></param>
+        </member>
+        <member name="M:WorkQueue.#ctor(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="thread"></param>
+            <param name="capacity"></param>
         </member>
     </members>
 </doc>

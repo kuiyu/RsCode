@@ -5,40 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace System
 {
     public static class HttpHelper
-    {
-        #region get
-        /// <summary>
-        /// 使用Get方法获取字符串结果（没有加入Cookie）
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static async Task<string> HttpGetAsync(string url, Encoding encoding = null)
-        {
-            HttpClient httpClient = new HttpClient();
-            var data = await httpClient.GetByteArrayAsync(url);
-            var ret = encoding.GetString(data);
-            return ret;
-        }
-        /// <summary>
-        /// Http Get 同步方法
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
-        public static string HttpGet(string url, Encoding encoding = null)
-        {
-            HttpClient httpClient = new HttpClient();
-            var t = httpClient.GetByteArrayAsync(url);
-            t.Wait();
-            var ret = encoding.GetString(t.Result);
-            return ret;
-        }
-        #endregion
+    { 
 
         #region post
         /// <summary>
@@ -204,6 +177,29 @@ namespace System
                 ip = context.Connection.RemoteIpAddress.ToString();
             }
             return ip;
+        }
+        /// <summary>
+        /// 拼接地址栏参数
+        /// </summary>
+        /// <param name="obj">含有JsonPropertyName标记属性的对象</param>
+        /// <returns></returns>
+        public static string GetUrlParam(object obj)
+        {
+            var s = "";
+            var properties = obj.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            foreach (var propertyInfo in properties)
+            {
+                var value = propertyInfo.GetValue(obj, null);
+                var attr = propertyInfo.GetCustomAttributes(false);
+                if (value == null || attr.Length == 0)
+                    continue;
+
+                value = value.ToString();
+                var attrName = (JsonPropertyNameAttribute)attr.First();
+                string name = attrName.Name;
+                s += s == "" ? $"{name}={value}" : $"&{name}={value}";
+            }
+            return s;
         }
     }
 

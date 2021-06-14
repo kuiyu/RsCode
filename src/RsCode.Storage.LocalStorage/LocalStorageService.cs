@@ -126,5 +126,15 @@ namespace RsCode.Storage.LocalStorage
         {
             throw new NotImplementedException();
         }
+
+        public Task<TokenResult> GetUploadTokenInfoAsync(string key, DateTime expiresTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StorageOptions UseBucket(string bucket)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -17,7 +17,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace RsCode.Threading
+namespace RsCode
 {
     /// <summary>
     /// 可用于跨线程保存数据

@@ -6,14 +6,19 @@ using System.IO;
 using System.Text;
 
 namespace RsCode.Config
-{
+{/// <summary>
+/// 
+/// </summary>
     public class AppConfig
     {
         string root;
         string jsonFilePath;
         IConfiguration config;
         static JObject CurrentJsonObject;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="config"></param>
         public AppConfig(IConfiguration config)
         {
             root = AppContext.BaseDirectory;

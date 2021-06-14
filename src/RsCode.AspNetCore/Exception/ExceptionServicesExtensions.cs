@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using RsCode.Exceptions;
 using System.Linq;
 
 namespace RsCode.AspNetCore

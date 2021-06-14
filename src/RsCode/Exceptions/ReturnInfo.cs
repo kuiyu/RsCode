@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RsCode.Exceptions
+namespace RsCode
 {
     /// <summary>
     /// 响应客户端的信息

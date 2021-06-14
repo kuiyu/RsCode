@@ -9,7 +9,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using RsCode.Exceptions;
+using RsCode;
 using System;
 using System.Net;
 using System.Text.Json;
@@ -103,4 +103,6 @@ namespace RsCode.AspNetCore
 
         }
     }
+
+   
 }

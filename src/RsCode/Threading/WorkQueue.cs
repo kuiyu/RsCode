@@ -2,14 +2,28 @@
 using System.Collections.Generic;
  
 using System.Threading;
-
+/// <summary>
+/// 
+/// </summary>
 public class WorkQueue : WorkQueue<Action>
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public WorkQueue() : this(16, -1) { }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="thread"></param>
     public WorkQueue(int thread)
         : this(thread, -1)
     {
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="thread"></param>
+    /// <param name="capacity"></param>
     public WorkQueue(int thread, int capacity)
     {
         base.Thread = thread;

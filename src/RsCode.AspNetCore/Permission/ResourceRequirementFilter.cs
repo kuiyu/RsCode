@@ -14,7 +14,7 @@ namespace RsCode.AspNetCore.Permission
             data = _data;
         }
 
-        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+        public  Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             /*
              * 多个RsAuthorize之间是并且的关系
@@ -63,7 +63,7 @@ namespace RsCode.AspNetCore.Permission
             //    var r = await authorizationService.AuthorizeAsync(User, data, data.Policy);
             //}
 
-
+            return Task.CompletedTask;
         }
 
 

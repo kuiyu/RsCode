@@ -8,10 +8,11 @@ namespace RsCode.AspNetCore.Permission
 {
     public class ResourceAuthorizationHandler : AuthorizationHandler<ResourceRequirement, ResourceRequirementData>
     {
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceRequirement requirement, ResourceRequirementData resource)
+        protected override  Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceRequirement requirement, ResourceRequirementData resource)
         {
             //if
-            context.Succeed(requirement); 
+            context.Succeed(requirement);
+            return Task.CompletedTask;
         }
     }
 

@@ -4,12 +4,17 @@ using System.Xml.Serialization;
 
 namespace RsCode.Helper
 {
+	/// <summary>
+	/// xml helper
+	/// </summary>
 	public class XmlHelper
 	{
-		public XmlHelper()
-		{
-		}
-
+		/// <summary>
+		/// xml转对象
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="filePath"></param>
+		/// <returns></returns>
 		public static object DeserializeFromXML(Type type, string filePath)
 		{
 			object obj;
@@ -35,7 +40,12 @@ namespace RsCode.Helper
 			}
 			return obj;
 		}
-
+		/// <summary>
+		/// xml序列化
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="filePath"></param>
+		/// <returns></returns>
 		public static bool SerializeToXml(object obj, string filePath)
 		{
 			bool flag = false;

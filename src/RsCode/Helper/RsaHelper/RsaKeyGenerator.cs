@@ -1,12 +1,20 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿/*
+ * 项目：.net开发基础工具类
+ * 作者：河南软商网络科技有限公司
+ * * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Rswl.RsaHelper

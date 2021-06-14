@@ -2,10 +2,11 @@
 using AspectCore.DynamicProxy;
 using Microsoft.Extensions.Logging;
 using RsCode.AspNetCore;
+using RsCode.Domain.Uow;
 using System;
 using System.Threading.Tasks;
 
-namespace RsCode.Domain.Uow
+namespace RsCode
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Interface)]
     public sealed class UnitOfWorkAttribute : AbstractInterceptorAttribute

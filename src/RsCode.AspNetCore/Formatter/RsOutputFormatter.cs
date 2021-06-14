@@ -12,7 +12,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
-using RsCode.Exceptions;
 using System;
 using System.Text;
 using System.Text.Json;
