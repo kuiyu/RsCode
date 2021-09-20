@@ -188,51 +188,6 @@
             <param name="value">要获取描述信息的枚举值。</param>
             <returns>枚举值的描述信息。</returns>
         </member>
-        <member name="M:System.HttpHelper.HttpPostAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.Text.Encoding,System.Int32)">
-            <summary>
-            POST 异步
-            </summary>
-            <param name="url"></param>
-            <param name="postStream"></param>
-            <param name="encoding"></param>
-            <param name="timeOut"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.HttpHelper.HttpPost(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.Text.Encoding,System.Int32)">
-            <summary>
-            POST 同步
-            </summary>
-            <param name="url"></param>
-            <param name="postStream"></param>
-            <param name="encoding"></param>
-            <param name="timeOut"></param>
-            <returns></returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:System.HttpHelper.GetQueryString(System.Collections.Generic.Dictionary{System.String,System.String})" -->
-        <member name="M:System.HttpHelper.FillFormDataStream(System.Collections.Generic.Dictionary{System.String,System.String},System.IO.Stream)">
-            <summary>
-            填充表单信息的Stream
-            </summary>
-            <param name="formData"></param>
-            <param name="stream"></param>
-        </member>
-        <member name="M:System.HttpHelper.PostAsync(System.String,System.HttpHelper.DataFrom,System.Collections.Generic.Dictionary{System.String,System.String},System.Text.Encoding,System.Int32)">
-            <summary>
-            POST 异步
-            </summary>
-            <param name="url"></param>
-            <param name="postStream"></param>
-            <param name="encoding"></param>
-            <param name="timeOut"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.HttpHelper.GetUrlParam(System.Object)">
-            <summary>
-            拼接地址栏参数
-            </summary>
-            <param name="obj">含有JsonPropertyName标记属性的对象</param>
-            <returns></returns>
-        </member>
         <member name="M:System.Text.Json.JsonHelper.JsonSerialize(System.Object)">
             <summary>
             使用json格式序列化对象
@@ -495,6 +450,22 @@
             <param name="connName">默认值为DefaultConnection</param>
             <returns></returns>
         </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.InsertAsync``1(``0)">
+            <summary>
+            新增记录,返回主键值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.SaveAsync``1(``0)">
+            <summary>
+            保存记录
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
         <member name="M:RsCode.Domain.Uow.OneToManyRelator`2.#ctor(System.String,System.String)">
             <summary>
             
@@ -535,6 +506,38 @@
             <summary>
             
             </summary>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.GetAsync``1(System.Object)">
+            <summary>
+            获取单条记录
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="primaryKeyValue">主键值</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.InsertAsync``1(``0)">
+            <summary>
+            新增记录
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns>返回新增记录主键值</returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.SaveAsync``1(``0)">
+            <summary>
+            保存记录
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.DeleteAsync``1(System.Object)">
+            <summary>
+            删除记录
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="primaryKeyValue"></param>
+            <returns>返回删除记录条数</returns>
         </member>
         <member name="T:RsCode.AspNetCore.AppException">
             <summary>
@@ -675,6 +678,19 @@
             </summary>
             <param name="obj"></param>
             <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="T:RsCode.HttpHelper">
+            <summary>
+            针对RsCode WebApi响应做的封装
+            </summary>
+        </member>
+        <member name="M:RsCode.HttpHelper.GetUrlParamValue(System.String,System.String)">
+            <summary>
+            获取地址栏参数值
+            </summary>
+            <param name="url"></param>
+            <param name="urlParamName"></param>
             <returns></returns>
         </member>
         <member name="M:RsCode.SecureHelper.AESDecrypt(System.String,System.String)">

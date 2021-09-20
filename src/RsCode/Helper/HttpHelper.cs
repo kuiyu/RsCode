@@ -1,207 +1,233 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿/*
+ * RsCode
+ * 
+ * RsCode is .net core platform rapid development framework
+ * Apache License 2.0
+ * 
+ * 作者：lrj
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+
+
+using RsCode.AspNetCore;
+using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Web;
 
-namespace System
+namespace RsCode
 {
-    public static class HttpHelper
-    { 
-
-        #region post
-        /// <summary>
-        /// POST 异步
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="postStream"></param>
-        /// <param name="encoding"></param>
-        /// <param name="timeOut"></param>
-        /// <returns></returns>
-        public static async Task<string> HttpPostAsync(string url, Dictionary<string, string> formData = null, Encoding encoding = null, int timeOut = 10000)
+    /// <summary>
+    /// 针对RsCode WebApi响应做的封装
+    /// </summary>
+    public  class HttpHelper
+    {
+        HttpClient HttpClient { get; }
+        public HttpHelper(HttpClient client)
         {
-
-            HttpClientHandler handler = new HttpClientHandler();
-
-            HttpClient client = new HttpClient(handler);
-            MemoryStream ms = new MemoryStream();
-            formData.FillFormDataStream(ms);//填充formData
-            HttpContent hc = new StreamContent(ms);
-
-
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml", 0.9));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/webp"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.8));
-            hc.Headers.Add("UserAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-            hc.Headers.Add("Timeout", timeOut.ToString());
-            hc.Headers.Add("KeepAlive", "true");
-
-            var r = await client.PostAsync(url, hc);
-            byte[] tmp = await r.Content.ReadAsByteArrayAsync();
-
-            return encoding.GetString(tmp);
+            HttpClient = client;
         }
 
-        /// <summary>
-        /// POST 同步
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="postStream"></param>
-        /// <param name="encoding"></param>
-        /// <param name="timeOut"></param>
-        /// <returns></returns>
-        public static string HttpPost(string url, Dictionary<string, string> formData = null, Encoding encoding = null, int timeOut = 10000)
+
+        public virtual async Task<T> GetAsync<T>(string url,string accessToken="")
+          where T : class
         {
-            HttpClientHandler handler = new HttpClientHandler();
-
-            HttpClient client = new HttpClient(handler);
-            MemoryStream ms = new MemoryStream();
-            formData.FillFormDataStream(ms);//填充formData
-            HttpContent hc = new StreamContent(ms);
-
-
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml", 0.9));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/webp"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.8));
-            hc.Headers.Add("UserAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-            hc.Headers.Add("Timeout", timeOut.ToString());
-            hc.Headers.Add("KeepAlive", "true");
-
-            var t = client.PostAsync(url, hc);
-            t.Wait();
-            var t2 = t.Result.Content.ReadAsByteArrayAsync();
-            return encoding.GetString(t2.Result);
-        }
-        /// <summary>
-        /// 组装QueryString的方法
-        /// 参数之间用&连接，首位没有符号，如：a=1&b=2&c=3
-        /// </summary>
-        /// <param name="formData"></param>
-        /// <returns></returns>
-        public static string GetQueryString(this Dictionary<string, string> formData)
-        {
-            if (formData == null || formData.Count == 0)
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            if (!string.IsNullOrWhiteSpace(accessToken))
             {
-                return "";
+                httpRequestMessage.Headers.Add("Authorization", $"Bearer {accessToken}");
             }
 
-            StringBuilder sb = new StringBuilder();
-
-            var i = 0;
-            foreach (var kv in formData)
+            var response = await HttpClient.SendAsync(httpRequestMessage);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                i++;
-                sb.AppendFormat("{0}={1}", kv.Key, kv.Value);
-                if (i < formData.Count)
+                throw new AppException(401,"无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string s = await response.Content.ReadAsStringAsync();
+
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                var result = root.GetProperty("result");
+
+                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+                return data;
+            }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
                 {
-                    sb.Append("&");
+                    throw new AppException(returnInfo.Msg);
                 }
+                return default(T);
+            }
+        }
+
+
+        public virtual async Task<T> GetItemsAsync<T>(string url,string accessToken="")
+           where T : class
+        {
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                httpRequestMessage.Headers.Add("Authorization", $"Bearer {accessToken}");
+            }
+            var response = await HttpClient.SendAsync(httpRequestMessage); 
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AppException(401,"无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string s = await response.Content.ReadAsStringAsync();
+                var ret = JsonSerializer.Deserialize<ReturnInfo>(s);
+
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                var result = root.GetProperty("result");
+                var items = result.GetProperty("items");
+                var ls = items.EnumerateArray();
+                var data = JsonSerializer.Deserialize<T>(ls.JsonSerialize(), options); 
+
+                return data;
+            }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
+                {
+                    throw new AppException(returnInfo.Msg);
+                }
+                return default(T);
             }
 
-            return sb.ToString();
         }
-        /// <summary>
-        /// 填充表单信息的Stream
-        /// </summary>
-        /// <param name="formData"></param>
-        /// <param name="stream"></param>
-        public static void FillFormDataStream(this Dictionary<string, string> formData, Stream stream)
+        public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent,string accessToken="")
+             where T : class
         {
-            string dataString = GetQueryString(formData);
-            var formDataBytes = formData == null ? new byte[0] : Encoding.UTF8.GetBytes(dataString);
-            stream.Write(formDataBytes, 0, formDataBytes.Length);
-            stream.Seek(0, SeekOrigin.Begin);//设置指针读取位置
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = httpContent;
+            if(!string.IsNullOrWhiteSpace(accessToken))
+            {
+                request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            }
+
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AppException(401,"无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    string s = await response.Content.ReadAsStringAsync();
+
+                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                    JsonDocument doc = JsonDocument.Parse(s);
+                    var root = doc.RootElement;
+                    var result = root.GetProperty("result");
+                    var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+
+                    return data;
+                }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
+                {
+                    throw new AppException(returnInfo.Msg);
+                }
+                return default(T);
+            }
+
+
+
+        }
+        public virtual async Task<T> PostItemsAsync<T>(string url, HttpContent httpContent,string accessToken="")
+            where T : class
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = httpContent;
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            }
+            var response = await  HttpClient.SendAsync(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AppException(401,"无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string s = await response.Content.ReadAsStringAsync();
+
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                var result = root.GetProperty("result");
+                var items = result.GetProperty("items");
+                var ls = items.EnumerateArray();
+                var data = JsonSerializer.Deserialize<T>(ls.JsonSerialize(), options);
+
+                return data;
+            }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
+                {
+                    throw new AppException(returnInfo.Msg);
+                }
+                return default(T);
+            }
         }
 
         /// <summary>
-        /// POST 异步
+        /// 获取地址栏参数值
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="postStream"></param>
-        /// <param name="encoding"></param>
-        /// <param name="timeOut"></param>
+        /// <param name="urlParamName"></param>
         /// <returns></returns>
-        public static async Task<string> PostAsync(string url,DataFrom from, Dictionary<string, string> formData = null, Encoding encoding = null, int timeOut = 10000)
+        public string GetUrlParamValue(string url,string urlParamName)
         {
-
-            HttpClientHandler handler = new HttpClientHandler();
-
-            HttpClient client = new HttpClient(handler);
-            MemoryStream ms = new MemoryStream();
-
-            var content = new FormUrlEncodedContent(formData); 
-            HttpContent hc = content; //body
-            //form
-            if(from==DataFrom.Form)
-            { 
-                formData.FillFormDataStream(ms);//填充formData
-                 hc = new StreamContent(ms);
-            }
-
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml", 0.9));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/webp"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.8));
-            hc.Headers.Add("UserAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-            hc.Headers.Add("Timeout", timeOut.ToString());
-            hc.Headers.Add("KeepAlive", "true");
-
-            var r = await client.PostAsync(url, hc);
-            byte[] tmp = await r.Content.ReadAsByteArrayAsync();
-
-            return encoding.GetString(tmp);
-        }
-        #endregion
-
-        public enum DataFrom
-        {
-            Url=3,
-            Body=2,
-            Form=3
+            string query  = new Uri(url).Query;
+            var p=HttpUtility.ParseQueryString(query);
+            return p.Get(urlParamName);
         }
 
-        public static string GetIp(this HttpContext context)
-        {
-            var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            if (string.IsNullOrEmpty(ip))
-            {
-                ip = context.Connection.RemoteIpAddress.ToString();
-            }
-            return ip;
-        }
-        /// <summary>
-        /// 拼接地址栏参数
-        /// </summary>
-        /// <param name="obj">含有JsonPropertyName标记属性的对象</param>
-        /// <returns></returns>
-        public static string GetUrlParam(object obj)
-        {
-            var s = "";
-            var properties = obj.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            foreach (var propertyInfo in properties)
-            {
-                var value = propertyInfo.GetValue(obj, null);
-                var attr = propertyInfo.GetCustomAttributes(false);
-                if (value == null || attr.Length == 0)
-                    continue;
+        
+    }
 
-                value = value.ToString();
-                var attrName = (JsonPropertyNameAttribute)attr.First();
-                string name = attrName.Name;
-                s += s == "" ? $"{name}={value}" : $"&{name}={value}";
-            }
-            return s;
+    public class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
+    {
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return DateTime.Parse(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString());
         }
     }
 
-    
 }

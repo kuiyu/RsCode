@@ -29,7 +29,20 @@ namespace RsCode.AspNetCore
             requestDelegate = rd;
             log = _log;
         }
-
+        void WriteInfoLog(string msg)
+        {
+            if(log!=null)
+            {
+                log.LogInformation(msg);
+            }
+        }
+        void WriteErrorLog(string msg)
+        {
+            if (log != null)
+            {
+                log.LogError(msg);
+            }
+        }
         public async Task Invoke(HttpContext context)
         {
             try
@@ -60,7 +73,8 @@ namespace RsCode.AspNetCore
             if (e is UnauthorizedAccessException)
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             else if (e is Exception)
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.StatusCode = 500;
+            //context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
 
 
@@ -68,14 +82,15 @@ namespace RsCode.AspNetCore
             if (e is AppException)
             {
                 appException = e as AppException;
+                
             }else
             {
-                log.LogError($"{e.Message}\n{e.StackTrace}");
+                WriteErrorLog($"{e.Message}\n{e.StackTrace}"); 
             }
              
             if (appException != null)
-            {
-                
+            { 
+                WriteInfoLog(appException.Message);
                 context.Response.ContentType = "application/json";
                 ReturnInfo returnInfo = new ReturnInfo()
                 {
@@ -98,6 +113,7 @@ namespace RsCode.AspNetCore
             }
             else
             {
+                WriteErrorLog(e.Message);
                 await context.Response.WriteAsync("应用程序错误，"+e.Message).ConfigureAwait(false);
             }
 

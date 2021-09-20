@@ -15,9 +15,7 @@
  */
 using PetaPoco;
 using PetaPoco.Core;
-using RsCode.DI;
 using RsCode.Domain.Aggregate;
-using RsCode.Threading;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,12 +29,10 @@ namespace RsCode.Domain.Repositories
         
     }
 
-   
-
     public abstract class Repository<TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>
        where TEntity : Entity<TPrimaryKey>, IAggregateRoot
     {
-
+        IApplicationDbContext dbContext;
         public IDatabase db { get;private set; }
         public virtual async Task<TPrimaryKey> InsertAsync(TEntity poco)
         {
@@ -50,6 +46,10 @@ namespace RsCode.Domain.Repositories
            
         }
 
+        public virtual async Task SaveAsync<TEntity>(TEntity entity)
+        {
+            
+        }
 
         string GetPrimaryKey()
         {
@@ -65,4 +65,7 @@ namespace RsCode.Domain.Repositories
         
         
     }
+
+
+     
 }

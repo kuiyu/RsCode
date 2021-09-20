@@ -16,9 +16,10 @@
 
 using Microsoft.Extensions.Configuration;
 using PetaPoco;
-using RsCode.Threading;
+using PetaPoco.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RsCode.Domain.Uow
 {
@@ -73,6 +74,57 @@ namespace RsCode.Domain.Uow
             return db;
         }
 
-       
+
+        public virtual async Task<T>GetAsync<T>(object primaryKeyValue)
+        {
+            var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
+            string key = pd.TableInfo.PrimaryKey; 
+            string sql = $"where {key}={primaryKeyValue}";
+            return await Current.FirstOrDefaultAsync<T>(sql); 
+        }
+
+        public virtual async Task<Page<T>>GetPageAsync<T>(int page,int rows)
+        {
+            return await Current.PageAsync<T>(page, rows);
+        }
+
+        /// <summary>
+        /// 新增记录,返回主键值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public virtual async Task<object> InsertAsync<T>(T t)
+        {
+           return await Current.InsertAsync(t); 
+        }
+        /// <summary>
+        /// 保存记录
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public virtual async Task SaveAsync<T>(T t)
+        {
+            await Current.SaveAsync(t); 
+        }
+
+        public virtual async Task<int> DeleteAsync<T>(object primaryKeyValue)
+        {
+            var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
+            string key = pd.TableInfo.PrimaryKey;
+            string sql = $"where {key}={primaryKeyValue}";
+            return await Current.DeleteAsync<T>(sql);
+        }
+
+
+
+        //string GetPrimaryKeyValue()
+        //{
+        //    var pkAttr = typeof(TEntity).GetCustomAttributes(typeof(PrimaryKeyAttribute), true).FirstOrDefault() as PrimaryKeyAttribute;
+        //    return pkAttr?.Value;
+        //}
+
+
     }
 }
