@@ -1,13 +1,28 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿/*
+ * RsCode
+ * 
+ * RsCode is .net core platform rapid development framework
+ * Apache License 2.0
+ * 
+ * 作者：lrj
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using RsCode.Config;
+using RsCode.AspNetCore.Jwt;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace RsCode.AspNetCore.Jwt
+namespace RsCode.AspNetCore
 {
     public class JwtHelper
     {
@@ -70,7 +85,21 @@ namespace RsCode.AspNetCore.Jwt
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         } 
-    }
+        
+        public static  IEnumerable<Claim>GetClaims(string accessToken)
+        {
+            try
+            {
+                JwtSecurityToken encodeToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+                var claims = encodeToken.Payload.Claims;
+                return claims;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
-    
+       
+    }
 }
