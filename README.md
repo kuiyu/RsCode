@@ -52,18 +52,18 @@
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 1.5.1
+  $ dotnet add package RsCode --version 1.5.3
   ```
 
 - asp.net core项目引用:
 
   ```
-  Install-Package RsCode.AspNetCore -Version 1.5.1
+  Install-Package RsCode.AspNetCore -Version 1.5.3
   ```
 
   > 推荐使用 Visual Studio 2019 开发。
 
-## 🔗 链接
+## 🔗 文档链接
 
 - [文档主页](https://rscode.cn)
 - [微软官方教程](https://docs.microsoft.com/zh-cn/aspnet/core/?view=aspnetcore-5.0)
@@ -80,13 +80,11 @@
 
 如果您在使用的过程中碰到问题，可以通过以下途径寻求帮助，同时我们也鼓励资深用户通过下面的途径给新人提供帮助。
 - [gitee](https://gitee.com/kuiyu/RsCode/issues)
-- [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
 
-技术人互动群  
-聊技术，聊赚钱，传播技术,分享经验
-- 
+
+- 技术人互动群(微信)  
   <img src="https://www.hnrswl.com/res/static/img/tq.png" width="300" alt="技术赚钱群">
-
+- [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
 
 ## ☀️ 授权协议
 
