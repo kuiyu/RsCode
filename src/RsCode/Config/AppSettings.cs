@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace RsCode.Config
+namespace RsCode
 {
 
 
@@ -37,11 +37,11 @@ namespace RsCode.Config
         static IConfiguration config;
         static JObject CurrentJsonObject; 
         
-        public static string Get(string Key, string JsonFilePath = "appsettings.json")
+        public static string Get(string key, string JsonFilePath = "appsettings.json")
         {
             
                 SetJsonFile(JsonFilePath);
-            return config.GetValue<string>(Key);
+            return config.GetValue<string>(key);
         }
 
         public static T GetValue<T>(string Key, string JsonFilePath = "appsettings.json")
@@ -49,9 +49,9 @@ namespace RsCode.Config
            return  GetSection(Key,JsonFilePath).Get<T>(); 
         }
 
-        public static T GetValue<T>( string JsonFilePath = "appsettings.json")
+        public static T GetAllValue<T>(string JsonFilePath = "appsettings.json")
         {
-            return GetSection("").Get<T>(); 
+            return GetSection("").Get<T>();
         }
 
         public static IConfigurationSection GetSection(string key, string JsonFilePath = "appsettings.json")
@@ -74,7 +74,7 @@ namespace RsCode.Config
             return GetSection(key, JsonFilePath).Get<T>();
         }
 
-        public static T GetSection<T>(string JsonFilePath = "appsettings.json")
+        public static T GetAllSection<T>(string JsonFilePath = "appsettings.json")
         {
             SetJsonFile(JsonFilePath);
             return config.Get<T>();

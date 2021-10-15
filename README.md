@@ -82,9 +82,10 @@
 - [gitee](https://gitee.com/kuiyu/RsCode/issues)
 - [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
 
-
+技术人互动群  
+聊技术，聊赚钱，传播技术,分享经验
 - 
-  <img src="https://www.hnrswl.com/res/static/img/erweima.jpg" width="300" alt="官方微信">
+  <img src="https://www.hnrswl.com/res/static/img/tq.png" width="300" alt="技术赚钱群">
 
 
 ## ☀️ 授权协议

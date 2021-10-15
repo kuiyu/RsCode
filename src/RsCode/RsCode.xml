@@ -244,12 +244,12 @@
             <param name="JsonFilePath"></param>
             <returns></returns>
         </member>
-        <member name="T:RsCode.Config.AppSettings">
+        <member name="T:RsCode.AppSettings">
             <summary>
             .netcore json config
             </summary>
         </member>
-        <member name="M:RsCode.Config.AppSettings.Exists(System.String,System.String)">
+        <member name="M:RsCode.AppSettings.Exists(System.String,System.String)">
             <summary>
             检查节点是否存在
             </summary>
@@ -422,10 +422,46 @@
             <param name="services"></param>
             <param name="assemblyName">程序集名称</param>
         </member>
-        <member name="T:RsCode.Domain.Aggregate.IEntity">
+        <member name="T:RsCode.Domain.IEntity">
             <summary>
-            实体
+            实体类
             </summary>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`2.Insert(`0)">
+            <summary>
+            增加记录
+            </summary>
+            <param name="poco"></param>
+            <returns>自动分配新记录的主键，对于非自动递增表为空。</returns>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`2.InsertAsync(System.Threading.CancellationToken,`0)">
+            <summary>
+            增加记录
+            </summary>
+            <param name="cancellationToken"></param>
+            <param name="poco">自动分配新记录的主键，对于非自动递增表为空。</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`2.Update(`0)">
+            <summary>
+            
+            </summary>
+            <param name="poco"></param>
+            <returns>受影响的行数</returns>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`2.UpdateAsync(`0)">
+            <summary>
+            
+            </summary>
+            <param name="poco"></param>
+            <returns>受影响的行数</returns>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`2.Delete(`0)">
+            <summary>
+                Performs an SQL Delete
+            </summary>
+            <param name="poco">The POCO object specifying the table name and primary key value of the row to be deleted</param>
+            <returns>受影响的行数</returns>
         </member>
         <member name="T:RsCode.Domain.Uow.ApplicationDbContext">
             <summary>
@@ -629,36 +665,6 @@
             </summary>
             <returns>ID</returns>
         </member>
-        <member name="M:RsCode.Helper.RandomHelper.RandAmount(System.Double,System.Int32)">
-            <summary>
-            正态随机分配额度
-            </summary>
-            <param name="totalAmount">要分配的额度</param>
-            <param name="count">总份数</param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.Helper.RandomHelper.GenerateCheckCodeNum(System.Int32)">
-            <summary>
-            Generates the check code with unique number.
-            </summary>
-            <returns>The check code number.</returns>
-            <param name="codeCount">Code count. Max 10</param>
-        </member>
-        <member name="M:RsCode.Helper.RandomHelper.GenerateCheckCode(System.Int32)">
-            <summary>
-            随机生成字符串（数字和字母混和）
-            </summary>
-            <returns>The check code.</returns>
-            <param name="CodeCount">Code lenght.</param>
-        </member>
-        <member name="M:RsCode.Helper.RandomHelper.GetRandomCode(System.Char[],System.Int32)">
-            <summary>
-            Gets the random code.
-            </summary>
-            <returns>The random code.</returns>
-            <param name="CharList">All char want to generate.</param>
-            <param name="CodeLength">Code lenght.</param>
-        </member>
         <member name="T:RsCode.Helper.XmlHelper">
             <summary>
             xml helper
@@ -692,6 +698,36 @@
             <param name="url"></param>
             <param name="urlParamName"></param>
             <returns></returns>
+        </member>
+        <member name="M:RsCode.RandomHelper.RandAmount(System.Double,System.Int32)">
+            <summary>
+            正态随机分配额度
+            </summary>
+            <param name="totalAmount">要分配的额度</param>
+            <param name="count">总份数</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.RandomHelper.GenerateCheckCodeNum(System.Int32)">
+            <summary>
+            Generates the check code with unique number.
+            </summary>
+            <returns>The check code number.</returns>
+            <param name="codeCount">Code count. Max 10</param>
+        </member>
+        <member name="M:RsCode.RandomHelper.GenerateCheckCode(System.Int32)">
+            <summary>
+            随机生成字符串（数字和字母混和）
+            </summary>
+            <returns>The check code.</returns>
+            <param name="CodeCount">Code lenght.</param>
+        </member>
+        <member name="M:RsCode.RandomHelper.GetRandomCode(System.Char[],System.Int32)">
+            <summary>
+            Gets the random code.
+            </summary>
+            <returns>The random code.</returns>
+            <param name="CharList">All char want to generate.</param>
+            <param name="CodeLength">Code lenght.</param>
         </member>
         <member name="M:RsCode.SecureHelper.AESDecrypt(System.String,System.String)">
             <summary>

@@ -6,16 +6,15 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RsCode.Storage.LocalStorage
+namespace RsCode.Storage
 {
-    public class LocalOptions
+    public class LocalStorageOptions
     {
        public string  UploadTokenUrl { get; set; }
         public string UploadUrl { get; set; }
+        public string SavePath { get; set; }
+        public string AccessPath { get; set; }
         public string AccessKey { get; set; }
 
         public string SecretKey { get; set; }

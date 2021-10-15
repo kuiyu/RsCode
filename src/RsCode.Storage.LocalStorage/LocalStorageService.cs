@@ -9,63 +9,60 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RsCode.Storage.LocalStorage
 {
     public class LocalStorageService : IStorageProvider
     {
-        LocalOptions Options;
+        LocalStorageOptions Options;
         IHttpContextAccessor httpContext;
-        public LocalStorageService(IHttpContextAccessor _httpContext,IOptionsSnapshot<LocalOptions> options)
+        public LocalStorageService(IHttpContextAccessor _httpContext,IOptionsSnapshot<LocalStorageOptions> options)
         {
             httpContext = _httpContext;
             Options = options.Value;
         }
         public string StorageName => "local";
 
-        public async Task<UploadResult> UploadAsync()
+        public virtual async Task<UploadResult> UploadAsync()
         {
             UploadResult result = new UploadResult();
-            var request = httpContext.HttpContext.Request.Form;
-            string key = httpContext.HttpContext.Request.Form["key"];
-            var token = httpContext.HttpContext.Request.Form["token"];
-            var files = httpContext.HttpContext.Request.Form.Files;
-
-            long size = files.Sum(f => f.Length); //统计所有文件的大小
-
-            var filepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");  //存储文件的路径           
-
-            foreach (var item in files)     //上传选定的文件列表
+            List<string> urls = new List<string>();
+            List<string> keys = new List<string>();
+            var form =httpContext.HttpContext.Request.Form;
+            foreach (var item in form.Files)
             {
-                if (item.Length > 0)        //文件大小 0 才上传
-                {
-                    var savePath = filepath + "\\" + key.Replace("/", "\\");     //当前上传文件应存放的位置
-                    if (System.IO.File.Exists(savePath) == true)        //如果文件已经存在,跳过此文件的上传
-                    {
-                        //文件已存在
-                        continue;
-                    }
+                var ext = item.FileName.Split('.')[1];
+                var fileName = $"{Guid.NewGuid().ToString("N")}.{ext}";
+                var savePath = Options.SavePath;
+                string filePath = Path.Combine(savePath, fileName);
 
-                    //上传文件
-                    using (var stream = new FileStream(savePath, FileMode.Create))      //创建特定名称的文件流
-                    {
-                        try
-                        {
-                            await item.CopyToAsync(stream);     //上传文件
-                            result.Res = "ok";
-                            result.Key = key;
-                        }
-                        catch (Exception ex)        //上传异常处理
-                        {
-                            result.Res = ex.Message;
-                        }
-                    }
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    await item.CopyToAsync(fs);
+                    await fs.FlushAsync();
                 }
+                var tmp = fileName.Replace("\\", "/");
+                var domainUrl = $"{httpContext.HttpContext.Request.Scheme}://{httpContext.HttpContext.Request.Host}";
+                urls.Add($"{domainUrl}{Options.AccessPath}/{tmp}");
+                keys.Add($"{Options.AccessPath}/{tmp}");
             }
+            if (form.Files.Count == 1)
+            {
+                result.Res = urls.FirstOrDefault();
+                result.Key = keys.FirstOrDefault();
+            }
+            else
+            {
+              result.Res = JsonSerializer.Serialize(urls);
+              result.Key = JsonSerializer.Serialize(keys);
+            }
+           
             return result;
         }
         
@@ -75,7 +72,7 @@ namespace RsCode.Storage.LocalStorage
             return new TokenResult
             {
                 Domain = url,
-                Token = "",
+                Token = Guid.NewGuid().ToString("N"),
                 UploadUrl =Options.UploadUrl
             };
         }
@@ -124,12 +121,31 @@ namespace RsCode.Storage.LocalStorage
 
         public string CreateDownloadUrl(string url, int expireInSeconds = 3600)
         {
-            throw new NotImplementedException();
+            string requestFile = url;
+            requestFile = requestFile.Replace("/res/", "");
+            requestFile = requestFile.Replace("//", "\\");
+            string physicsPath =Options.SavePath;
+            string file = Path.Combine($"{physicsPath}{requestFile}");
+            file = System.Web.HttpUtility.UrlDecode(file);
+            if (File.Exists(file))
+            {
+                return file;
+            }
+            else
+            {
+               return "";
+            }
         }
 
-        public Task<TokenResult> GetUploadTokenInfoAsync(string key, DateTime expiresTime)
+        public async Task<TokenResult> GetUploadTokenInfoAsync(string key, DateTime expiresTime)
         {
-            throw new NotImplementedException();
+            var url = $"{httpContext.HttpContext.Request.Scheme}://{httpContext.HttpContext.Request.Host}";
+            return new TokenResult
+            {
+                Domain = url,
+                Token = Guid.NewGuid().ToString("N"),
+                UploadUrl = Options.UploadUrl
+            };
         }
 
         public StorageOptions UseBucket(string bucket)

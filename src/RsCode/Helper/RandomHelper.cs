@@ -1,9 +1,25 @@
-﻿using System;
+﻿/*
+ * RsCode
+ * 
+ * RsCode is .net core platform rapid development framework
+ * Apache License 2.0
+ * 
+ * 作者：lrj
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace RsCode.Helper
+namespace RsCode
 {
     public class RandomHelper
     {
@@ -54,7 +70,7 @@ namespace RsCode.Helper
         /// </summary>
         /// <returns>The check code number.</returns>
         /// <param name="codeCount">Code count. Max 10</param>
-        public string GenerateCheckCodeNum(int codeCount)
+        public static string GenerateCheckCodeNum(int codeCount)
         {
             codeCount = codeCount > 10 ? 10 : codeCount;   // unable to return unique number list longer than 10
 
@@ -76,7 +92,7 @@ namespace RsCode.Helper
         /// </summary>
         /// <returns>The check code.</returns>
         /// <param name="CodeCount">Code lenght.</param>
-        public string GenerateCheckCode(int CodeCount)
+        public static string GenerateCheckCode(int CodeCount)
         {
             char[] MixedList = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' }; //remove I & O
             return GetRandomCode(MixedList, CodeCount);
@@ -89,7 +105,7 @@ namespace RsCode.Helper
         /// <returns>The random code.</returns>
         /// <param name="CharList">All char want to generate.</param>
         /// <param name="CodeLength">Code lenght.</param>
-        private string GetRandomCode(char[] CharList, int CodeLength)
+        private static  string GetRandomCode(char[] CharList, int CodeLength)
         {
             string result = string.Empty;
             for (int i = 0; i < CodeLength; i++)
@@ -99,10 +115,7 @@ namespace RsCode.Helper
             }
             return result;
         }
-        void test()
-        {
-            
-        }
+     
         #endregion
     }
 }

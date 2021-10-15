@@ -10,7 +10,8 @@
  */
 using Microsoft.Extensions.DependencyInjection;
 using RsCode.DI;
-using RsCode.Domain.Repositories;
+using RsCode.Domain;
+
 
 
 namespace RsCode
