@@ -407,7 +407,7 @@ namespace RsCode.Domain
             return await db.FirstOrDefaultAsync<T>(sql);
         }
         public virtual async Task<T> FirstOrDefaultAsync(TPrimaryKey primaryKey)
-        {
+        { 
             return await db.FirstOrDefaultAsync<T>($"where {GetPrimaryKey()}=@0",new object[] {primaryKey });
         }
         public virtual async Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken, Sql sql)
@@ -878,7 +878,7 @@ namespace RsCode.Domain
 
          string GetPrimaryKey()
         {
-            var pd = PocoData.ForType(typeof(TPrimaryKey), db.DefaultMapper);
+            var pd = PocoData.ForType(typeof(T), db.DefaultMapper);
             if (string.IsNullOrWhiteSpace(pd.TableInfo.PrimaryKey))
                 return "Id";
            
@@ -887,7 +887,7 @@ namespace RsCode.Domain
 
         string GetPrimaryKeyValue()
         {
-            var pkAttr = typeof(TPrimaryKey).GetCustomAttributes(typeof(PrimaryKeyAttribute), true).FirstOrDefault() as PrimaryKeyAttribute;
+            var pkAttr = typeof(T).GetCustomAttributes(typeof(PrimaryKeyAttribute), true).FirstOrDefault() as PrimaryKeyAttribute;
             return pkAttr?.Value;
         }
     }
