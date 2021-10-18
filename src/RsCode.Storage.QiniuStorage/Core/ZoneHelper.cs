@@ -1,4 +1,11 @@
-﻿using RsCode.Threading;
+﻿/*
+ * 项目:.Net项目开发工具库 
+ * 协议:MIT License 2.0 
+ * 作者:河南软商网络科技有限公司 
+ * 项目己托管于  
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -20,7 +27,10 @@ namespace RsCode.Storage.QiniuStorage.Core
         HttpClient httpClient;
         public ZoneHelper()
         {
-            httpClient = new HttpClient();
+            var httpClientHandler = new HttpClientHandler {
+                ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+            };
+            httpClient = new HttpClient(httpClientHandler);
         }
         public async Task<Zone> QueryZoneAsync(Mac mac,string bucket)
         {
