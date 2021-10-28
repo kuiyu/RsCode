@@ -1,5 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*
+ * 项目:.Net项目开发工具库 
+ * 协议:MIT License 2.0 
+ * 作者:河南软商网络科技有限公司 
+ * 项目己托管于  
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using RsCode.Storage.LocalStorage;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +25,16 @@ namespace RsCode.Storage
     {
         readonly RequestDelegate next;
         LocalStorageOptions StorageOptions;
-        public FileProviderMiddleware(RequestDelegate _next,IOptionsSnapshot<LocalStorageOptions> localStorageOptions)
+        ILocalStorageAccess localStorageAccessService;
+        public FileProviderMiddleware(RequestDelegate _next,IOptionsSnapshot<LocalStorageOptions> localStorageOptions, ILocalStorageAccess _localStorageAccessService)
         {
             next = _next;
             StorageOptions = localStorageOptions.Value;
+            localStorageAccessService = _localStorageAccessService;
         }
         public async Task InvokeAsync(HttpContext context )
         {
-            await AccessResourceAsync(context);
+            await localStorageAccessService.AccessFileAsync(context);
         }
          
         async Task<string> ReadBodyAsync(HttpContext context)
@@ -37,14 +50,16 @@ namespace RsCode.Storage
             return result;
         }
 
-        async Task AccessResourceAsync(HttpContext context)
+        public virtual async Task AccessResourceAsync(HttpContext context)
         {
             string requestFile = context.Request.Path;
-            requestFile = requestFile.Replace("/res/", "");
+            var accessPath = StorageOptions.AccessPath;
+            requestFile = requestFile.Replace(accessPath, "");
             requestFile = requestFile.Replace("//", "\\");
             string physicsPath =StorageOptions.SavePath ;
             string file = Path.Combine($"{physicsPath}{requestFile}");
             file = System.Web.HttpUtility.UrlDecode(file);
+            Console.WriteLine($"file={file}");
             if (File.Exists(file))
             {
                 await context.Response.SendFileAsync(file);

@@ -24,7 +24,7 @@ namespace RsCode.Storage
             services.Configure<LocalStorageOptions>(configuration.GetSection("LocalStorage"));
             
             services.AddScoped<IStorageProvider, LocalStorageService>();
-
+            services.AddSingleton<ILocalStorageAccess,LocalStorageAccess>();
          
 
             services.Configure<FormOptions>(x =>
