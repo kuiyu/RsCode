@@ -38,7 +38,7 @@ namespace RsCode
 
 
         public virtual async Task<T> GetAsync<T>(string url,string accessToken="")
-          where T : class
+         
         {
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             if (!string.IsNullOrWhiteSpace(accessToken))
@@ -60,8 +60,8 @@ namespace RsCode
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
                 var result = root.GetProperty("result");
-
-                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+                var json=result.JsonSerialize();
+                var data = JsonSerializer.Deserialize<T>(json, options);
                 return data;
             }
             else
@@ -78,7 +78,7 @@ namespace RsCode
 
 
         public virtual async Task<T> GetItemsAsync<T>(string url,string accessToken="")
-           where T : class
+         
         {
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             if (!string.IsNullOrWhiteSpace(accessToken))
@@ -119,7 +119,7 @@ namespace RsCode
 
         }
         public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent,string accessToken="")
-             where T : class
+            
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = httpContent;
@@ -161,7 +161,7 @@ namespace RsCode
 
         }
         public virtual async Task<T> PostItemsAsync<T>(string url, HttpContent httpContent,string accessToken="")
-            where T : class
+           
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = httpContent;
@@ -201,6 +201,93 @@ namespace RsCode
             }
         }
 
+
+        public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "")
+
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Content = httpContent;
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            }
+
+            HttpResponseMessage response = await HttpClient.SendAsync(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AppException(401, "无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string s = await response.Content.ReadAsStringAsync();
+
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                var result = root.GetProperty("result");
+                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+
+                return data;
+            }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
+                {
+                    throw new AppException(returnInfo.Msg);
+                }
+                return default(T);
+            }
+
+
+
+        }
+
+        public virtual async Task<T> DeleteAsync<T>(string url, HttpContent httpContent, string accessToken = "")
+
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Content = httpContent;
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            }
+
+            HttpResponseMessage response = await HttpClient.SendAsync(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AppException(401, "无访问权限");
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string s = await response.Content.ReadAsStringAsync();
+
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                var result = root.GetProperty("result");
+                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+
+                return data;
+            }
+            else
+            {
+                string ret = await response.Content.ReadAsStringAsync();
+                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
+                if (returnInfo != null)
+                {
+                    throw new AppException(returnInfo.Msg);
+                }
+                return default(T);
+            }
+
+
+
+        }
+
         /// <summary>
         /// 获取地址栏参数值
         /// </summary>
@@ -219,6 +306,11 @@ namespace RsCode
 
     public class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
     {
+        public DateTimeConverterUsingDateTimeParse(string DateTimeFormat = "yyyy-MM-dd HH:mm:ss")
+        {
+            _DateTimeFormat = DateTimeFormat;
+        }
+        string _DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss";
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return DateTime.Parse(reader.GetString());
@@ -226,7 +318,7 @@ namespace RsCode
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString());
+            writer.WriteStringValue(value.ToString(this._DateTimeFormat));
         }
     }
 
