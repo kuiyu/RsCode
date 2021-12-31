@@ -103,34 +103,64 @@ namespace RsCode.Domain
             return await db.DeleteAsync<T>(cancellationToken, sql);
         }
 
-        public virtual T ExecuteScalar(string sql, params object[] args)
+        public virtual object ExecuteScalar(string sql, params object[] args)
         {
-            return db.ExecuteScalar<T>(sql, args);
+            var ret= db.ExecuteScalar<object>(sql, args);
+            if(!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
-        public virtual T ExecuteScalar(Sql sql)
+        public virtual object ExecuteScalar(Sql sql)
         {
-            return db.ExecuteScalar<T>(sql);
+            var ret = db.ExecuteScalar<object>(sql);
+            if (!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
-        public virtual async Task<T> ExecuteScalarAsync(string sql, params object[] args)
+        public virtual async Task<object> ExecuteScalarAsync(string sql, params object[] args)
         {
-            return await db.ExecuteScalarAsync<T>(sql, args);
+            var ret = await db.ExecuteScalarAsync<object>(sql, args);
+            if (!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
-        public virtual async Task<T> ExecuteScalarAsync(CancellationToken cancellationToken, string sql, params object[] args)
+        public virtual async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, string sql, params object[] args)
         {
-            return await db.ExecuteScalarAsync<T>(cancellationToken, sql, args);
+            var ret = await db.ExecuteScalarAsync<object>(cancellationToken, sql, args);
+            if (!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
-        public virtual async Task<T> ExecuteScalarAsync(Sql sql)
+        public virtual async Task<object> ExecuteScalarAsync(Sql sql)
         {
-            return await db.ExecuteScalarAsync<T>(sql);
+            var ret = await db.ExecuteScalarAsync<object>(sql);
+            if (!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
-        public virtual async Task<T> ExecuteScalarAsync(CancellationToken cancellationToken, Sql sql)
+        public virtual async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, Sql sql)
         {
-            return await db.ExecuteScalarAsync<T>(cancellationToken, sql);
+            var ret= await db.ExecuteScalarAsync<object>(cancellationToken, sql);
+            if (!Convert.IsDBNull(ret))
+            {
+                return ret;
+            }
+            return null;
         }
 
          

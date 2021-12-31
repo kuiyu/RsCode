@@ -30,12 +30,12 @@ namespace RsCode.Domain
     public interface IRepository<T,TPrimaryKey> where T : IEntity<TPrimaryKey>
     {
         IDatabase ChangeDataBase(string connStrName);
-         T ExecuteScalar(Sql sql);
-        T ExecuteScalar(string sql, params object[] args);
-        Task<T> ExecuteScalarAsync(CancellationToken cancellationToken, Sql sql);
-        Task<T> ExecuteScalarAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<T> ExecuteScalarAsync(Sql sql);
-        Task<T> ExecuteScalarAsync(string sql, params object[] args);
+         object ExecuteScalar(Sql sql);
+        object ExecuteScalar(string sql, params object[] args);
+        Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, Sql sql);
+        Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, string sql, params object[] args);
+        Task<object> ExecuteScalarAsync(Sql sql);
+        Task<object> ExecuteScalarAsync(string sql, params object[] args);
          
         bool Exists(string sqlCondition, params object[] args);
         

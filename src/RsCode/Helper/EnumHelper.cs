@@ -19,7 +19,15 @@ namespace System
 
         private static void AddToEnumDescription(Type enumType)
         {
-            EnumHelper.enumDesciption.Add(enumType, EnumHelper.GetEnumDic(enumType));
+            try
+            {
+                EnumHelper.enumDesciption.Add(enumType, EnumHelper.GetEnumDic(enumType));
+            }
+            catch (Exception)
+            {
+                 
+            }
+           
         }
 
         private static string GetDescription(Type enumType, string enumText)

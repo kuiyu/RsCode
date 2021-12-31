@@ -90,7 +90,7 @@ namespace RsCode.AspNetCore
              
             if (appException != null)
             { 
-                WriteInfoLog(appException.Message);
+                //WriteInfoLog(appException.Message);
                 context.Response.ContentType = "application/json";
                 ReturnInfo returnInfo = new ReturnInfo()
                 {
