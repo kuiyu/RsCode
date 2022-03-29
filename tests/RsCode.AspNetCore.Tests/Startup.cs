@@ -45,7 +45,8 @@ namespace RsCode.AspNetCore.Tests
                 .ConfigureServices((context, services) =>
                 {
                     // 注册自定义服务
-                    
+                    services.AddSchedulerJob();
+                    services.AddSingleton<MyJob>();
                 })
                 ;
         }
@@ -64,6 +65,8 @@ namespace RsCode.AspNetCore.Tests
         {
             // 有一些测试数据要初始化可以放在这里
             // InitData();
+
+
         }
     }
 }

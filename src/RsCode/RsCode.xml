@@ -4,6 +4,23 @@
         <name>RsCode</name>
     </assembly>
     <members>
+        <member name="T:System.AssemblyContainer">
+            <summary>
+            程序集容器
+            </summary>
+        </member>
+        <member name="M:System.AssemblyContainer.Remove(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="assemblyPath"></param>
+        </member>
+        <member name="M:System.AssemblyContainer.GetAll">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="F:System.AutoMapperExtensions.Sync">
             <summary>
             同步锁
@@ -132,6 +149,11 @@
             缓存Collection Name Key
             </summary>
         </member>
+        <member name="T:System.DateTimeHelper">
+            <summary>
+            日期帮助类
+            </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:System.DateTimeHelper.GetTimeByJavascript(System.Int64)" -->
         <member name="M:System.DateTimeHelper.ConvertDateTimeByJavascript(System.DateTime)">
             <summary>
@@ -140,7 +162,13 @@
             <param name="dt"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:System.DateTimeHelper.ConvertDateTimeByUnix(System.DateTime)" -->
+        <member name="M:System.DateTimeHelper.ConvertDateTimeByUnix(System.DateTime)">
+            <summary>
+            把时间格式转换为Unix时间戳格式
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
         <member name="M:System.DateTimeHelper.GetTimeByUnix(System.Int64)">
             <summary>
             把Unix时间戳转化为时间
@@ -790,6 +818,20 @@
             <param name="width">宽</param>
             <param name="height">高</param>
             <returns>byte[]</returns>
+        </member>
+        <member name="M:RsCode.IBackgroundTaskQueue.QueueWorkItemAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.ValueTask})">
+            <summary>
+            添加任务到队列
+            </summary>
+            <param name="workItem"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IBackgroundTaskQueue.DequeueWorkItemAsync(System.Threading.CancellationToken)">
+            <summary>
+            任务出列
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
         </member>
         <member name="T:RsCode.CallContext`1">
             <summary>

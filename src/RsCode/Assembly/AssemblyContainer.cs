@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace System
 {
+    /// <summary>
+    /// 程序集容器
+    /// </summary>
     public static class AssemblyContainer
     {
         static Dictionary<string, HostAssemblyLoadContext> AssemblyList = null;
@@ -18,7 +21,10 @@ namespace System
                 AssemblyList.Add(assemblyPath, assembly);
             }            
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assemblyPath"></param>
         public static void Remove(string assemblyPath)
         {
             if(AssemblyList.ContainsKey(assemblyPath))
@@ -43,7 +49,10 @@ namespace System
             }
             return null; 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<string, HostAssemblyLoadContext> GetAll()
         {
             return AssemblyList;

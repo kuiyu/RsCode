@@ -8,12 +8,13 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace System
 {
+    /// <summary>
+    /// 日期帮助类
+    /// </summary>
     public class DateTimeHelper
     {
         public static DateTime GetStartDayOfWeeks(int year, int month, int index)
@@ -99,7 +100,7 @@ namespace System
         /// <returns></returns>
         public static DateTime GetTimeByJavascript(long jsTimeStamp)
         {
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+            System.DateTime startTime = TimeZoneInfo.ConvertTime(new DateTime(1970, 1, 1), TimeZoneInfo.Local); // 当地时区
             DateTime dt = startTime.AddMilliseconds(jsTimeStamp);
             return dt;
         }
@@ -111,7 +112,7 @@ namespace System
         /// <returns></returns>
         public static long ConvertDateTimeByJavascript(DateTime dt)
         {
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+            System.DateTime startTime = TimeZoneInfo.ConvertTime(new DateTime(1970, 1, 1), TimeZoneInfo.Local);// 当地时区
             long timeStamp = (long)(dt - startTime).TotalMilliseconds; // 相差毫秒数
             return timeStamp;
         }
@@ -119,11 +120,12 @@ namespace System
         /// <summary>
         /// 把时间格式转换为Unix时间戳格式
         /// </summary>
-        /// <param name=”time”></param>
+        /// <param name="time"></param>
         /// <returns></returns>
         public static long ConvertDateTimeByUnix(System.DateTime time)
         {
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+            
+            System.DateTime startTime = TimeZoneInfo.ConvertTime(new DateTime(1970, 1, 1), TimeZoneInfo.Local); // 当地时区
             long timeStamp = (long)(DateTime.Now - startTime).TotalSeconds; // 相差秒数
             return timeStamp;
         }
@@ -135,7 +137,7 @@ namespace System
         /// <returns></returns>
         public static DateTime GetTimeByUnix(long unixTimeStamp)
         {
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+            System.DateTime startTime = TimeZoneInfo.ConvertTime(new DateTime(1970, 1, 1), TimeZoneInfo.Local); // 当地时区
             DateTime dt = startTime.AddSeconds(unixTimeStamp);
             return dt;
         }
