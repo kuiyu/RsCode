@@ -37,6 +37,7 @@
     <PackageReference Include="AspectCore.Extensions.DataAnnotations" Version="2.2.0" />
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="AutoMapper.Data" Version="3.0.0" />
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.6" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

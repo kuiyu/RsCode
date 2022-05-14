@@ -14,183 +14,162 @@
    https://github.com/kuiyu/RsCode.git
  */
 using AutoMapper;
+using AutoMapper.Data;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data;
 using System.Linq;
-using System.Reflection;
 
 namespace System
 {
+    /// <summary>
+    /// AutoMapper扩展
+    /// </summary>
     public static class AutoMapperExtensions
     {
         /// <summary>
-        /// 同步锁
+        /// 创建Mapper
         /// </summary>
-        private static readonly object Sync = new object();
-
-        /// <summary>
-        /// 将源对象映射到目标对象
-        /// </summary>
-        /// <typeparam name="TSource">源类型</typeparam>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <param name="source">源对象</param>
-        /// <param name="destination">目标对象</param>
-        public static TDestination MapTo<TSource, TDestination>(this TSource source, TDestination destination)
+        /// <typeparam name="TSource">要被转化的model</typeparam>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <returns></returns>
+        private static IMapper CreateMapper<TSource, TDestination>()
         {
-            return MapTo<TDestination>(source, destination);
-        }
-
-        
-
-        /// <summary>
-        /// 将源对象映射到目标对象
-        /// </summary>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <param name="source">源对象</param>
-        public static TDestination MapTo<TDestination>(this object source) where TDestination : new()
-        {
-            return MapTo(source, new TDestination());
-        }
-
-        /// <summary>
-        /// 将源对象映射到目标对象
-        /// </summary>
-        private static TDestination MapTo<TDestination>(object source, TDestination destination)
-        {
-             
-            if (source == null)
-                throw new Exception($"use MapTo<>() error:{nameof(source)} is null" );
-            if (destination == null)
-                throw new Exception($"use MapTo<>() error:{nameof(destination)} is null");
-            var sourceType = GetType(source);
-            var destinationType = GetType(destination);
-            var map = GetMap(sourceType, destinationType);
-            
-
-            if (map != null)
-            {  
-                return Mapper.Map(source, destination);
-            }
-            
-            lock (Sync)
+            var config = new MapperConfiguration(cfg =>
             {
-                map = GetMap(sourceType, destinationType);
-                if (map != null)
-                    return Mapper.Map(source, destination);
-                InitMaps(sourceType, destinationType);
-            }
-            return Mapper.Map(source, destination);
-        }
-
-        
-
-        /// <summary>
-        /// 获取类型
-        /// </summary>
-        private static Type GetType(object obj)
-        {
-            var type = obj.GetType();
-            if ((obj is System.Collections.IEnumerable) == false)
-                return type;
-            if (type.IsArray)
-                return type.GetElementType();
-            var genericArgumentsTypes = type.GetTypeInfo().GetGenericArguments();
-            if (genericArgumentsTypes == null || genericArgumentsTypes.Length == 0)
-                throw new ArgumentException("泛型类型参数不能为空");
-            return genericArgumentsTypes[0];
+                cfg.AddDataReaderMapping();
+                cfg.CreateMap<TSource, TDestination>();
+            }); ;
+            var mapper = config.CreateMapper();
+            return mapper;
         }
 
         /// <summary>
-        /// 获取映射配置
+        /// 创建Mapper
         /// </summary>
-        private static TypeMap GetMap(Type sourceType, Type destinationType)
+        /// <param name="sourceType">要被转化的model类型</param>
+        /// <param name="destinationType">转化之后的model类型</param>
+        /// <returns></returns>
+        private static IMapper CreateMapper(Type sourceType, Type destinationType)
         {
-            try
-            { 
-                return Mapper.Configuration.FindTypeMapFor(sourceType, destinationType);
-            }
-            catch (InvalidOperationException)
-            {
-                lock (Sync)
-                {
-                    try
-                    {
-                        return Mapper.Configuration.FindTypeMapFor(sourceType, destinationType);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        InitMaps(sourceType, destinationType);
-                    }
-                    return Mapper.Configuration.FindTypeMapFor(sourceType, destinationType);
-                }
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// 初始化映射配置
-        /// </summary>
-        private static void InitMaps(Type sourceType, Type destinationType)
-        {
-            try
-            {
-               
-                var maps = Mapper.Configuration.GetAllTypeMaps();
-                 
-                Mapper.Initialize(config => {
-                    ClearConfig();
-                    foreach (var item in maps)
-                    {
-                          config.CreateMap(item.SourceType, item.DestinationType)
-                        //.ForMember(item.DestinationType.Name,
-                        //dest => dest.Ignore() )
-                        ; 
-                    }
-                        
-                    config.CreateMap(sourceType, destinationType);
-                });
-            }
-            catch (InvalidOperationException)
-            {
-                Mapper.Initialize(config => {
-                    config.CreateMap(sourceType, destinationType);
-                });
-            }
+            var config = new MapperConfiguration(cfg => cfg.CreateMap(sourceType, destinationType)); ;
+            var mapper = config.CreateMapper();
+            return mapper;
         }
 
         /// <summary>
-        /// 清空配置
+        /// 类型映射
         /// </summary>
-        private static void ClearConfig()
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <param name="obj">可以使用这个扩展方法的类型</param>
+        /// <returns>转化之后的实体</returns>
+        public static TDestination MapTo<TDestination>(this object obj)
+            where TDestination : class
         {
-            var typeMapper = typeof(Mapper).GetTypeInfo();
-            var configuration = typeMapper.GetDeclaredField("_configuration");
-            configuration.SetValue(null, null, BindingFlags.Static, null, CultureInfo.CurrentCulture);
+            var mapper = CreateMapper(obj.GetType(), typeof(TDestination));
+            return mapper.Map<TDestination>(obj);
+        }
+        /// <summary>
+        /// 复杂类型映射
+        /// </summary>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <param name="obj">可以使用这个扩展方法的类型</param>
+        /// <param name="configure"></param>
+        /// <returns>转化之后的实体</returns>
+        public static TDestination MapTo<TDestination>(this object obj,Action<IMapperConfigurationExpression>configure)
+            where TDestination : class
+        {
+            var config=new MapperConfiguration(configure);
+            config.AssertConfigurationIsValid();
+            var mapper = config.CreateMapper();
+            return mapper.Map<TDestination>(obj);
+        }
+        /// <summary>
+        ///  类型映射
+        /// </summary>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <typeparam name="TSource">要被转化的model</typeparam>
+        /// <param name="source">可以使用这个扩展方法的类型</param>
+        /// <returns>转化之后的实体</returns>
+        public static TDestination MapTo<TDestination, TSource>(this TSource source)
+            where TDestination : class
+            where TSource : class
+        {
+            if (source == null) return default(TDestination);
+            var mapper = CreateMapper<TSource, TDestination>();
+            return mapper.Map<TDestination>(source);
         }
 
         /// <summary>
-        /// 将源集合映射到目标集合
+        ///  类型映射,默认字段名字一一对应
         /// </summary>
-        /// <typeparam name="TDestination">目标元素类型,范例：Sample,不要加List</typeparam>
-        /// <param name="source">源集合</param>
-        public static List<TDestination> MapToList<TDestination>(this System.Collections.IEnumerable source)
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <typeparam name="TSource">要被转化的model</typeparam>
+        /// <param name="source">可以使用这个扩展方法的类型</param>
+        /// <returns>转化之后的实体</returns>
+        public static List<TDestination> MapTo<TDestination>(this IEnumerable source)
+            where TDestination : class
         {
-            return MapTo<List<TDestination>>(source);
+            if (source == null) return default(List<TDestination>);
+            var mapper = CreateMapper(source.AsQueryable().ElementType, typeof(TDestination));
+            return mapper.Map<List<TDestination>>(source);
         }
 
-         static IMappingExpression<TSource, TDestination> IgnoreAllNonExisting<TSource, TDestination>(this IMappingExpression<TSource, TDestination> expression)
+        /// <summary>
+        ///  类型映射
+        /// </summary>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <typeparam name="TSource">要被转化的model</typeparam>
+        /// <param name="source">可以使用这个扩展方法的类型</param>
+        /// <returns>转化之后的实体</returns>
+        public static List<TDestination> MapTo<TDestination, TSource>(this IEnumerable<TSource> source)
+            where TDestination : class
+            where TSource : class
         {
-            var sourceType = typeof(TSource);
-            var destinationType = typeof(TDestination);
-            var existingMaps = Mapper.Configuration.GetAllTypeMaps().First(x => x.SourceType.Equals(sourceType)
-                && x.DestinationType.Equals(destinationType));
-            foreach (var property in existingMaps.GetUnmappedPropertyNames())
-            {
-                expression.ForMember(property, opt => opt.Ignore());
-            }
-            return expression;
+            if (source == null) return default(List<TDestination>);
+            var mapper = CreateMapper<TSource, TDestination>();
+            return mapper.Map<List<TDestination>>(source);
+        }
+
+        /// <summary>
+        /// DataTable映射
+        /// </summary>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <param name="dt">DataTable对象</param>
+        /// <returns></returns>
+        public static List<TDestination> MapTo<TDestination>(this DataTable dt)
+            where TDestination : class
+        {
+            if (dt == null || dt.Rows.Count == 0) return default(List<TDestination>);
+            var mapper = CreateMapper<IDataReader, TDestination>();
+            return mapper.Map<List<TDestination>>(dt.CreateDataReader());
+        }
+
+        /// <summary>
+        /// DataSet映射
+        /// </summary>
+        /// <typeparam name="TDestination">转化之后的model</typeparam>
+        /// <param name="ds">DataSet对象</param>
+        /// <param name="tableIndex">DataSet中要映射的DataTable的索引</param>
+        /// <returns></returns>
+        public static List<TDestination> MapTo<TDestination>(this DataSet ds, int tableIndex = 0)
+           where TDestination : class
+        {
+            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) return default(List<TDestination>);
+            var mapper = CreateMapper<IDataReader, TDestination>();
+            return mapper.Map<List<TDestination>>(ds.Tables[tableIndex].CreateDataReader());
+        }
+
+        public static List<TDestination> MapToList<TDestination>(this DataSet ds, int tableIndex = 0)
+          where TDestination : class
+        {
+            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) return default(List<TDestination>);
+            var mapper = CreateMapper<IDataReader, TDestination>();
+            return mapper.Map<List<TDestination>>(ds.Tables[tableIndex].CreateDataReader());
         }
     }
+
+ 
+
+
 }

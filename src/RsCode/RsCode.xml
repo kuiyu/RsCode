@@ -21,58 +21,87 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="F:System.AutoMapperExtensions.Sync">
+        <member name="T:System.AutoMapperExtensions">
             <summary>
-            同步锁
+            AutoMapper扩展
             </summary>
         </member>
-        <member name="M:System.AutoMapperExtensions.MapTo``2(``0,``1)">
+        <member name="M:System.AutoMapperExtensions.CreateMapper``2">
             <summary>
-            将源对象映射到目标对象
+            创建Mapper
             </summary>
-            <typeparam name="TSource">源类型</typeparam>
-            <typeparam name="TDestination">目标类型</typeparam>
-            <param name="source">源对象</param>
-            <param name="destination">目标对象</param>
+            <typeparam name="TSource">要被转化的model</typeparam>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:System.AutoMapperExtensions.CreateMapper(System.Type,System.Type)">
+            <summary>
+            创建Mapper
+            </summary>
+            <param name="sourceType">要被转化的model类型</param>
+            <param name="destinationType">转化之后的model类型</param>
+            <returns></returns>
         </member>
         <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object)">
             <summary>
-            将源对象映射到目标对象
+            类型映射
             </summary>
-            <typeparam name="TDestination">目标类型</typeparam>
-            <param name="source">源对象</param>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <param name="obj">可以使用这个扩展方法的类型</param>
+            <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object,``0)">
+        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object,System.Action{AutoMapper.IMapperConfigurationExpression})">
             <summary>
-            将源对象映射到目标对象
+            复杂类型映射
             </summary>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <param name="obj">可以使用这个扩展方法的类型</param>
+            <param name="configure"></param>
+            <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.GetType(System.Object)">
+        <member name="M:System.AutoMapperExtensions.MapTo``2(``1)">
             <summary>
-            获取类型
+             类型映射
             </summary>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <typeparam name="TSource">要被转化的model</typeparam>
+            <param name="source">可以使用这个扩展方法的类型</param>
+            <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.GetMap(System.Type,System.Type)">
+        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Collections.IEnumerable)">
             <summary>
-            获取映射配置
+             类型映射,默认字段名字一一对应
             </summary>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <typeparam name="TSource">要被转化的model</typeparam>
+            <param name="source">可以使用这个扩展方法的类型</param>
+            <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.InitMaps(System.Type,System.Type)">
+        <member name="M:System.AutoMapperExtensions.MapTo``2(System.Collections.Generic.IEnumerable{``1})">
             <summary>
-            初始化映射配置
+             类型映射
             </summary>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <typeparam name="TSource">要被转化的model</typeparam>
+            <param name="source">可以使用这个扩展方法的类型</param>
+            <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.ClearConfig">
+        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Data.DataTable)">
             <summary>
-            清空配置
+            DataTable映射
             </summary>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <param name="dt">DataTable对象</param>
+            <returns></returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.MapToList``1(System.Collections.IEnumerable)">
+        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Data.DataSet,System.Int32)">
             <summary>
-            将源集合映射到目标集合
+            DataSet映射
             </summary>
-            <typeparam name="TDestination">目标元素类型,范例：Sample,不要加List</typeparam>
-            <param name="source">源集合</param>
+            <typeparam name="TDestination">转化之后的model</typeparam>
+            <param name="ds">DataSet对象</param>
+            <param name="tableIndex">DataSet中要映射的DataTable的索引</param>
+            <returns></returns>
         </member>
         <member name="T:System.CmdHelper">
             <summary>
@@ -719,6 +748,7 @@
             针对RsCode WebApi响应做的封装
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String)" -->
         <member name="M:RsCode.HttpHelper.GetUrlParamValue(System.String,System.String)">
             <summary>
             获取地址栏参数值

@@ -1,8 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿/*
+ * 项目:.Net项目开发工具库 
+ * 协议:MIT License 2.0 
+ * 作者:河南软商网络科技有限公司 
+ * 项目己托管于  
+ * github
+   https://github.com/kuiyu/RsCode.git
+ */
+
+using Microsoft.AspNetCore.Mvc.Filters;
 using RsCode.AspNetCore.XSS;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RsCode.AspNetCore
 {
@@ -40,10 +47,10 @@ namespace RsCode.AspNetCore
                         {
                             context.ActionArguments[p.Name] = xss.Filter(context.ActionArguments[p.Name].ToString());
                         }
-                        else if (p.ParameterType.IsClass)//当参数等于类
-                        {
-                            ModelFieldFilter(p.Name, p.ParameterType, context.ActionArguments[p.Name]);
-                        }
+                        //else if (p.ParameterType.IsClass)//当参数等于类
+                        //{
+                        //    ModelFieldFilter(p.Name, p.ParameterType, context.ActionArguments[p.Name]);
+                        //}
                     }
                 } 
             }
@@ -77,10 +84,15 @@ namespace RsCode.AspNetCore
                             string value = pp.GetValue(obj).ToString();
                             pp.SetValue(obj, xss.Filter(value));
                         }
-                        else if (pp.PropertyType.IsClass)//当属性等于类进行递归
+                        if(pp.PropertyType.IsArray)
+                        {
+                            var value = pp.GetValue(obj);
+                            pp.SetValue(obj, value);
+                        }else if (pp.PropertyType.IsClass)//当属性等于类进行递归
                         {
                             pp.SetValue(obj, ModelFieldFilter(pp.Name, pp.PropertyType, pp.GetValue(obj)));
                         }
+                      
                     }
 
                 }
