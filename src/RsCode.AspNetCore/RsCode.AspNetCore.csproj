@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.5.6</Version>
+    <Version>1.5.8</Version>
     <Authors>Tony</Authors>
     <Company>河南软商网络科技有限公司</Company>
     <PackageIcon>rscode64_64.png</PackageIcon>
@@ -12,7 +12,8 @@
     <PackageReleaseNotes>软商网络asp.net core项目开发工具包</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <AssemblyVersion>1.5.4.0</AssemblyVersion>
+    <AssemblyVersion>1.5.8.0</AssemblyVersion>
+    <FileVersion>1.5.8.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <PackageReference Include="Caching.CSRedis" Version="3.6.5" />
     <PackageReference Include="CSRedisCore" Version="3.6.5" />
     <PackageReference Include="EnyimMemcachedCore" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />

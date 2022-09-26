@@ -38,7 +38,14 @@ namespace RsCode
             HttpClient = client;
         }
 
-
+        /// <summary>
+        /// 发送get请求
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         public virtual async Task<T> GetAsync<T>(string url,string accessToken="")
          
         {
@@ -70,22 +77,16 @@ namespace RsCode
             }
             else
             {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
+                int code = (int)response.StatusCode;
+                string content = await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={httpRequestMessage.RequestUri.ToString()}" + content);
                 return default(T);
             }
 
-            if(typeof(T)==typeof(PetaPoco.Page<>))
-            {
-
-            }
+            
         }
         /// <summary>
-        /// 对PetaPoco.Page<>结果的封装
+        /// 获取PetaPoco.Page结果的数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="url"></param>
@@ -125,58 +126,23 @@ namespace RsCode
             }
             else
             {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
-               
+                int code = (int)response.StatusCode;
+                string content =await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={httpRequestMessage.RequestUri.ToString()}"+ content);
+
             }
               return page;
         }
 
-        public virtual async Task<T> GetItemsAsync<T>(string url,string accessToken="")
-         
-        {
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            if (!string.IsNullOrWhiteSpace(accessToken))
-            {
-                httpRequestMessage.Headers.Add("Authorization", $"Bearer {accessToken}");
-            }
-            var response = await HttpClient.SendAsync(httpRequestMessage); 
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                throw new AppException(401,"无访问权限");
-            }
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                string s = await response.Content.ReadAsStringAsync();
-                var ret = JsonSerializer.Deserialize<ReturnInfo>(s);
-
-                JsonSerializerOptions options = new JsonSerializerOptions();
-                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
-                JsonDocument doc = JsonDocument.Parse(s);
-                var root = doc.RootElement;
-                var result = root.GetProperty("result");
-                var items = result.GetProperty("items");
-                var ls = items.EnumerateArray();
-                var data = JsonSerializer.Deserialize<T>(ls.JsonSerialize(), options); 
-
-                return data;
-            }
-            else
-            {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
-                return default(T);
-            }
-
-        }
+       /// <summary>
+       /// 请求POST数据
+       /// </summary>
+       /// <typeparam name="T"></typeparam>
+       /// <param name="url"></param>
+       /// <param name="httpContent"></param>
+       /// <param name="accessToken"></param>
+       /// <returns></returns>
+       /// <exception cref="AppException"></exception>
         public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent,string accessToken="")
             
         {
@@ -207,60 +173,24 @@ namespace RsCode
                 }
             else
             {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
+                int code = (int)response.StatusCode;
+                string content = await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={response.RequestMessage.RequestUri.ToString()}" + content);
+
                 return default(T);
-            }
-
-
-
+            } 
         }
-        public virtual async Task<T> PostItemsAsync<T>(string url, HttpContent httpContent,string accessToken="")
-           
-        {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Content = httpContent;
-            if (!string.IsNullOrWhiteSpace(accessToken))
-            {
-                request.Headers.Add("Authorization", $"Bearer {accessToken}");
-            }
-            var response = await  HttpClient.SendAsync(request);
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                throw new AppException(401,"无访问权限");
-            }
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                string s = await response.Content.ReadAsStringAsync();
+        
 
-                JsonSerializerOptions options = new JsonSerializerOptions();
-                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
-                JsonDocument doc = JsonDocument.Parse(s);
-                var root = doc.RootElement;
-                var result = root.GetProperty("result");
-                var items = result.GetProperty("items");
-                var ls = items.EnumerateArray();
-                var data = JsonSerializer.Deserialize<T>(ls.JsonSerialize(), options);
-
-                return data;
-            }
-            else
-            {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
-                return default(T);
-            }
-        }
-
-
+        /// <summary>
+        /// PUT数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="httpContent"></param>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "")
 
         {
@@ -291,19 +221,22 @@ namespace RsCode
             }
             else
             {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
+                int code = (int)response.StatusCode;
+                string content = await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={response.RequestMessage.RequestUri.ToString()}" + content);
                 return default(T);
-            }
-
-
+            } 
 
         }
-
+        /// <summary>
+        /// DELETE数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="httpContent"></param>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         public virtual async Task<T> DeleteAsync<T>(string url, HttpContent httpContent, string accessToken = "")
 
         {
@@ -334,12 +267,9 @@ namespace RsCode
             }
             else
             {
-                string ret = await response.Content.ReadAsStringAsync();
-                ReturnInfo returnInfo = JsonSerializer.Deserialize<ReturnInfo>(ret);
-                if (returnInfo != null)
-                {
-                    throw new AppException(returnInfo.Msg);
-                }
+                int code = (int)response.StatusCode;
+                string content = await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={response.RequestMessage.RequestUri.ToString()}" + content);
                 return default(T);
             }
 
@@ -360,8 +290,36 @@ namespace RsCode
             return p.Get(urlParamName);
         }
 
-        
+        void GetException(int code,string content)
+        {
+            try
+            {
+                if(!string.IsNullOrWhiteSpace(content))
+                {
+                    if(content.Contains("{")&&content.Contains("}"))
+                    {
+                     var returnInfo = JsonSerializer.Deserialize<ReturnInfo>(content);
+                    throw new AppException(returnInfo.code, returnInfo.Msg);
+                    }
+                  else
+                    {
+                        throw new AppException(code, content);
+                    }
+                }
+                else
+                {
+                    throw new AppException(code, content);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
+    /// <summary>
+    /// 日期格式处理
+    /// </summary>
 
     public class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
     {

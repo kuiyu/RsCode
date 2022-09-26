@@ -16,6 +16,9 @@ using System.IO;
 
 namespace System.Text.Json
 {
+    /// <summary>
+    /// json helper
+    /// </summary>
     public static class JsonHelper
     {
         /// <summary>

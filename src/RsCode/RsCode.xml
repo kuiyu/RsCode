@@ -183,7 +183,13 @@
             日期帮助类
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:System.DateTimeHelper.GetTimeByJavascript(System.Int64)" -->
+        <member name="M:System.DateTimeHelper.GetTimeByJavascript(System.Int64)">
+            <summary>
+            时间戳转为C#格式时间
+            </summary>
+            <param name="timeStamp"></param>
+            <returns></returns>
+        </member>
         <member name="M:System.DateTimeHelper.ConvertDateTimeByJavascript(System.DateTime)">
             <summary>
             把时间转换为javascript所使用的时间
@@ -244,6 +250,11 @@
             </summary>
             <param name="value">要获取描述信息的枚举值。</param>
             <returns>枚举值的描述信息。</returns>
+        </member>
+        <member name="T:System.Text.Json.JsonHelper">
+            <summary>
+            json helper
+            </summary>
         </member>
         <member name="M:System.Text.Json.JsonHelper.JsonSerialize(System.Object)">
             <summary>
@@ -306,6 +317,55 @@
             .netcore json config
             </summary>
         </member>
+        <member name="M:RsCode.AppSettings.GetValue``1(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="Key"></param>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetAllValue``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetSection(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetConnectionString(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="connStrName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetSection``1(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetAllSection``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
         <member name="M:RsCode.AppSettings.Exists(System.String,System.String)">
             <summary>
             检查节点是否存在
@@ -313,6 +373,20 @@
             <param name="key"></param>
             <param name="JsonFilePath"></param>
             <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.GetJObject(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="JsonFilePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.AppSettings.WriteJsonFile(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path"></param>
+            <param name="jsonConents"></param>
         </member>
         <member name="M:RsCode.DI.Context.#ctor(System.Collections.Generic.IEnumerable{System.Type},System.Collections.Generic.IDictionary{System.String,System.Object},System.Action{System.String})">
             <summary>
@@ -748,7 +822,59 @@
             针对RsCode WebApi响应做的封装
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String)" -->
+        <member name="M:RsCode.HttpHelper.GetAsync``1(System.String,System.String)">
+            <summary>
+            发送get请求
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+        </member>
+        <member name="M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String)">
+            <summary>
+            获取PetaPoco.Page结果的数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+        </member>
+        <member name="M:RsCode.HttpHelper.PostAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+            <summary>
+            请求POST数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="httpContent"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+        </member>
+        <member name="M:RsCode.HttpHelper.PutAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+            <summary>
+            PUT数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="httpContent"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+        </member>
+        <member name="M:RsCode.HttpHelper.DeleteAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+            <summary>
+            DELETE数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="httpContent"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+        </member>
         <member name="M:RsCode.HttpHelper.GetUrlParamValue(System.String,System.String)">
             <summary>
             获取地址栏参数值
@@ -756,6 +882,11 @@
             <param name="url"></param>
             <param name="urlParamName"></param>
             <returns></returns>
+        </member>
+        <member name="T:RsCode.DateTimeConverterUsingDateTimeParse">
+            <summary>
+            日期格式处理
+            </summary>
         </member>
         <member name="M:RsCode.RandomHelper.RandAmount(System.Double,System.Int32)">
             <summary>

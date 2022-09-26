@@ -19,6 +19,7 @@ using RsCode.AspNetCore.Jwt;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -26,7 +27,7 @@ namespace RsCode.AspNetCore
 {
     public class JwtHelper
     {
-        public static int RefreshTokenExpire { get; set; }= 3600 * 24 * 180; //180天
+       static int RefreshTokenExpire { get; set; }= 60 * 24 * 366; //366
          
         public static JwtInfo GetJwtInfo()
         {
@@ -42,15 +43,11 @@ namespace RsCode.AspNetCore
         /// <param name="claims"></param>
         /// <param name="expire">过期时间(以分钟为单位)</param>
         /// <returns></returns>
-        public static AccessTokenInfo CreateAccessToken(List<Claim>claims,int expire=-1)
+        public  AccessTokenInfo CreateAccessToken(List<Claim>claims,int expire=-1)
         {
-            var jwt = GetJwtInfo();
-
-            //accesstoken
             if (expire == -1)
-                expire = jwt.Expire * 60;
-            else
-                expire = expire * 60;
+                expire =  60*24*360;
+          
             var token= CreateToken(claims, expire);
 
             //refreshtoken
@@ -59,34 +56,43 @@ namespace RsCode.AspNetCore
             var refreshToken = CreateToken(claims, RefreshTokenExpire);
 
             AccessTokenInfo tokenInfo = new AccessTokenInfo();
-            tokenInfo.ExpiresIn = expire;
+            tokenInfo.ExpiresIn = expire*60;
             tokenInfo.AccessToken = token;
             tokenInfo.RefreshToken = refreshToken;
             return tokenInfo;
         }
-        public static string CreateToken(List<Claim> claims, int minutes)
+        /// <summary>
+        /// 创建AccessToken
+        /// </summary>
+        /// <param name="claims"></param>
+        /// <param name="expire"></param>
+        /// <returns></returns>
+        public  AccessTokenInfo CreateAccessToken(IEnumerable<Claim> claims, int expire = -1)
+        {
+            return CreateAccessToken(claims.ToList(), expire);
+        }
+        public  string CreateToken(List<Claim> claims, int minutes)
         {
             var jwt = GetJwtInfo();
             string securityKey =jwt.SecurityKey;//安全码
             string issuer =jwt.Issuer;//发行者
-            string audience =jwt.Audience;//接收者
-            int expire = minutes;//秒
+            string audience =jwt.Audience;//接收者 
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddMinutes(expire)).ToUnixTimeSeconds()}"));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddMinutes(minutes)).ToUnixTimeSeconds()}"));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(expire),
+                expires: DateTime.Now.AddMinutes(minutes),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         } 
         
-        public static  IEnumerable<Claim>GetClaims(string accessToken)
+        public   IEnumerable<Claim>GetClaims(string accessToken)
         {
             try
             {
@@ -100,6 +106,18 @@ namespace RsCode.AspNetCore
             }
         }
 
-       
+        public AccessTokenInfo RefreshToken(ClaimsPrincipal claimsPrincipal)
+        {
+            var jwtInfo = GetJwtInfo();
+            var code = claimsPrincipal.Claims.FirstOrDefault(m => m.Type.Equals(ClaimTypes.NameIdentifier));
+            if (null != code)
+            {
+                return CreateAccessToken(claimsPrincipal.Claims,jwtInfo.Expire);
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

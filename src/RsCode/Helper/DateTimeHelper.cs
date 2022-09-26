@@ -96,7 +96,7 @@ namespace System
         /// <summary>
         /// 时间戳转为C#格式时间
         /// </summary>
-        /// <param name=”timeStamp”></param>
+        /// <param name="timeStamp"></param>
         /// <returns></returns>
         public static DateTime GetTimeByJavascript(long jsTimeStamp)
         {

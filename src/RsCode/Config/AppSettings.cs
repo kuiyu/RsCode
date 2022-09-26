@@ -43,22 +43,43 @@ namespace RsCode
                 SetJsonFile(JsonFilePath);
             return config.GetValue<string>(key);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Key"></param>
+        /// <param name="JsonFilePath"></param>
+        /// <returns></returns>
         public static T GetValue<T>(string Key, string JsonFilePath = "appsettings.json")
         {
            return  GetSection(Key,JsonFilePath).Get<T>(); 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="JsonFilePath"></param>
+        /// <returns></returns>
         public static T GetAllValue<T>(string JsonFilePath = "appsettings.json")
         {
             return GetSection("").Get<T>();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="JsonFilePath"></param>
+        /// <returns></returns>
         public static IConfigurationSection GetSection(string key, string JsonFilePath = "appsettings.json")
         {
             SetJsonFile(JsonFilePath);
             return config.GetSection(key);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connStrName"></param>
+        /// <returns></returns>
         public static string GetConnectionString(string connStrName)
         {
             if (config == null)
@@ -68,12 +89,23 @@ namespace RsCode
 
             return config.GetValue<string>("ConnectionStrings:" + connStrName);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="JsonFilePath"></param>
+        /// <returns></returns>
         public static T GetSection<T>(string key, string JsonFilePath = "appsettings.json")
         {
             return GetSection(key, JsonFilePath).Get<T>();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="JsonFilePath"></param>
+        /// <returns></returns>
         public static T GetAllSection<T>(string JsonFilePath = "appsettings.json")
         {
             SetJsonFile(JsonFilePath);
@@ -91,7 +123,11 @@ namespace RsCode
             return GetSection(key, JsonFilePath).Exists();
         }
             
-                            
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="JsonFilePath"></param>
+       /// <returns></returns>
        public static JObject GetJObject(string JsonFilePath = "appsettings.json")
         {
             SetJsonFile(JsonFilePath);
@@ -129,7 +165,11 @@ namespace RsCode
             return config;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="jsonConents"></param>
        public static void WriteJsonFile(string path, string jsonConents)
         { 
             using (FileStream fs = new FileStream(path, FileMode.Create, System.IO.FileAccess.ReadWrite, FileShare.ReadWrite))
