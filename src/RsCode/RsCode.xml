@@ -734,6 +734,12 @@
             响应消息
             </summary>
         </member>
+        <member name="M:RsCode.ExceptionExtensions.AddExceptionLogging(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加异常记录
+            </summary>
+            <param name="services"></param>
+        </member>
         <member name="T:RsCode.ReturnInfo">
             <summary>
             响应客户端的信息
@@ -803,7 +809,7 @@
         </member>
         <member name="M:RsCode.Helper.XmlHelper.DeserializeFromXML(System.Type,System.String)">
             <summary>
-            xml转对象
+            将指定xml文件的内容转对象
             </summary>
             <param name="type"></param>
             <param name="filePath"></param>
@@ -811,10 +817,30 @@
         </member>
         <member name="M:RsCode.Helper.XmlHelper.SerializeToXml(System.Object,System.String)">
             <summary>
-            xml序列化
+            将指定xml文件的内容序列化
             </summary>
             <param name="obj"></param>
             <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.Deserializer``1(System.String,System.String)">
+            <summary>
+            将xml字符串转化对象
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="xml"></param>
+            <param name="xmlRoot"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.Serializer``1(``0,System.String,System.String,System.String)">
+            <summary>
+            将对象转成xml字符串
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="xsd"></param>
+            <param name="xsi"></param>
+            <param name="xmlRoot"></param>
             <returns></returns>
         </member>
         <member name="T:RsCode.HttpHelper">
@@ -979,6 +1005,72 @@
             <param name="width">宽</param>
             <param name="height">高</param>
             <returns>byte[]</returns>
+        </member>
+        <member name="T:RsCode.LogHelper">
+            <summary>
+            日志记录工具
+            </summary>
+        </member>
+        <member name="M:RsCode.LogHelper.WriteLog(System.String)">
+            <summary>
+            调用Log4net写日志，日志等级为 ：错误（Error）
+            </summary>
+            <param name="logContent">日志内容</param>
+        </member>
+        <member name="M:RsCode.LogHelper.WriteLog(System.String,RsCode.Log4NetLevel)">
+            <summary>
+            调用Log4net写日志
+            </summary>
+            <param name="logContent">日志内容</param>
+            <param name="log4Level">记录日志等级，枚举</param>
+        </member>
+        <member name="M:RsCode.LogHelper.WriteLog(System.Type,System.String,RsCode.Log4NetLevel,System.Exception)">
+            <summary>
+            调用Log4net写日志
+            </summary>
+            <param name="type">类的类型，指定日志中错误的具体类。例如：typeof(Index)，Index是类名，如果为空表示不指定类</param>
+            <param name="logContent">日志内容</param>
+            <param name="log4Level">记录日志等级，枚举</param>
+        </member>
+        <member name="T:RsCode.Log4NetLevel">
+            <summary>
+            log4net 日志等级类型枚举
+            </summary>
+        </member>
+        <member name="T:RsCode.SystemLogInfo">
+            <summary>
+            日志明细
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.Id">
+            <summary>
+            序列
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.LogDate">
+            <summary>
+            时间
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.LogLevel">
+            <summary>
+            级别
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.Logger">
+            <summary>
+            记录器名字
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.LogMessage">
+            <summary>
+            消息
+            </summary>
+        </member>
+        <member name="P:RsCode.SystemLogInfo.ExceptionData">
+            <summary>
+            异常信息
+            </summary>
         </member>
         <member name="M:RsCode.IBackgroundTaskQueue.QueueWorkItemAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.ValueTask})">
             <summary>

@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>1.5.8.0</AssemblyVersion>
-    <FileVersion>1.5.8.0</FileVersion>
+    <AssemblyVersion>1.6.0.0</AssemblyVersion>
+    <FileVersion>1.6.0.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>快速高效的开发.net就用RsCode,文档访问https://rscode.cn</Description>
     <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.5.8</Version>
+    <Version>1.6.0</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
@@ -39,6 +39,7 @@
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="AutoMapper.Data" Version="3.0.0" />
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.6" />
+    <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.5" />
@@ -48,7 +49,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-    <PackageReference Include="PetaPoco.Compiled" Version="6.0.480" />
+    <PackageReference Include="PetaPoco.Compiled" Version="6.0.532" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />

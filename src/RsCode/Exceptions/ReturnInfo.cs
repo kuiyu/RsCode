@@ -14,11 +14,10 @@ namespace RsCode
         /// 操作成功状态
         /// </summary>
 
-        [JsonPropertyName("success")]public bool Success { get {
-
-                if (code == 200) success = true;
-                else
-                    success = false;
+        [JsonPropertyName("success")]
+        public bool Success { 
+            get {
+                
                 return success;
             } set {
                 success = value;

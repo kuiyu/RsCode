@@ -4,7 +4,8 @@ namespace RsCode.AspNetCore
     /// <summary>
     /// 
     /// </summary>
-    public  class AppException:Exception
+    
+    public class AppException : Exception
     {
         /// <summary>
         /// 
@@ -27,10 +28,10 @@ namespace RsCode.AspNetCore
         /// <summary>
         /// 
         /// </summary>
-        public int Status { get; set; } = 500;
+        public int Status { get; set; } = 200;
         /// <summary>
         /// 响应消息
         /// </summary>
-        public new string  Message { get; set; }
+        public new string Message { get; set; }
     }
 }
