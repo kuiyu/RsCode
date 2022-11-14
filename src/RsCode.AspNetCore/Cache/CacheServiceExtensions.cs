@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Cache;
 
 using System;
@@ -38,13 +39,13 @@ namespace RsCode
 
         public static void AddMemoryCaches(this IServiceCollection services)
         {
-            services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
+            services.TryAddSingleton<ICacheProvider, MemoryCacheProvider>();
             services.AddMemoryCache();
         }
 
         public static void AddMemcachedCaches(this IServiceCollection services)
         {
-            services.AddSingleton<ICacheProvider, MemcachedCacheProvider>();
+            services.TryAddSingleton<ICacheProvider, MemcachedCacheProvider>();
         }
     }
 }
