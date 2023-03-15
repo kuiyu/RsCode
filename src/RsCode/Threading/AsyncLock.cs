@@ -23,11 +23,14 @@ namespace RsCode
     public class AsyncLock
     {
         private readonly Task<IDisposable> _releaserTask;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore;
         private readonly IDisposable _releaser;
 
-        public AsyncLock()
+        public AsyncLock(int initCount=1,int maxCount=1)
         {
+            if (initCount < 1) initCount = 1;
+            if (maxCount < 1) maxCount = 1;
+            _semaphore = new SemaphoreSlim(initCount, maxCount);
             _releaser = new Releaser(_semaphore);
             _releaserTask = Task.FromResult(_releaser);
         }

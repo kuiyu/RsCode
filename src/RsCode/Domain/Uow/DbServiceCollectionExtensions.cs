@@ -14,6 +14,7 @@
    https://github.com/kuiyu/RsCode.git
  */
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PetaPoco;
@@ -26,7 +27,19 @@ namespace RsCode
     public static class DbServiceCollectionExtensions
     {
         /// <summary>
-        /// 
+        /// 使用默认配置添加数据库
+        /// </summary>
+        /// <typeparam name="TDatabaseProvider"></typeparam>
+        /// <param name="services"></param>
+        public static void AddDatabase<TDatabaseProvider>(this IServiceCollection services)
+           where TDatabaseProvider : IProvider
+        {
+            var Configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+            var connStr = Configuration.GetConnectionString("DefaultConnection");
+            AddDatabase<TDatabaseProvider>(services,connStr, new RsCodeMapper());
+        }
+        /// <summary>
+        /// 添加数据库配置
         /// </summary>
         /// <typeparam name="TDatabaseProvider"></typeparam>
         /// <param name="services"></param>
@@ -39,7 +52,7 @@ namespace RsCode
             
         }
         /// <summary>
-        /// 添加数据库
+        /// 添加数据库配置
         /// </summary>
         /// <param name="services"></param>
         /// <param name="func"></param>
@@ -60,7 +73,7 @@ namespace RsCode
         public RsCodeMapper()
         { 
              InflectTableName =  (inflector, s) => inflector.Pluralise(inflector.Underscore(s));
-            InflectColumnName = (inflector, s) => inflector.Underscore(s);
+             //InflectColumnName = (inflector, s) => inflector.Underscore(s);
             //InflectColumnName = (inflector, s) => inflector.Pluralise(s);
         }
     }

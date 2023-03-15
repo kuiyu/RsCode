@@ -25,6 +25,11 @@ namespace RsCode
             services.AddSingleton<ICacheProvider, RedisCacheProvider>();
         }
 
+        public static void AddRedisCaches(this IServiceCollection services)
+        {
+            var configuration= services.BuildServiceProvider().GetRequiredService<IConfiguration>();
+            AddRedisCaches(services,configuration);
+        }
 
         public static void AddRedisCaches(this IServiceCollection services, IConfiguration configuration, CSRedisClient csredis)
         {  
@@ -39,13 +44,13 @@ namespace RsCode
 
         public static void AddMemoryCaches(this IServiceCollection services)
         {
-            services.TryAddSingleton<ICacheProvider, MemoryCacheProvider>();
+            services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
             services.AddMemoryCache();
         }
 
         public static void AddMemcachedCaches(this IServiceCollection services)
         {
-            services.TryAddSingleton<ICacheProvider, MemcachedCacheProvider>();
+            services.AddSingleton<ICacheProvider, MemcachedCacheProvider>();
         }
     }
 }

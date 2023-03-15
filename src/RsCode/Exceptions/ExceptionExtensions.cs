@@ -18,9 +18,11 @@
 
 using AspectCore.Configuration;
 using AspectCore.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RsCode.AspNetCore;
 using System;
+
 
 namespace RsCode
 {
@@ -32,6 +34,12 @@ namespace RsCode
         /// <param name="services"></param>
         public static void AddExceptionLogging(this IServiceCollection services)
         {
+            //var config = services.BuildServiceContextProvider().GetService<IConfiguration>();
+            //var sql = CreateTableScript();
+            //using (var connection = new MySqlConnection(config.GetConnectionString("DefaultConnection")))
+            //    connection.ExecuteNonQuery(sql);
+            
+            
             services.ConfigureDynamicProxy(config =>
             {
                 config.Interceptors.AddDelegate(async (context, next) =>
@@ -51,6 +59,22 @@ namespace RsCode
                     }
                 });
             });
+        }
+
+        static string  CreateTableScript()
+        {
+            string sql =
+                $@"create table if not exists rscode_system_log
+                (
+                    Id                   bigint not null auto_increment,
+                    LogDate              datetime not null,
+                    LogLevel             varchar(20) not null,
+                    Logger               varchar(255) not null,
+                    LogMessage           text not null,
+                    ExceptionData        text not null,
+                    primary key (Id)
+                );";
+            return sql;
         }
     }
 }

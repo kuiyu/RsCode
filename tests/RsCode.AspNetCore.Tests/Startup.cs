@@ -47,6 +47,10 @@ namespace RsCode.AspNetCore.Tests
                     // 注册自定义服务
                     services.AddSchedulerJob();
                     services.AddSingleton<MyJob>();
+
+                    services.AddSingleton<IA, A>();
+                    services.AddSingleton<IA, B>();
+                    services.AddSingleton<IA, C>();
                 })
                 ;
         }

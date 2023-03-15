@@ -63,14 +63,16 @@ namespace RsCode.AspNetCore
             }
             else
             {
+                int statusCode = 500;
                 var msg = exception.Message;
                 if(exception is AppException)
                 {
-                   msg= ((RsCode.AspNetCore.AppException)exception).Message;
+                    statusCode = 0;
+                    msg = ((RsCode.AspNetCore.AppException)exception).Message;
                 }
                 
                 context.Response.Clear();
-                context.Response.StatusCode = 500;
+                context.Response.StatusCode = statusCode;
                 await context.Response.WriteAsync($"Error ,{msg}");
             }
         }
@@ -105,7 +107,7 @@ namespace RsCode.AspNetCore
                     code = appException.Status,
                     Msg = appException.Message
                 };
-
+                context.Response.StatusCode = 0;
                 var result = JsonSerializer.Serialize(returnInfo, options);
                 await context.Response.WriteAsync(result).ConfigureAwait(false);
             }
@@ -120,11 +122,12 @@ namespace RsCode.AspNetCore
                 };
 
                 var result = JsonSerializer.Serialize(returnInfo, options);
+                context.Response.StatusCode = statusCode;
                 await context.Response.WriteAsync(result).ConfigureAwait(false);
             }
         }
 
-      
+        
 
         bool IsAjax(HttpRequest request)
         {

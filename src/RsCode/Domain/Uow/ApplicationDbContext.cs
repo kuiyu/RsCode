@@ -60,6 +60,7 @@ namespace RsCode.Domain.Uow
             var connStr = Configuration.GetConnectionString(connName);
             if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception("ConnectionString not fund");
              
+            
             var db = CallContext<IDatabase>.GetData(connStr);
             if (db == null)
             {              

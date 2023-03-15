@@ -654,9 +654,16 @@
             连接字符串名称
             </summary>
         </member>
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            使用默认配置添加数据库
+            </summary>
+            <typeparam name="TDatabaseProvider"></typeparam>
+            <param name="services"></param>
+        </member>
         <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,PetaPoco.IMapper)">
             <summary>
-            
+            添加数据库配置
             </summary>
             <typeparam name="TDatabaseProvider"></typeparam>
             <param name="services"></param>
@@ -664,7 +671,7 @@
         </member>
         <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{PetaPoco.Database})">
             <summary>
-            添加数据库
+            添加数据库配置
             </summary>
             <param name="services"></param>
             <param name="func"></param>

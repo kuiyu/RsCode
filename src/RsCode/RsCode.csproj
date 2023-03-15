@@ -34,12 +34,13 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp.Css" Version="0.14.1" />
-    <PackageReference Include="AspectCore.Extensions.DataAnnotations" Version="2.2.0" />
-    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="AspectCore.Extensions.DataAnnotations" Version="2.3.0" />
+    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.3.0" />
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="AutoMapper.Data" Version="3.0.0" />
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.6" />
     <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.5" />

@@ -20,7 +20,7 @@ namespace RsCode.AspNetCore.Tests
 
             List<TestA> aa = new List<TestA>();
             aa.Add(a);
-            var cc = aa.MapToList<TestC>();
+            var cc =aa.MapTo<TestC>();
             Assert.Equal(cc.FirstOrDefault().Nick, aa.FirstOrDefault().Nick);
         }
     }

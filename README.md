@@ -71,10 +71,13 @@ builder.Host.UseServiceContext(o =>
     var p = Predicates.ForService("Rswl.*"); //your project namespace
     o.AddDataAnnotations(p);
 });
+//添加日志
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.AddLog4Net();
+});
 //添加mediatR
 builder.Services.AddMediatR(typeof(Program).Assembly);
-//添加日志
-builder.Logging.AddLog4Net();
 //记录日志
 builder.Services.AddExceptionLogging();
 

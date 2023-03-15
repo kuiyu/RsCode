@@ -29,10 +29,14 @@ namespace RsCode.Domain
 
     public class Repository<T>:Repository<T,long>, IRepository<T> where T : IEntity<long>
     {
-
+      
     }
     public  class Repository<T, TPrimaryKey> : IRepository<T,TPrimaryKey> where T : IEntity<TPrimaryKey>
     {
+        [FromServiceContext]
+        public IApplicationDbContext applicationDbContext { get; set; }
+      
+
         protected IDatabase db
         {
             get
@@ -41,8 +45,7 @@ namespace RsCode.Domain
             }
         }
 
-        [FromServiceContext]
-        protected IApplicationDbContext applicationDbContext { get; set; }
+       
 
         public virtual IDatabase ChangeDataBase(string connStrName)
         {
