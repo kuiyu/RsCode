@@ -67,7 +67,7 @@ namespace RsCode.AspNetCore
                 });
 
             services.AddScoped<JwtHelper>();
-           
+      
         }
     }
 }

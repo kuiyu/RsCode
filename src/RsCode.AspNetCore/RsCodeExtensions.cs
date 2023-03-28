@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 
 namespace RsCode.AspNetCore
@@ -23,10 +24,11 @@ namespace RsCode.AspNetCore
             services.AddExceptionLogging();
             //添加内存缓存
             services.AddMemoryCaches();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddTransient<IdGenerate>();
             
+
         }
     }
 }

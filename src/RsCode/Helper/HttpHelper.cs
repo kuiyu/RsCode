@@ -70,10 +70,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                var result = root.GetProperty("result");
-                var json = result.JsonSerialize();
-                var data = JsonSerializer.Deserialize<T>(json, options); 
-                return data;
+                return GetValue<T>(root);
             }
             else
             {
@@ -86,7 +83,7 @@ namespace RsCode
             
         }
         /// <summary>
-        /// 获取PetaPoco.Page结果的数据
+        /// 获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="url"></param>
@@ -166,10 +163,8 @@ namespace RsCode
                     options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                     JsonDocument doc = JsonDocument.Parse(s);
                     var root = doc.RootElement;
-                    var result = root.GetProperty("result");
-                    var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
-
-                    return data;
+               
+                    return GetValue<T>(root);
                 }
             else
             {
@@ -180,6 +175,7 @@ namespace RsCode
                 return default(T);
             } 
         }
+        
         
 
         /// <summary>
@@ -214,10 +210,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                var result = root.GetProperty("result");
-                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
-
-                return data;
+                return GetValue<T>(root);
             }
             else
             {
@@ -260,10 +253,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                var result = root.GetProperty("result");
-                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
-
-                return data;
+                return GetValue<T>(root);
             }
             else
             {
@@ -298,8 +288,15 @@ namespace RsCode
                 {
                     if(content.Contains("{")&&content.Contains("}"))
                     {
-                     var returnInfo = JsonSerializer.Deserialize<ReturnInfo>(content);
-                    throw new AppException(returnInfo.code, returnInfo.Msg);
+                        var returnInfo = Deserializer<ReturnInfo>(content);
+                        if (returnInfo != null)
+                        {
+ throw new AppException(returnInfo.code, returnInfo.Msg);
+                        }else
+                        {
+                            throw new AppException(code, content);
+                        }
+                   
                     }
                   else
                     {
@@ -314,6 +311,37 @@ namespace RsCode
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        T Deserializer<T>(string json)
+        {
+            try
+            {
+               return JsonSerializer.Deserialize<T>(json);
+            }
+            catch (Exception)
+            {
+                return default(T);
+            }
+        }
+        T GetValue<T>(JsonElement root)
+        {
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+
+            JsonElement result;
+            var ret = root.TryGetProperty("result", out result);
+            if (ret)
+            {
+                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+                return data;
+            }
+            else
+            {
+                string s = root.JsonSerialize();
+                var data = JsonSerializer.Deserialize<T>(s, options); ;
+                return data;
             }
         }
     }

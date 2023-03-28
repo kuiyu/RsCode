@@ -867,7 +867,7 @@
         </member>
         <member name="M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String)">
             <summary>
-            获取PetaPoco.Page结果的数据
+            获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
             </summary>
             <typeparam name="T"></typeparam>
             <param name="url"></param>

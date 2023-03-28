@@ -19,7 +19,9 @@ namespace RsCode.Cache
         }
         public T Get<T>(string key)
         {
-          return  cache.Get<T>(key); 
+            T value=default(T);
+            cache.TryGetValue<T>(key, out value);
+            return value;
         }
         public void Remove(string key)
         {
