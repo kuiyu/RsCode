@@ -39,7 +39,7 @@ namespace RsCode.AspNetCore
             _loggerFactory = loggerFactory; 
             this.options = options.Value;
         }
-
+        
         public void OnException(ExceptionContext context)
         {
             if (context.ExceptionHandled) return;

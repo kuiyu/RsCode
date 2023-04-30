@@ -13,6 +13,7 @@ namespace RsCode.AspNetCore
             services.AddMvc(config => {
                 config.Filters.Add<AntiXSSAttribute>();
                 config.Filters.Add<ModelValidateFilter>();
+                config.Filters.Add<AppExceptionFilter>();
                 config.OutputFormatters.Insert(0, new RsOutputFormatter());
                 config.InputFormatters.Insert(0, new RsInputFormatter());
             }).AddControllersAsServices()
