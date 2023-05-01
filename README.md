@@ -39,13 +39,13 @@
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 1.6.0
+  $ dotnet add package RsCode --version 1.6.1
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 1.6.0
+  Install-Package RsCode.AspNetCore -Version 1.6.1
   ```
 
   > 推荐使用 Visual Studio 2022 开发。
@@ -78,8 +78,8 @@ builder.Host.ConfigureLogging(logging =>
 });
 //添加mediatR
 builder.Services.AddMediatR(typeof(Program).Assembly);
-//记录日志
-builder.Services.AddExceptionLogging();
+//添加rscode
+builder.Services.AddRsCode();
 
 //自动注册接口和实现
 builder.Services.AutoRegister("myproject.Core"); //your project name
