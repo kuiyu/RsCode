@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.AspNetCore.Tests", "tests\RsCode.AspNetCore.Tests\RsCode.AspNetCore.Tests.csproj", "{0EC076FE-1424-40D1-B27E-7DF86B12123E}"
 EndProject
@@ -18,6 +18,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.Storage.QiniuStorage", "src\RsCode.Storage.QiniuStorage\RsCode.Storage.QiniuStorage.csproj", "{83CB53C0-FADC-48C0-A675-66D3A0E74372}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.Storage.Tests", "tests\RsCode.Storage.Tests\RsCode.Storage.Tests.csproj", "{4018983D-89AB-4A7F-81DC-77631FC0D3D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsCode.Douyin", "src\RsCode.Douyin\RsCode.Douyin.csproj", "{A12AA294-E96D-4475-B0A6-B793D96E1EFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RsCode.Douyin.Tests", "tests\RsCode.Douyin.Tests\RsCode.Douyin.Tests.csproj", "{64052172-FEA5-4CB5-90C7-F04743C05D36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,14 @@ Global
 		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4018983D-89AB-4A7F-81DC-77631FC0D3D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A12AA294-E96D-4475-B0A6-B793D96E1EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12AA294-E96D-4475-B0A6-B793D96E1EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12AA294-E96D-4475-B0A6-B793D96E1EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12AA294-E96D-4475-B0A6-B793D96E1EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64052172-FEA5-4CB5-90C7-F04743C05D36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64052172-FEA5-4CB5-90C7-F04743C05D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64052172-FEA5-4CB5-90C7-F04743C05D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64052172-FEA5-4CB5-90C7-F04743C05D36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +72,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0EC076FE-1424-40D1-B27E-7DF86B12123E} = {A1F1CC2D-DD98-4784-A2A7-36FF487F0476}
 		{4018983D-89AB-4A7F-81DC-77631FC0D3D1} = {A1F1CC2D-DD98-4784-A2A7-36FF487F0476}
+		{64052172-FEA5-4CB5-90C7-F04743C05D36} = {A1F1CC2D-DD98-4784-A2A7-36FF487F0476}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E888CD95-C5BE-484E-A8A1-356835B130AD}

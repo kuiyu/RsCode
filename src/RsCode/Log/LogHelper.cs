@@ -20,6 +20,7 @@ using log4net;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace RsCode
 {
@@ -62,10 +63,10 @@ namespace RsCode
         /// <param name="log4Level">记录日志等级，枚举</param>
         public static void WriteLog(Type type, string logContent, Log4NetLevel log4Level,Exception ex=null)
         {
-            //log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)
+            
             var repositories = LogManager.GetAllRepositories();
             var repository = repositories.FirstOrDefault();
-        
+            if (repository == null) return;
             
            ILog log = type == null ? LogManager.GetLogger(repository.Name, "") : LogManager.GetLogger(type);
            

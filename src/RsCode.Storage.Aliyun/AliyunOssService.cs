@@ -28,7 +28,7 @@ namespace RsCode.Storage.Aliyun
             AccessKeySecret = optionsSnapshot.Value.AccessKeySecret;
         }
 
-        public async Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync(string sessionName, string endpointName, string roleArn = "", int durationSeconds = 900)
+        public async Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync(string sessionName, string endpointName, string roleArn = "", int durationSeconds = 3600)
         {
             try
             {
@@ -176,13 +176,13 @@ namespace RsCode.Storage.Aliyun
             return await Task.Run(()=> client.DeleteObject(bucketName, key));
         }
 
-        public Uri GeneratePresignedUri(string bucketName,string key,string endpointName, AssumeRoleResponseBodyCredentials stsToken)
+        public Uri GeneratePresignedUri(string bucketName,string key,string endpointName, AssumeRoleResponseBodyCredentials stsToken, int minute = 60 )
         {
             var endpoint = Options.GetEndPoint(endpointName);
             var client = GetOssClient(stsToken.AccessKeyId, stsToken.AccessKeySecret, endpoint.Oss, stsToken.SecurityToken); 
             //创建临时访问的url
-            return client.GeneratePresignedUri(bucketName,key,DateTime.Now.AddMinutes(5),SignHttpMethod.Get);
-             
+            return client.GeneratePresignedUri(bucketName,key,DateTime.Now.AddMinutes(minute),SignHttpMethod.Get);
+            
         }
       
 

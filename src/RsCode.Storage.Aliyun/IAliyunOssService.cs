@@ -9,7 +9,7 @@ namespace RsCode.Storage.Aliyun
 {
     public  interface IAliyunOssService
     {
-        Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync( string sessionName,string endpointName, string roleArn = "", int durationSeconds = 900);
+        Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync( string sessionName,string endpointName, string roleArn = "", int durationSeconds = 3600);
 
         AlibabaCloud.SDK.Sts20150401.Client CreateStsClient(string accessKeyId, string accessKeySecret, string endpoint);
 
@@ -24,7 +24,7 @@ namespace RsCode.Storage.Aliyun
         /// <param name="endpointName"></param>
         /// <param name="stsToken"></param>
         /// <returns></returns>
-        Uri GeneratePresignedUri(string bucketName, string key, string endpointName, AssumeRoleResponseBodyCredentials stsToken);
+        Uri GeneratePresignedUri(string bucketName, string key, string endpointName, AssumeRoleResponseBodyCredentials stsToken,int minute=60);
         Task<DeleteObjectResult> DeleteFileAsync(string bucketName, string key, string endpointName, AssumeRoleResponseBodyCredentials stsToken);
         /// <summary>
         /// 查询指定key对应UrL
