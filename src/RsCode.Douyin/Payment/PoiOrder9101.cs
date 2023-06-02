@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 namespace RsCode.Douyin.Payment
 {
     /// <summary>
+    /// 进入了抖音商品库的商品称为 POI 订单
     /// 9101团购券类型
     /// https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/ecpay/order/order-sync#_接口说明
     /// </summary>

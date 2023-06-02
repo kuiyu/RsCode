@@ -10,6 +10,10 @@ using System.Text.Json.Serialization;
 
 namespace RsCode.Douyin.Payment
 {
+    /// <summary>
+    /// 非抖音商品库的商品称为 POI 订单
+    /// 需使用真机调试生成的openid做订单同步
+    /// </summary>
     public class NpoiOrder
     {
         /// <summary>
@@ -31,7 +35,7 @@ namespace RsCode.Douyin.Payment
         /// 订单商品总数
         /// </summary>
         [JsonPropertyName("amount")]
-        public int Amount { get; set; } 
+        public int Amount { get; set; }
         /// <summary>
         /// 订单总价，单位为分
         /// </summary>
@@ -47,7 +51,7 @@ namespace RsCode.Douyin.Payment
         /// </summary>
         [JsonPropertyName("item_list")]
         public NpoiItem[] ItemList { get; set; }
-        
+
     }
 
     public class NpoiItem
@@ -59,8 +63,8 @@ namespace RsCode.Douyin.Payment
         public string ItemCode { get; set; }
         /// <summary>
         /// 子订单商品图片 URL， 长度 <= 512 byte
-         /// </summary>
-                [JsonPropertyName("img")]
+        /// </summary>
+        [JsonPropertyName("img")]
         public string Img { get; set; }
         /// <summary>
         /// 子订单商品介绍标题，长度 <= 256 byte

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -62,7 +63,12 @@ namespace RsCode.Douyin.Core
 
                 if (method == "POST")
                 {
-                    string json = JsonSerializer.Serialize(request, request.GetType(),new JsonSerializerOptions {Encoder= JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All) });
+                    var option = new JsonSerializerOptions
+                    {
+                        Encoder = JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                        DefaultIgnoreCondition= System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                    };
+                    string json = JsonSerializer.Serialize(request, request.GetType(),option);
                     HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
 
                     var res = await httpClient.PostAsync<T>(url, httpContent);

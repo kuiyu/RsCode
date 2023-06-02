@@ -10,6 +10,9 @@ using System.Text.Json.Serialization;
 
 namespace RsCode.Douyin.Payment
 {
+    /// <summary>
+    /// <see cref="https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/ecpay/pay-list/query"/>
+    /// </summary>
     public class PayQueryResponse:DouyinResponse
     {
         /// <summary>
@@ -36,10 +39,10 @@ namespace RsCode.Douyin.Payment
         /// 支付信息
         /// </summary>
         [JsonPropertyName("payment_info")]
-        public PaymentInfo PaymentInfo { get; set; }
+        public PaymentInfo PaymentInfo { get; set; } 
 
         [JsonPropertyName("cps_info")]
-        public CpsInfo CpsInfo { get; set; }
+        public string CpsInfo { get; set; } 
     }
 
     public class PaymentInfo

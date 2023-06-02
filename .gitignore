@@ -305,7 +305,7 @@ __pycache__/
 OpenCover/
 upload
 Plugins
-/tests/RsCode.Storage.Tests/appsettings.json
-/tests/RsCode.Douyin.Tests/douyin.json
-/tests/RsCode.Douyin.Tests/appsettings.json
-/tests/RsCode.Douyin.Tests/cert/douyin
+appsettings.json
+douyin.json
+appsettings.json
+*.pem
