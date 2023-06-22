@@ -27,14 +27,27 @@ namespace RsCode
     public static class DbServiceCollectionExtensions
     {
         /// <summary>
-        /// 使用默认配置添加数据库
+        /// 添加数据库配置
         /// </summary>
         /// <typeparam name="TDatabaseProvider"></typeparam>
         /// <param name="services"></param>
-        public static void AddDatabase<TDatabaseProvider>(this IServiceCollection services)
+        /// <param name="configuration"></param>
+		public static void AddDatabase<TDatabaseProvider>(this IServiceCollection services,IConfiguration configuration)
+		   where TDatabaseProvider : IProvider
+		{
+			var connStr = configuration.GetConnectionString("DefaultConnection");
+			AddDatabase<TDatabaseProvider>(services, connStr, new RsCodeMapper());
+		}
+		/// <summary>
+		/// 使用默认配置添加数据库
+		/// </summary>
+		/// <typeparam name="TDatabaseProvider"></typeparam>
+		/// <param name="services"></param>
+		public static void AddDatabase<TDatabaseProvider>(this IServiceCollection services)
            where TDatabaseProvider : IProvider
         {
-            var Configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+            var provider = services.BuildServiceProvider();
+            var Configuration = provider.GetService<IConfiguration>();
             var connStr = Configuration.GetConnectionString("DefaultConnection");
             AddDatabase<TDatabaseProvider>(services,connStr, new RsCodeMapper());
         }

@@ -32,5 +32,6 @@ public static class QiniuStorageServiceExtension
         services.AddScoped<ZoneHelper>();
             
         }
-    }
+
+}
  

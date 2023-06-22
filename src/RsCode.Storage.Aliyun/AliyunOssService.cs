@@ -28,8 +28,12 @@ namespace RsCode.Storage.Aliyun
             AccessKeySecret = optionsSnapshot.Value.AccessKeySecret;
         }
 
-        public async Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync(string sessionName, string endpointName, string roleArn = "", int durationSeconds = 3600)
+        public async Task<AlibabaCloud.SDK.Sts20150401.Models.AssumeRoleResponseBody> GetStsTokenAsync(string sessionName, string endpointName, string roleArn = "", int durationSeconds = 900)
         {
+            if(durationSeconds<900|| durationSeconds>3600)
+            {
+                throw new Exception("角色扮演时指定的过期时间无效,请设定在15分钟到1小时之间");
+            }
             try
             {
                 if (string.IsNullOrEmpty(sessionName))
@@ -98,6 +102,8 @@ namespace RsCode.Storage.Aliyun
                     result = client.PutObject(request);
                 }
             });
+
+
             return result;
         }
         public async Task<PutObjectResult> UploadFileAsync(Stream fs, string key, string bucketName, string endpointName, AssumeRoleResponseBodyCredentials stsToken)

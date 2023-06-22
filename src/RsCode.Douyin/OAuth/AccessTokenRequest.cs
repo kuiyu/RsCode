@@ -14,15 +14,27 @@ namespace RsCode.Douyin.OAuth
     //https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/interface-request-credential/get-access-token
     public class AccessTokenRequest: DouyinRequest
     {
+        /// <summary>
+        /// getAccessToken
+        /// <see cref="https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/interface-request-credential/get-access-token"/>
+        /// </summary>
         public AccessTokenRequest()
         {
             
         }
+        /// <summary>
+        /// getAccessToken
+        /// <see cref="https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/interface-request-credential/get-access-token"/>
+        /// </summary>
         public AccessTokenRequest(string appid,string secret)
         {
             AppId = appid;
             AppSecret = secret;
         }
+        /// <summary>
+        /// getAccessToken
+        /// <see cref="https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/server/interface-request-credential/get-access-token"/>
+        /// </summary>
         public AccessTokenRequest(DouyinOptions options)
         {
             AppId=options.AppId; AppSecret=options.Secret;

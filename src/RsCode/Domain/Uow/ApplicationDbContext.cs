@@ -71,7 +71,7 @@ namespace RsCode.Domain.Uow
            
             CallContext<IDatabase>.SetData(connStr, db);       
            
-            Current = db;
+            //Current = db;
             return db;
         }
 

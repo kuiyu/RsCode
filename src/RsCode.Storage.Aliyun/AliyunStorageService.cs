@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -34,6 +35,11 @@ namespace RsCode.Storage.Aliyun
         }
 
         public Task<UploadResult> UploadAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UploadResult> UploadAsync(Stream stream, string key, string token)
         {
             throw new NotImplementedException();
         }

@@ -7,16 +7,18 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Microsoft.Extensions.Options;
+
 using RsCode.Storage.QiniuStorage;
 using RsCode.Storage.QiniuStorage.Core;
-using RsCode.Threading;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+
 
 namespace RsCode.Storage
 {
@@ -27,7 +29,7 @@ namespace RsCode.Storage
         Mac mac;
         StorageOptions storageOption;
          QiniuHttpClient httpClient;
-        ZoneHelper zoneHelper;
+         ZoneHelper zoneHelper;
         public QiniuStorageProvider(
             IOptionsSnapshot<List<StorageOptions>> _options, 
             QiniuHttpClient _qiniuHttpClient ,
@@ -202,7 +204,25 @@ namespace RsCode.Storage
 
         #region 上传
 
+        public async Task<UploadResult> UploadAsync(Stream stream,string key,string token)
+        {
+            await Task.Run(() =>
+            {
+                var config = new Qiniu.Storage.Config();
+                Qiniu.Storage.UploadManager uploadManager = new Qiniu.Storage.UploadManager(config);
+                Qiniu.Storage.PutExtra putExtra = new Qiniu.Storage.PutExtra();
 
+                var ret = uploadManager.UploadStream(stream, key, token, putExtra);
+                UploadResult result = new UploadResult();
+                if (ret.Code == 200)
+                {
+                    result.Key = key;
+                }
+                return result;
+            });
+
+            return null;
+        }
 
         ///// <summary>
         ///// 上传文件

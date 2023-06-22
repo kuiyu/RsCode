@@ -7,6 +7,7 @@
    https://github.com/kuiyu/RsCode.git
  */
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -48,5 +49,7 @@ namespace RsCode.Storage
 
 
         Task<(HttpResponseMessage,string)> SendAsync(StorageRequest request);
+
+        Task<UploadResult> UploadAsync(Stream stream, string key, string token);
     }
 }
