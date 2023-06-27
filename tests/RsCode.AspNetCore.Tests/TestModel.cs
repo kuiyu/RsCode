@@ -1,7 +1,9 @@
-﻿using System;
+﻿using PetaPoco;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RsCode.AspNetCore.Tests
@@ -45,6 +47,34 @@ namespace RsCode.AspNetCore.Tests
         {
             return "c";
         }
+    }
+
+    public interface IUserService
+    {
+        Task<UserModel> GetUserAsync();
+    }
+
+    public class UserService:IUserService
+    {
+        IDatabase db;
+        public UserService(IApplicationDbContext applicationDbContext)
+        {
+            db = applicationDbContext.Current;
+        }
+        public async Task<UserModel> GetUserAsync()
+        {
+            return await db.FirstOrDefaultAsync<UserModel>("where userId!=''");
+        }
+    }
+
+    [TableName("rswl_user_info")]
+    [PrimaryKey("UserId",AutoIncrement =false)]
+    public class UserModel
+    {
+        [Column("UserId")]
+        public string UserId { get; set; }
+        [Column("UserName")]
+        public string UserName { get; set; }
     }
 
     public  class TestModel

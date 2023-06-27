@@ -1,115 +1,84 @@
-# RsCode
-一款开箱即用的.net工具库，助力.net开发。
+---
+home: true
+lang: zh-CN
+title: RsCode技术文档
+description: RsCode代码库技术文档
+features: #配置首页特性列表。
+  - title:  高效
+    details: 开箱即用
+  - title: 开源
+    details: 遵守MIT协议 100%公开源码	
+  - title: 免费
+    details: 完全免费使用
 
+# actions:
+#   - text: 快速上手
+#     link: /rscode/guide/getting-started.html
+#     type: primary
+#   - text: 项目简介
+#     link: /rscode/guide/README.md
+#     type: secondary
+---
 
 ## ✨ 特性
 
-- 🌈 基于最新的.net技术。
-- 📦 开箱即用的工具库。
+- 🌈 MIT开源协议，完全免费使用
+
+- 📦 开箱即用
+
 - 💕 集成一些流行的开源框架/库。
-- 🎨 统一的异常处理
-- 🛡 高效的第三方业务库,例：微信开发，微信支付 ，第三方存储等
-- ⚙️ 基于 .NET Standard 2.1/.NET 6，可直接引用丰富的 .NET 类库。
-- 🎁 可与已有的 ASP.NET Core MVC、Razor Pages 项目无缝集成。
 
-
-## 🌈 源码托管
-
-- [Gitee](https://github.com/kuiyu/RsCode/)
-- [GitHub](https://gitee.com/kuiyu/RsCode/)
-- 
-## 🖥 支持环境
-
-- .NET Core 3.1以上
-
+- 🎨 集成第三方平台业务API，例：微信开发，第三方支付，第三方存储,抖音相关开发SDK等
 
 ## 💿 当前版本
 
 - 正式发布: [![RsCode](https://img.shields.io/nuget/v/RsCode.svg?color=red&style=flat-square)](https://www.nuget.org/packages/RsCode/)
 
+- 开源协议: [![RsCode](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://github.com/kuiyu/RsCode/blob/master/LICENSE)
 
+  
 
-## 📦 安装
+## 快速使用
 
-- 先安装 [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1?WT.mc_id=DT-MVP-5003987) 3.1.300 以上版本
-
-
-### 在已有项目中引入 RsCode
+> 推荐使用 Visual Studio 2022 开发。
 
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 1.6.1
+  $ dotnet add package RsCode --version 2.0.0
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 1.6.1
+  Install-Package RsCode.AspNetCore -Version 2.0.0
   ```
 
-  > 推荐使用 Visual Studio 2022 开发。
+- 引入[log4net配置](https://rscode.cn/rscode/log.html#%E9%99%84%E5%BD%951)，
 
+- Pragram.cs中添加即可
 
+  ````csharp
+  using PetaPoco;
+  using RsCode;
+  using RsCode.AspNetCore;
+  using AspectCore.Extensions.DependencyInjection;
+  
+  var builder = WebApplication.CreateBuilder(args);
+  //1.添加动态代理
+  builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+  //2.添加RsCode
+  builder.Services.AddRsCode();
+  //3.自动注册应用接口和实现
+  string[] assemblies = new string[] { "your.project.Core", "应用程序集名称" }; //todo 替换成实际业务类程序集名称
+  builder.Services.AutoInject(assemblies); 
+  //4.添加数据库，以MySql为例
+  builder.Services.AddDatabase<MySqlDatabaseProvider>();
+  builder.Services.AddUnitOfWork();
+  ````
+  
 
-## ⚙️使用
-
-使用RsCode时，必要的项目配置 di,mediatR,异常日志
-
-```csharp
-using RsCode;
-using RsCode.AspNetCore;
-using AspectCore.Configuration;
-using AspectCore.Extensions.Hosting;
-using AspectCore.Extensions.DataAnnotations;
-using MediatR;
-
-var builder = WebApplication.CreateBuilder(args);
-//添加di
-builder.Host.UseServiceContext(o =>
-{
-    var p = Predicates.ForService("Rswl.*"); //your project namespace
-    o.AddDataAnnotations(p);
-});
-//添加日志
-builder.Host.ConfigureLogging(logging =>
-{
-    logging.AddLog4Net();
-});
-//添加mediatR
-builder.Services.AddMediatR(typeof(Program).Assembly);
-//添加rscode
-builder.Services.AddRsCode();
-
-//自动注册接口和实现
-builder.Services.AutoRegister("myproject.Core"); //your project name
-builder.Services.AutoRegister("myproject.Application");
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseAuthorization();
-//异常处理
-app.UseErrorHandler();
-app.MapControllers();
-
-app.Run();
-```
-
-
-
-## 🔗 文档链接
-
-- [文档主页](https://rscode.cn)
-- [微软官方教程](https://docs.microsoft.com/zh-cn/aspnet/core/?view=aspnetcore-6.0)
+​      以上功能包含：API统一消息，工作单元，日志，数据库操作，接口自动注入，异常拦截，模型验证，mediator中间件，内存缓存，id生成器;需要更多的功能，可[查阅文档](https://rscode.cn/rscode/utils.html)
 
 
 
@@ -129,13 +98,3 @@ app.Run();
   <img src="https://www.hnrswl.com/res/static/img/tq.png" width="300" alt="技术赚钱群">
 - [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
 
-
-
-
-## ☀️ 授权协议
-
-[![RsCode](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://github.com/kuiyu/RsCode/blob/master/LICENSE)
-
-## 友情链接
-
-[稀缺资源下载](https://pan.rs888.net)   [网络工具箱](https://u.rscode.cn)

@@ -15,9 +15,12 @@
  */
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using PetaPoco;
 using PetaPoco.Core;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,28 +30,29 @@ namespace RsCode.Domain.Uow
     /// 
     /// </summary>
     public class ApplicationDbContext : IApplicationDbContext
-    { 
-        
+    {
         IEnumerable<IDatabase> databases;
-        IConfiguration Configuration { get; }
+        IServiceProvider serviceProvider;
+        public ApplicationDbContext(IEnumerable<IDatabase> databases, IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+            this.databases = databases;
+        }
+
+
+
         /// <summary>
         /// 当前数据库连接
         /// </summary>
-        public IDatabase Current { get;  set; } 
-        /// <summary>
-        /// 数据库连接
-        /// </summary>
-        /// <param name="_databases"></param>
-        public ApplicationDbContext(IEnumerable<IDatabase> _databases)
-        { 
-            databases = _databases;
-           
-            Configuration =new ConfigurationBuilder()
-                .SetBasePath(System.IO.Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true)
-                .Build();
-            Current = GetDatabase();
+        public IDatabase Current
+        {
+            get
+            {
+                var db = GetDatabase();
+                return db;
+            }
         }
+
 
         /// <summary>
         /// 指定数据库连接字符串key,获取数据库配置
@@ -56,35 +60,33 @@ namespace RsCode.Domain.Uow
         /// <param name="connName">默认值为DefaultConnection</param>
         /// <returns></returns>
         public virtual IDatabase GetDatabase(string connName = "DefaultConnection")
-        { 
-            var connStr = Configuration.GetConnectionString(connName);
+        {
+            var connStr = serviceProvider.GetService<IConfiguration>().GetConnectionString(connName);
             if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception("ConnectionString not fund");
-             
-            
-            var db = CallContext<IDatabase>.GetData(connStr);
+
+
+            var db = CallContext<IDatabase>.GetData(connName);
             if (db == null)
-            {              
+            {
                 db = databases.FirstOrDefault(x => x.ConnectionString == connStr);
             }
-            if(db==null)
+            if (db == null)
                 throw new System.Exception("ConnectionString not fund");
-           
-            CallContext<IDatabase>.SetData(connStr, db);       
-           
-            //Current = db;
+
+            CallContext<IDatabase>.SetData(connName, db);
             return db;
         }
 
 
-        public virtual async Task<T>GetAsync<T>(object primaryKeyValue)
+        public virtual async Task<T> GetAsync<T>(object primaryKeyValue)
         {
             var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
-            string key = pd.TableInfo.PrimaryKey; 
+            string key = pd.TableInfo.PrimaryKey;
             string sql = $"where {key}={primaryKeyValue}";
-            return await Current.FirstOrDefaultAsync<T>(sql); 
+            return await Current.FirstOrDefaultAsync<T>(sql);
         }
 
-        public virtual async Task<Page<T>>GetPageAsync<T>(int page,int rows)
+        public virtual async Task<Page<T>> GetPageAsync<T>(int page, int rows)
         {
             return await Current.PageAsync<T>(page, rows);
         }
@@ -97,7 +99,7 @@ namespace RsCode.Domain.Uow
         /// <returns></returns>
         public virtual async Task<object> InsertAsync<T>(T t)
         {
-           return await Current.InsertAsync(t); 
+            return await Current.InsertAsync(t);
         }
         /// <summary>
         /// 保存记录
@@ -107,7 +109,7 @@ namespace RsCode.Domain.Uow
         /// <returns></returns>
         public virtual async Task SaveAsync<T>(T t)
         {
-            await Current.SaveAsync(t); 
+            await Current.SaveAsync(t);
         }
 
         public virtual async Task<int> DeleteAsync<T>(object primaryKeyValue)

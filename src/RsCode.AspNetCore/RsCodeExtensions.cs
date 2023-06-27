@@ -13,10 +13,12 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
+using System;
 
 namespace RsCode.AspNetCore
 {
@@ -36,7 +38,7 @@ namespace RsCode.AspNetCore
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
             services.AddExceptionLogging();
             //添加内存缓存
             services.AddMemoryCaches();

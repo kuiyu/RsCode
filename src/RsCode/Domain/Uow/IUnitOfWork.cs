@@ -16,13 +16,19 @@
  * 文档 https://rscode.cn/
  */
 
-namespace RsCode.DI
+using PetaPoco;
+using System;
+
+namespace RsCode.Domain.Uow
 {
     /// <summary>
-    ///  瞬时（Transient）生命周期服务在它们每次请求时被创建。
-    ///  这一生命周期适合轻量级的，无状态的服务
+    /// 数据操作：工作单元 
     /// </summary>
-    public interface ITransientDependency
+    public interface IUnitOfWork:IDisposable
     {
+        void Commit();
+        IDatabase Open(string connName= "DefaultConnection");
+
+      
     }
 }

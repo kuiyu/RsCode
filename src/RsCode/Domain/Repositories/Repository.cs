@@ -13,7 +13,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using AspectCore.DependencyInjection;
+
 using PetaPoco;
 using PetaPoco.Core;
 using System;
@@ -27,15 +27,19 @@ namespace RsCode.Domain
 {
 
 
-    public class Repository<T>:Repository<T,long>, IRepository<T> where T : IEntity<long>
+    public class Repository<T> : Repository<T, long>, IRepository<T> where T : IEntity<long>
     {
-      
+        public Repository(IApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        {
+        }
     }
     public  class Repository<T, TPrimaryKey> : IRepository<T,TPrimaryKey> where T : IEntity<TPrimaryKey>
     {
-        [FromServiceContext]
-        public IApplicationDbContext applicationDbContext { get; set; }
-      
+        IApplicationDbContext applicationDbContext;
+        public Repository(IApplicationDbContext applicationDbContext)
+        {
+            this.applicationDbContext = applicationDbContext;
+        }
 
         protected IDatabase db
         {
@@ -45,7 +49,6 @@ namespace RsCode.Domain
             }
         }
 
-       
 
         public virtual IDatabase ChangeDataBase(string connStrName)
         {

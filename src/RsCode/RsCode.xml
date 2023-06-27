@@ -23,24 +23,9 @@
         </member>
         <member name="T:System.AutoMapperExtensions">
             <summary>
-            AutoMapper扩展
+            改用Mapster,
+            为了防止之前应用报错
             </summary>
-        </member>
-        <member name="M:System.AutoMapperExtensions.CreateMapper``2">
-            <summary>
-            创建Mapper
-            </summary>
-            <typeparam name="TSource">要被转化的model</typeparam>
-            <typeparam name="TDestination">转化之后的model</typeparam>
-            <returns></returns>
-        </member>
-        <member name="M:System.AutoMapperExtensions.CreateMapper(System.Type,System.Type)">
-            <summary>
-            创建Mapper
-            </summary>
-            <param name="sourceType">要被转化的model类型</param>
-            <param name="destinationType">转化之后的model类型</param>
-            <returns></returns>
         </member>
         <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object)">
             <summary>
@@ -50,7 +35,7 @@
             <param name="obj">可以使用这个扩展方法的类型</param>
             <returns>转化之后的实体</returns>
         </member>
-        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object,System.Action{AutoMapper.IMapperConfigurationExpression})">
+        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Object,Mapster.TypeAdapterConfig)">
             <summary>
             复杂类型映射
             </summary>
@@ -85,23 +70,6 @@
             <typeparam name="TSource">要被转化的model</typeparam>
             <param name="source">可以使用这个扩展方法的类型</param>
             <returns>转化之后的实体</returns>
-        </member>
-        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Data.DataTable)">
-            <summary>
-            DataTable映射
-            </summary>
-            <typeparam name="TDestination">转化之后的model</typeparam>
-            <param name="dt">DataTable对象</param>
-            <returns></returns>
-        </member>
-        <member name="M:System.AutoMapperExtensions.MapTo``1(System.Data.DataSet,System.Int32)">
-            <summary>
-            DataSet映射
-            </summary>
-            <typeparam name="TDestination">转化之后的model</typeparam>
-            <param name="ds">DataSet对象</param>
-            <param name="tableIndex">DataSet中要映射的DataTable的索引</param>
-            <returns></returns>
         </member>
         <member name="T:System.CmdHelper">
             <summary>
@@ -388,6 +356,44 @@
             <param name="path"></param>
             <param name="jsonConents"></param>
         </member>
+        <member name="T:RsCode.DI.AttributeBasedServiceCollectionExtensions">
+            <summary>
+            Contains <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> extension methods to register all the services containing
+            <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes.
+            </summary>
+        </member>
+        <member name="M:RsCode.DI.AttributeBasedServiceCollectionExtensions.AddServicesWithAttributeOfType``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+            <summary>
+            Add all the services containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/>
+            and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes to the dependency injection container.
+            </summary>
+            <typeparam name="T">Any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes.</typeparam>
+            <param name="serviceCollection">Type to be extended.</param>
+            <param name="scanAssembliesStartsWith">Assembly name starts with any of the provided strings will only be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.DI.AttributeBasedServiceCollectionExtensions.AddServicesWithAttributeOfType``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly)">
+            <summary>
+            This will add all the types containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes
+            to the dependency injection container.
+            </summary>
+            <typeparam name="T">Any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes.</typeparam>
+            <param name="serviceCollection">Type to be extended.</param>
+            <param name="assemblyToBeScanned">The <see cref="T:System.Reflection.Assembly"/> will only be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="assemblyToBeScanned"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.DI.AttributeBasedServiceCollectionExtensions.AddServicesWithAttributeOfType``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            This will add all the types containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes
+            to the dependency injection container.
+            </summary>
+            <typeparam name="T">Any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes.</typeparam>
+            <param name="serviceCollection">Type to be extended.</param>
+            <param name="assembliesToBeScanned">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:System.Reflection.Assembly"/> which will only be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="assembliesToBeScanned"/> is <see langword="null"/>.</exception>
+        </member>
         <member name="M:RsCode.DI.Context.#ctor(System.Collections.Generic.IEnumerable{System.Type},System.Collections.Generic.IDictionary{System.String,System.Object},System.Action{System.String})">
             <summary>
             初始化一个 <see cref="T:RsCode.DI.Context" /> 类
@@ -486,6 +492,12 @@
             每次请求都创建一个新的对象
             </summary>
         </member>
+        <member name="T:RsCode.DI.HostedServiceAttribute">
+            <summary>
+            The <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing this <see cref="T:System.Attribute"/> will automatically be registered in <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>
+            with <see cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton"/> lifetime.
+            </summary>
+        </member>
         <member name="T:RsCode.DI.IScopedDependency">
             <summary>
             作用域（Scoped）生命周期服务在每个作用域内被创建一次
@@ -543,6 +555,98 @@
             接口实现的自定义别名
             </summary>
         </member>
+        <member name="T:RsCode.HostedServiceCollectionExtensions">
+            <summary>
+            Contains <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> extension methods to register all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/>
+            containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> attribute at once.
+            </summary>
+        </member>
+        <member name="M:RsCode.HostedServiceCollectionExtensions.AddHostedServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+            <summary>
+            Add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+            <param name="serviceCollection">The type to be extended.</param>
+            <param name="scanAssembliesStartsWith">Assemblies to be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.HostedServiceCollectionExtensions.AddHostedServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly)">
+            <summary>
+            Add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+            <param name="serviceCollection">The type to be extended.</param>
+            <param name="assemblyToBeScanned"><see cref="T:System.Reflection.Assembly"/> to be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.HostedServiceCollectionExtensions.AddHostedServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            Add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+            <param name="serviceCollection">The type to be extended.</param>
+            <param name="assembliesToBeScanned">Assemblies to be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:RsCode.IgnoreServiceRegistrationAttribute">
+            <summary>
+            The services containing this <c>Attribute</c> will be ignored during service registration in <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+        </member>
+        <member name="T:RsCode.ScopedServiceAttribute">
+            <summary>
+            作用域（Scoped）生命周期服务在每个作用域内被创建一次
+            </summary>
+        </member>
+        <member name="T:RsCode.ServiceCollectionExtensions">
+            <summary>
+            Contains <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> extension methods for dynamic service registration.
+            </summary>
+        </member>
+        <member name="M:RsCode.ServiceCollectionExtensions.AutoInject(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+            <summary>
+            <para>
+            1. This will also add all services containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes
+            to the dependency injection container.
+            </para>
+            <para>
+            2. This will also add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to
+            the dependency injection container.
+            </para>
+            </summary>
+            <param name="serviceCollection">The type that has been extended.</param>
+            <param name="scanAssembliesStartsWith">Assembly name starts with any of the provided strings will only be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.ServiceCollectionExtensions.AutoInject(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly)">
+            <summary>
+            <para>
+            1. This will also add all services containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes
+            to the dependency injection container.
+            </para>
+            <para>
+            2. This will also add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to
+            the dependency injection container.
+            </para>
+            </summary>
+            <param name="serviceCollection">The type that has been extended.</param>
+            <param name="assemblyToBeScanned">The <see cref="T:System.Reflection.Assembly"/> will only be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="assemblyToBeScanned"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:RsCode.ServiceCollectionExtensions.AutoInject(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            <para>
+            1. This will also add all services containing any of the <see cref="T:RsCode.ScopedServiceAttribute"/>, <see cref="T:RsCode.TransientServiceAttribute"/> and <see cref="T:RsCode.SingletonServiceAttribute"/> attributes
+            to the dependency injection container.
+            </para>
+            <para>
+            2. This will also add all the <see cref="T:Microsoft.Extensions.Hosting.IHostedService"/> containing <see cref="T:RsCode.DI.HostedServiceAttribute"/> to
+            the dependency injection container.
+            </para>
+            </summary>
+            <param name="serviceCollection">The type that has been extended.</param>
+            <param name="assembliesToBeScanned">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:System.Reflection.Assembly"/> which will be scanned.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="serviceCollection"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="assembliesToBeScanned"/> is <see langword="null"/>.</exception>
+        </member>
         <member name="M:RsCode.ServicesExtensions.AutoRegister(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
             <summary>
             自动注入指定名称的程序集，仅适用于
@@ -552,6 +656,18 @@
             </summary>
             <param name="services"></param>
             <param name="assemblyName">程序集名称</param>
+        </member>
+        <member name="T:RsCode.SingletonServiceAttribute">
+            <summary>
+            单例（Singleton）生命周期服务在它们第一次被解析时创建，并且每个后续解析将使用相同的实例。
+            如果你的应用程序需要单例行为，建议让服务容器管理服务的生命周期而不是在自己的类中实现单例模式和管理对象的生命周期。
+            </summary>
+        </member>
+        <member name="T:RsCode.TransientServiceAttribute">
+            <summary>
+            瞬时（Transient）生命周期服务在它们每次请求时被创建。
+             这一生命周期适合轻量级的，无状态的服务
+            </summary>
         </member>
         <member name="T:RsCode.Domain.IEntity">
             <summary>
@@ -604,12 +720,6 @@
             当前数据库连接
             </summary>
         </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor(System.Collections.Generic.IEnumerable{PetaPoco.IDatabase})">
-            <summary>
-            数据库连接
-            </summary>
-            <param name="_databases"></param>
-        </member>
         <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetDatabase(System.String)">
             <summary>
             指定数据库连接字符串key,获取数据库配置
@@ -632,6 +742,11 @@
             <typeparam name="T"></typeparam>
             <param name="t"></param>
             <returns></returns>
+        </member>
+        <member name="T:RsCode.Domain.Uow.IUnitOfWork">
+            <summary>
+            数据操作：工作单元 
+            </summary>
         </member>
         <member name="M:RsCode.Domain.Uow.OneToManyRelator`2.#ctor(System.String,System.String)">
             <summary>
@@ -773,11 +888,6 @@
         <member name="P:RsCode.ReturnInfo.Msg">
             <summary>
             服务器返回的信息
-            </summary>
-        </member>
-        <member name="P:RsCode.ReturnInfo.TargetUrl">
-            <summary>
-            这提供了一种服务器根据需要 将客户端重定向到另一个url的方法
             </summary>
         </member>
         <member name="P:RsCode.ReturnInfo.Result">

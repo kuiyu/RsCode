@@ -21,9 +21,7 @@ namespace RsCode
 
     public static class ServicesExtensions
     {
-        //public static Dictionary<string, IDatabaseBuildConfiguration> DbConfigs;
-
-        
+      
         /// <summary>
         /// 自动注入指定名称的程序集，仅适用于
         /// 继承IScopedDependency的 接口的实现

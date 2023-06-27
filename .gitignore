@@ -309,3 +309,4 @@ appsettings.json
 douyin.json
 appsettings.json
 *.pem
+/tests/RsCode.Douyin.Tests/cert/douyin/*.key

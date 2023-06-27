@@ -48,10 +48,6 @@ namespace RsCode
                 msg = value;
             } } 
 
-        /// <summary>
-        /// 这提供了一种服务器根据需要 将客户端重定向到另一个url的方法
-        /// </summary>
-        [JsonPropertyName("targetUrl")] public string TargetUrl { get; set; } = "";
 
         /// <summary>
         /// 服务器返回的数据对像

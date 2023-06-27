@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace RsCode
 {
-    public interface IApplicationDbContext:RsCode.DI.ITransientDependency
+    public interface IApplicationDbContext:RsCode.DI.ISingletonDependency
     {
         IDatabase GetDatabase(string connName = "DefaultConnection");
 
-        IDatabase Current { get; set; }
+        IDatabase Current { get; }
         /// <summary>
         /// 获取单条记录
         /// </summary>

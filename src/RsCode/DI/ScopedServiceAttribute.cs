@@ -16,13 +16,17 @@
  * 文档 https://rscode.cn/
  */
 
-namespace RsCode.DI
+
+
+using System;
+
+namespace RsCode
 {
     /// <summary>
-    ///  瞬时（Transient）生命周期服务在它们每次请求时被创建。
-    ///  这一生命周期适合轻量级的，无状态的服务
+    /// 作用域（Scoped）生命周期服务在每个作用域内被创建一次
     /// </summary>
-    public interface ITransientDependency
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class, AllowMultiple = false)]
+    public sealed class ScopedServiceAttribute : Attribute
     {
     }
 }

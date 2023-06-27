@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.6.1</Version>
+    <Version>2.0.0</Version>
     <Authors>Tony</Authors>
     <Company>河南软商网络科技有限公司</Company>
     <PackageIcon>rscode64_64.png</PackageIcon>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.4.0" />
+    <PackageReference Include="AspectCore.Extensions.DataValidation" Version="2.4.0" />
     <PackageReference Include="Caching.CSRedis" Version="3.6.5" />
     <PackageReference Include="EnyimMemcachedCore" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />

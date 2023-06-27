@@ -87,7 +87,8 @@ namespace RsCode.AspNetCore
             }
             else
             {
-                context.Result = new RedirectResult(options.ExceptionHandlingPath.Value);
+                var url = options.ExceptionHandlingPath.Value ?? "~/404.html";
+                context.Result = new RedirectResult(url);
             }
 
             context.ExceptionHandled = true;

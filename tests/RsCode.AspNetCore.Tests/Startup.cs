@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PetaPoco.Providers;
 using System;
 
 namespace RsCode.AspNetCore.Tests
@@ -45,12 +46,17 @@ namespace RsCode.AspNetCore.Tests
                 .ConfigureServices((context, services) =>
                 {
                     // 注册自定义服务
+                    services.AddRsCode();
                     services.AddSchedulerJob();
                     services.AddSingleton<MyJob>();
 
                     services.AddSingleton<IA, A>();
                     services.AddSingleton<IA, B>();
                     services.AddSingleton<IA, C>();
+                    
+                    services.AddDatabase<MySqlDatabaseProvider>("Server=127.0.0.1;uid=root;pwd=123456;database=rswl_pan;port=3306;");
+                    services.AddUnitOfWork();
+                    services.AddScoped<IUserService, UserService>();
                 })
                 ;
         }
