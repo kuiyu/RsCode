@@ -1,25 +1,4 @@
----
-home: true
-lang: zh-CN
-title: RsCode技术文档
-description: RsCode代码库技术文档
-features: #配置首页特性列表。
-  - title:  高效
-    details: 开箱即用
-  - title: 开源
-    details: 遵守MIT协议 100%公开源码	
-  - title: 免费
-    details: 完全免费使用
-
-# actions:
-#   - text: 快速上手
-#     link: /rscode/guide/getting-started.html
-#     type: primary
-#   - text: 项目简介
-#     link: /rscode/guide/README.md
-#     type: secondary
----
-
+RsCode是开箱即用的.net工具库，可高效完成.net项目开发
 ## ✨ 特性
 
 - 🌈 MIT开源协议，完全免费使用
@@ -45,7 +24,7 @@ features: #配置首页特性列表。
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 2.0.0
+  $ dotnet add package RsCode.AspNetCore --version 2.0.0
   ```
 
 - asp.net core项目引用:
@@ -56,7 +35,7 @@ features: #配置首页特性列表。
 
 - 引入[log4net配置](https://rscode.cn/rscode/log.html#%E9%99%84%E5%BD%951)，
 
-- Pragram.cs中添加即可
+- Pragram.cs中添加
 
   ````csharp
   using PetaPoco;
