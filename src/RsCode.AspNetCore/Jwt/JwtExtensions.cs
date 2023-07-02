@@ -24,16 +24,21 @@ namespace RsCode.AspNetCore
 {
     public  static class JwtExtensions
     {
-        public static  void AddJwt(this IServiceCollection services, string Url = "/UserAuthHub")
+        public static  void AddJwt(this IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
                     var jwt = JwtHelper.GetJwtInfo();
 
                     if (jwt.Expire < 0)
                         jwt.Expire = 60*24*360 ;
-
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,//是否验证发行者
@@ -48,19 +53,15 @@ namespace RsCode.AspNetCore
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SecurityKey))
                     };
 
-                    ////signalr auth
+                    //auth
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-
-                            var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments(Url)))
+                        { 
+                            if(context.Request.Query.TryGetValue("access_token", out var accessToken))
                             {
-                                context.Token = accessToken;
-                            }
+								context.Token = accessToken;
+							}
                             return Task.CompletedTask;
                         }
                     };

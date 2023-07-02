@@ -30,7 +30,8 @@ namespace RsCode
     { 
         public static void AddUnitOfWork(this IServiceCollection services) 
         {
-            services.TryAddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.TryAddTransient<IApplicationDbContext, ApplicationDbContext>();
+
             services.TryAddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.TryAddScoped<IUnitOfWork, PetaPocoUnitOfWork>();

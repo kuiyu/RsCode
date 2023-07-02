@@ -47,23 +47,13 @@ namespace RsCode
        
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
-            try
-            {
                 using (Uow)
                 {
                     Uow.Open(DbConnectionStringName);
                     await next(context);
                     Uow.Commit();
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-
-            }
+           
         }
 
 

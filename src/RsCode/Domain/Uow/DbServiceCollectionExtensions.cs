@@ -60,8 +60,8 @@ namespace RsCode
         public static void AddDatabase<TDatabaseProvider>(this IServiceCollection services, string connString,IMapper defaultMapper=null)
            where TDatabaseProvider : IProvider
         {           
-            services.AddScoped<IDatabase, Database>(x => new Database<TDatabaseProvider>(connString,defaultMapper));
-            services.TryAddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddTransient<IDatabase, Database>(x => new Database<TDatabaseProvider>(connString,defaultMapper));
+            services.TryAddTransient<IApplicationDbContext, ApplicationDbContext>();
           
         }
         /// <summary>
@@ -71,8 +71,8 @@ namespace RsCode
         /// <param name="func"></param>
         public static void AddDatabase(this IServiceCollection services,Func<Database> func)
        {
-            services.AddScoped<IDatabase, Database>(x => func());
-            services.TryAddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddTransient<IDatabase, Database>(x => func());
+            services.TryAddTransient<IApplicationDbContext, ApplicationDbContext>();
             
         }
   
