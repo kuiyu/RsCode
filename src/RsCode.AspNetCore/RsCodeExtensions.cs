@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 using System;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace RsCode.AspNetCore
 {
@@ -45,6 +47,11 @@ namespace RsCode.AspNetCore
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.TryAddTransient<IdGenerate>();
-        }
+			//解决中文被编码
+			services.TryAddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
+
+            //添加AI幂等处理
+
+		}
     }
 }
