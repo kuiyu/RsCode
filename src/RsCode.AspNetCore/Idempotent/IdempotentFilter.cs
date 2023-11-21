@@ -16,23 +16,20 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.Json;
 
 namespace RsCode.AspNetCore
 {
-	public class IdempotentAttributeFilter:IActionFilter,IResultFilter
+	public class IdempotentFilter:IActionFilter,IResultFilter
 	{
         ICacheProvider cache;
 		private string _idempotencyKey;
 		const string IdempotencyKeyHeaderName = "IdempotencyKey";
 		private bool _isIdempotencyCache = false;
-		public IdempotentAttributeFilter(IEnumerable<ICacheProvider> caches)
+		public IdempotentFilter(IEnumerable<ICacheProvider> caches)
         {
             cache = caches.FirstOrDefault(c => c.CacheName == "memory");
         }

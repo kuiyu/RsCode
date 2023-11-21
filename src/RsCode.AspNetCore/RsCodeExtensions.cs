@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 using System;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -33,6 +34,7 @@ namespace RsCode.AspNetCore
                 config.Filters.Add<AntiXSSAttribute>();
                 config.Filters.Add<ModelValidateFilter>();
                 config.Filters.Add<AppExceptionFilter>();
+                config.Filters.Add<QpsAttribute>();
                 config.OutputFormatters.Insert(0, new RsOutputFormatter());
                 config.InputFormatters.Insert(0, new RsInputFormatter());
             }).AddControllersAsServices()
@@ -52,6 +54,9 @@ namespace RsCode.AspNetCore
 
             //添加AI幂等处理
 
+            //添加跨域支持
+
+           
 		}
     }
 }

@@ -1,16 +1,32 @@
-﻿using AspectCore.DependencyInjection;
+﻿/*
+ * RsCode
+ * 
+ * RsCode is .net core platform rapid development framework
+ * Apache License 2.0
+ * 
+ * 作者：lrj
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
+ * 
+ * github
+   https://github.com/kuiyu/RsCode.git
+
+ * 文档 https://rscode.cn/
+ */
+
+using AspectCore.DependencyInjection;
 using AspectCore.DynamicProxy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RsCode.AspNetCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RsCode.Exceptions
 {
-    public class ExceptionInterceptor : AbstractInterceptorAttribute
+	public class ExceptionInterceptor : AbstractInterceptorAttribute
     {
         [FromServiceContext]
         public ILogger<ExceptionInterceptor> log { get; set; }

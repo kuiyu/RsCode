@@ -4,6 +4,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Authors>Tony</Authors>
+    <Title>RsCode.Storage.Aliyun</Title>
+    <Description>RsCode.Storage.Aliyun</Description>
+    <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
+    <Copyright>河南软商网络科技有限公司</Copyright>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/kuiyu/RsCode.git</RepositoryUrl>
+    <PackageIcon>rscode64_64.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +22,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RsCode.Storage\RsCode.Storage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="rscode64_64.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

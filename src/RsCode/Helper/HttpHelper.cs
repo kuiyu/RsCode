@@ -30,7 +30,7 @@ namespace RsCode
     /// <summary>
     /// 针对RsCode WebApi响应做的封装
     /// </summary>
-    public  class HttpHelper
+    public class HttpHelper
     {
         HttpClient HttpClient { get; }
         public HttpHelper(HttpClient client)
@@ -46,8 +46,8 @@ namespace RsCode
         /// <param name="accessToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public virtual async Task<T> GetAsync<T>(string url,string accessToken="")
-         
+        public virtual async Task<T> GetAsync<T>(string url, string accessToken = "", bool formatData = true)
+
         {
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             if (!string.IsNullOrWhiteSpace(accessToken))
@@ -70,7 +70,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                return GetValue<T>(root);
+                return GetValue<T>(root,formatData);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace RsCode
                 return default(T);
             }
 
-            
+
         }
         /// <summary>
         /// 获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
@@ -90,7 +90,7 @@ namespace RsCode
         /// <param name="accessToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public virtual async Task<Page<T>> GetPageAsync<T>(string url, string accessToken = "")
+        public virtual async Task<Page<T>> GetPageAsync<T>(string url, string accessToken = "", bool formatData = true)
         {
             Page<T> page = new Page<T>();
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
@@ -106,17 +106,21 @@ namespace RsCode
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 string s = await response.Content.ReadAsStringAsync();
-                
+
                 JsonSerializerOptions options = new JsonSerializerOptions();
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
                 var result = root.GetProperty("result");
-                var items = result.GetProperty("items"); 
+                if(formatData==false)
+                {
+                    result = root;
+                }
+                var items = result.GetProperty("items");
                 var ls = items.EnumerateArray();
-                var data = JsonSerializer.Deserialize<List<T>>(ls.JsonSerialize(), options); 
+                var data = JsonSerializer.Deserialize<List<T>>(ls.JsonSerialize(), options);
                 page.Items = data;
-                page.TotalItems =long.Parse(result.GetProperty("totalItems").ToString());
+                page.TotalItems = long.Parse(result.GetProperty("totalItems").ToString());
                 page.TotalPages = long.Parse(result.GetProperty("totalPages").ToString());
                 page.ItemsPerPage = long.Parse(result.GetProperty("itemsPerPage").ToString());
                 page.CurrentPage = long.Parse(result.GetProperty("currentPage").ToString());
@@ -124,48 +128,48 @@ namespace RsCode
             else
             {
                 int code = (int)response.StatusCode;
-                string content =await response.Content.ReadAsStringAsync();
-                GetException(code, $"RequestUri={httpRequestMessage.RequestUri.ToString()}"+ content);
+                string content = await response.Content.ReadAsStringAsync();
+                GetException(code, $"RequestUri={httpRequestMessage.RequestUri.ToString()}" + content);
 
             }
-              return page;
+            return page;
         }
 
-       /// <summary>
-       /// 请求POST数据
-       /// </summary>
-       /// <typeparam name="T"></typeparam>
-       /// <param name="url"></param>
-       /// <param name="httpContent"></param>
-       /// <param name="accessToken"></param>
-       /// <returns></returns>
-       /// <exception cref="AppException"></exception>
-        public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent,string accessToken="")
-            
+        /// <summary>
+        /// 请求POST数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="httpContent"></param>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
+        public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
+
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = httpContent;
-            if(!string.IsNullOrWhiteSpace(accessToken))
+            if (!string.IsNullOrWhiteSpace(accessToken))
             {
                 request.Headers.Add("Authorization", $"Bearer {accessToken}");
             }
 
-                HttpResponseMessage response = await HttpClient.SendAsync(request);
+            HttpResponseMessage response = await HttpClient.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                throw new AppException(401,"无访问权限");
+                throw new AppException(401, "无访问权限");
             }
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    string s = await response.Content.ReadAsStringAsync();
+            {
+                string s = await response.Content.ReadAsStringAsync();
 
-                    JsonSerializerOptions options = new JsonSerializerOptions();
-                    options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
-                    JsonDocument doc = JsonDocument.Parse(s);
-                    var root = doc.RootElement;
-               
-                    return GetValue<T>(root);
-                }
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+                JsonDocument doc = JsonDocument.Parse(s);
+                var root = doc.RootElement;
+                return GetValue<T>(root,formatData);
+
+            }
             else
             {
                 int code = (int)response.StatusCode;
@@ -173,10 +177,10 @@ namespace RsCode
                 GetException(code, $"RequestUri={response.RequestMessage.RequestUri.ToString()}" + content);
 
                 return default(T);
-            } 
+            }
         }
-        
-        
+
+
 
         /// <summary>
         /// PUT数据
@@ -187,7 +191,7 @@ namespace RsCode
         /// <param name="accessToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "")
+        public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
 
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, url);
@@ -210,7 +214,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                return GetValue<T>(root);
+                return GetValue<T>(root, formatData);
             }
             else
             {
@@ -218,7 +222,7 @@ namespace RsCode
                 string content = await response.Content.ReadAsStringAsync();
                 GetException(code, $"RequestUri={response.RequestMessage.RequestUri.ToString()}" + content);
                 return default(T);
-            } 
+            }
 
         }
         /// <summary>
@@ -230,7 +234,7 @@ namespace RsCode
         /// <param name="accessToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public virtual async Task<T> DeleteAsync<T>(string url, HttpContent httpContent, string accessToken = "")
+        public virtual async Task<T> DeleteAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
 
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, url);
@@ -253,7 +257,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                return GetValue<T>(root);
+                return GetValue<T>(root, formatData);
             }
             else
             {
@@ -273,32 +277,33 @@ namespace RsCode
         /// <param name="url"></param>
         /// <param name="urlParamName"></param>
         /// <returns></returns>
-        public string GetUrlParamValue(string url,string urlParamName)
+        public string GetUrlParamValue(string url, string urlParamName)
         {
-            string query  = new Uri(url).Query;
-            var p=HttpUtility.ParseQueryString(query);
+            string query = new Uri(url).Query;
+            var p = HttpUtility.ParseQueryString(query);
             return p.Get(urlParamName);
         }
 
-        void GetException(int code,string content)
+        void GetException(int code, string content)
         {
             try
             {
-                if(!string.IsNullOrWhiteSpace(content))
+                if (!string.IsNullOrWhiteSpace(content))
                 {
-                    if(content.Contains("{")&&content.Contains("}"))
+                    if (content.Contains("{") && content.Contains("}"))
                     {
                         var returnInfo = Deserializer<ReturnInfo>(content);
                         if (returnInfo != null)
                         {
- throw new AppException(returnInfo.code, returnInfo.Msg);
-                        }else
+                            throw new AppException(returnInfo.code, returnInfo.Msg);
+                        }
+                        else
                         {
                             throw new AppException(code, content);
                         }
-                   
+
                     }
-                  else
+                    else
                     {
                         throw new AppException(code, content);
                     }
@@ -318,21 +323,21 @@ namespace RsCode
         {
             try
             {
-               return JsonSerializer.Deserialize<T>(json);
+                return JsonSerializer.Deserialize<T>(json);
             }
             catch (Exception)
             {
                 return default(T);
             }
         }
-        T GetValue<T>(JsonElement root)
+        T GetValue<T>(JsonElement root,bool formatData=true)
         {
             JsonSerializerOptions options = new JsonSerializerOptions();
             options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
 
             JsonElement result;
             var ret = root.TryGetProperty("result", out result);
-            if (ret)
+            if (ret&&formatData)
             {
                 var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
                 return data;
@@ -344,6 +349,8 @@ namespace RsCode
                 return data;
             }
         }
+
+      
     }
     /// <summary>
     /// 日期格式处理

@@ -14,7 +14,6 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +28,7 @@ namespace RsCode.AspNetCore
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
 		{
 			var caches=(IEnumerable<ICacheProvider>)serviceProvider.GetService(typeof(IEnumerable<ICacheProvider>));
-			var filter = new IdempotentAttributeFilter(caches);
+			var filter = new IdempotentFilter(caches);
 			return filter;
 		}
 	}

@@ -30,24 +30,31 @@ namespace RsCode.Domain.Uow
         {
             applicationDbContext = dbContext;
             _db = dbContext.Current;
-            _transaction = new Transaction(_db);
+            //_transaction = new Transaction(_db);
+            _transaction = _db.Transaction as PetaPoco.Transaction;
         }
 
         public void Commit()
         {
-            if(_db.Connection!=null)
-            _transaction.Complete();
+            //if(_db.Connection!=null)
+            _transaction?.Complete();
         }
 
         public void Dispose()
         {
-            _transaction.Dispose();
+            _transaction?.Dispose();
         }
 
         public IDatabase Open(string connName = "DefaultConnection")
         {
             if(connName!= "DefaultConnection")
-            _db = applicationDbContext.GetDatabase(connName);
+            {
+               _db?.Dispose();
+                _transaction?.Dispose();
+               _db = applicationDbContext.GetDatabase(connName);
+                _transaction = _db.Transaction as PetaPoco.Transaction;
+            }
+            
             return _db;
         }
     }

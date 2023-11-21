@@ -973,7 +973,7 @@
             针对RsCode WebApi响应做的封装
             </summary>
         </member>
-        <member name="M:RsCode.HttpHelper.GetAsync``1(System.String,System.String)">
+        <member name="M:RsCode.HttpHelper.GetAsync``1(System.String,System.String,System.Boolean)">
             <summary>
             发送get请求
             </summary>
@@ -983,7 +983,7 @@
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
-        <member name="M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String)">
+        <member name="M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String,System.Boolean)">
             <summary>
             获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
             </summary>
@@ -993,7 +993,7 @@
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
-        <member name="M:RsCode.HttpHelper.PostAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+        <member name="M:RsCode.HttpHelper.PostAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
             请求POST数据
             </summary>
@@ -1004,7 +1004,7 @@
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
-        <member name="M:RsCode.HttpHelper.PutAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+        <member name="M:RsCode.HttpHelper.PutAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
             PUT数据
             </summary>
@@ -1015,7 +1015,7 @@
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
-        <member name="M:RsCode.HttpHelper.DeleteAsync``1(System.String,System.Net.Http.HttpContent,System.String)">
+        <member name="M:RsCode.HttpHelper.DeleteAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
             DELETE数据
             </summary>
