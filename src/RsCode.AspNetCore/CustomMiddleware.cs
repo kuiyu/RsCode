@@ -28,17 +28,6 @@ namespace RsCode.AspNetCore
         }
     }
 
-    public interface IA
-    {
-        int Add(int a, int b);
-    }
-
-    public class A : IA
-    {
-        public int Add(int a, int b)
-        {
-            return a + b;
-        }
-    }
+   
 
 }

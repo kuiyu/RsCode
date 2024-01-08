@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>阿里云SDK业务的二次封装</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AlibabaCloud.DarabonbaStream" Version="0.0.1" />
+    <PackageReference Include="AlibabaCloud.OpenApiClient" Version="0.1.7" />
+    <PackageReference Include="AlibabaCloud.SDK.Alimt20181012" Version="2.1.0" />
+    <PackageReference Include="AlibabaCloud.SDK.Docmind-api20220711" Version="1.0.4" />
+    <PackageReference Include="AlibabaCloud.SDK.Ecs20140526" Version="3.0.6" />
+    <PackageReference Include="AlibabaCloud.SDK.Facebody20191230" Version="3.0.8" />
+    <PackageReference Include="AlibabaCloud.SDK.Imageaudit20191230" Version="1.0.5" />
+    <PackageReference Include="AlibabaCloud.SDK.Imageenhan20190930" Version="1.0.9" />
+    <PackageReference Include="AlibabaCloud.SDK.Imageseg20191230" Version="2.0.4" />
+    <PackageReference Include="AlibabaCloud.SDK.Ocr-api20210707" Version="1.1.16" />
+    <PackageReference Include="AlibabaCloud.SDK.Videoenhan20200320" Version="2.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Response\" />
+  </ItemGroup>
+
+</Project>

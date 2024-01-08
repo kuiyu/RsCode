@@ -1,3 +1,4 @@
+using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace RsCode.AspNetCore.Tests
     }
     public class TestC
     {
-        [AutoMapper.IgnoreMap]
+        [AdaptIgnore]
         public string Name { get; set; } = "rs888.net";
         
         public string Nick { get; set; }

@@ -17,6 +17,13 @@ namespace System
     /// </summary>
     public class DateTimeHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public static DateTime GetStartDayOfWeeks(int year, int month, int index)
         {
             DateTime minValue;
@@ -96,7 +103,7 @@ namespace System
         /// <summary>
         /// 时间戳转为C#格式时间
         /// </summary>
-        /// <param name="timeStamp"></param>
+        /// <param name="jsTimeStamp"></param>
         /// <returns></returns>
         public static DateTime GetTimeByJavascript(long jsTimeStamp)
         {

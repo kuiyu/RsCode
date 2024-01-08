@@ -58,7 +58,6 @@
              类型映射,默认字段名字一一对应
             </summary>
             <typeparam name="TDestination">转化之后的model</typeparam>
-            <typeparam name="TSource">要被转化的model</typeparam>
             <param name="source">可以使用这个扩展方法的类型</param>
             <returns>转化之后的实体</returns>
         </member>
@@ -151,11 +150,20 @@
             日期帮助类
             </summary>
         </member>
+        <member name="M:System.DateTimeHelper.GetStartDayOfWeeks(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="year"></param>
+            <param name="month"></param>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
         <member name="M:System.DateTimeHelper.GetTimeByJavascript(System.Int64)">
             <summary>
             时间戳转为C#格式时间
             </summary>
-            <param name="timeStamp"></param>
+            <param name="jsTimeStamp"></param>
             <returns></returns>
         </member>
         <member name="M:System.DateTimeHelper.ConvertDateTimeByJavascript(System.DateTime)">
@@ -715,6 +723,13 @@
             
             </summary>
         </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor(System.Collections.Generic.IEnumerable{PetaPoco.IDatabase},System.IServiceProvider)">
+            <summary>
+            数据库上下文
+            </summary>
+            <param name="databases"></param>
+            <param name="serviceProvider"></param>
+        </member>
         <member name="P:RsCode.Domain.Uow.ApplicationDbContext.Current">
             <summary>
             当前数据库连接
@@ -725,6 +740,14 @@
             指定数据库连接字符串key,获取数据库配置
             </summary>
             <param name="connName">默认值为DefaultConnection</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetAsync``1(System.Object)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="primaryKeyValue"></param>
             <returns></returns>
         </member>
         <member name="M:RsCode.Domain.Uow.ApplicationDbContext.InsertAsync``1(``0)">
@@ -762,6 +785,34 @@
             <typeparam name="T">主表主键类型</typeparam>
             <param name="t1">主表</param>
             <param name="t2">辅表</param>
+            <returns></returns>
+        </member>
+        <member name="T:RsCode.Domain.Uow.PetaPocoUnitOfWork">
+            <summary>
+            PetaPoco UnitOfWork
+            </summary>
+        </member>
+        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.#ctor(RsCode.IApplicationDbContext)">
+            <summary>
+            
+            </summary>
+            <param name="dbContext"></param>
+        </member>
+        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Commit">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Open(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="connName"></param>
             <returns></returns>
         </member>
         <member name="P:RsCode.Domain.Uow.UnitOfWorkOptions.DefaultConnection">
@@ -980,6 +1031,7 @@
             <typeparam name="T"></typeparam>
             <param name="url"></param>
             <param name="accessToken"></param>
+            <param name="formatData">特定的格式化</param>
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
@@ -990,6 +1042,7 @@
             <typeparam name="T"></typeparam>
             <param name="url"></param>
             <param name="accessToken"></param>
+            <param name="formatData">特定的格式化</param>
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
@@ -1001,6 +1054,7 @@
             <param name="url"></param>
             <param name="httpContent"></param>
             <param name="accessToken"></param>
+            <param name="formatData">特定的格式化</param>
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
@@ -1012,6 +1066,7 @@
             <param name="url"></param>
             <param name="httpContent"></param>
             <param name="accessToken"></param>
+            <param name="formatData">特定的格式化</param>
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
@@ -1023,6 +1078,7 @@
             <param name="url"></param>
             <param name="httpContent"></param>
             <param name="accessToken"></param>
+            <param name="formatData">是否对数据进行特定的格式化</param>
             <returns></returns>
             <exception cref="T:RsCode.AspNetCore.AppException"></exception>
         </member>
@@ -1231,6 +1287,11 @@
             <typeparam name="T">The type of the data being retrieved. Must match the type used when the <paramref name="name"/> was set via <see cref="!:SetData&lt;T&gt;(string, T)"/>.</typeparam>
             <param name="name">The name of the item in the call context.</param>
             <returns>The object in the call context associated with the specified name, or a default value for <typeparamref name="T"/> if none is found.</returns>
+        </member>
+        <member name="M:RsCode.CallContext`1.Clear">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:RsCode.ChannelHelper`1">
             <summary>

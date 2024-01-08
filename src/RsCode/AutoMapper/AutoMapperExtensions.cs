@@ -68,7 +68,6 @@ namespace System
         ///  类型映射,默认字段名字一一对应
         /// </summary>
         /// <typeparam name="TDestination">转化之后的model</typeparam>
-        /// <typeparam name="TSource">要被转化的model</typeparam>
         /// <param name="source">可以使用这个扩展方法的类型</param>
         /// <returns>转化之后的实体</returns>
         public static List<TDestination> MapTo<TDestination>(this IEnumerable source)

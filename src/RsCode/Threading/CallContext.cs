@@ -43,7 +43,9 @@ namespace RsCode
         /// <returns>The object in the call context associated with the specified name, or a default value for <typeparamref name="T"/> if none is found.</returns>
         public static T GetData(string name) =>
             state.TryGetValue(name, out AsyncLocal<T> data) ? data.Value : default(T);
-
+        /// <summary>
+        /// 
+        /// </summary>
         public static void Clear() => state.Clear();
     }
 }

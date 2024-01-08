@@ -20,31 +20,44 @@ using PetaPoco;
 
 namespace RsCode.Domain.Uow
 {
+    /// <summary>
+    /// PetaPoco UnitOfWork
+    /// </summary>
     public class PetaPocoUnitOfWork:IUnitOfWork
     {
         private  Transaction _transaction;
         private  IDatabase _db;
 
         IApplicationDbContext applicationDbContext;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbContext"></param>
         public PetaPocoUnitOfWork(IApplicationDbContext dbContext)
         {
             applicationDbContext = dbContext;
             _db = dbContext.Current;
-            //_transaction = new Transaction(_db);
             _transaction = _db.Transaction as PetaPoco.Transaction;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Commit()
         {
-            //if(_db.Connection!=null)
             _transaction?.Complete();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             _transaction?.Dispose();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connName"></param>
+        /// <returns></returns>
         public IDatabase Open(string connName = "DefaultConnection")
         {
             if(connName!= "DefaultConnection")

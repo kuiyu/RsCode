@@ -38,12 +38,14 @@ namespace RsCode
             HttpClient = client;
         }
 
+        string resultTag = "result";
         /// <summary>
         /// 发送get请求
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="url"></param>
         /// <param name="accessToken"></param>
+        /// <param name="formatData">特定的格式化</param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
         public virtual async Task<T> GetAsync<T>(string url, string accessToken = "", bool formatData = true)
@@ -82,15 +84,16 @@ namespace RsCode
 
 
         }
-        /// <summary>
-        /// 获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <param name="accessToken"></param>
-        /// <returns></returns>
-        /// <exception cref="AppException"></exception>
-        public virtual async Task<Page<T>> GetPageAsync<T>(string url, string accessToken = "", bool formatData = true)
+		/// <summary>
+		/// 获取PetaPoco.Page结果的数据,只适用于RsCode的固定数据格式
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="url"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="formatData">特定的格式化</param>
+		/// <returns></returns>
+		/// <exception cref="AppException"></exception>
+		public virtual async Task<Page<T>> GetPageAsync<T>(string url, string accessToken = "", bool formatData = true)
         {
             Page<T> page = new Page<T>();
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
@@ -111,7 +114,7 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                var result = root.GetProperty("result");
+                var result = root.GetProperty(resultTag);
                 if(formatData==false)
                 {
                     result = root;
@@ -135,16 +138,17 @@ namespace RsCode
             return page;
         }
 
-        /// <summary>
-        /// 请求POST数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <param name="httpContent"></param>
-        /// <param name="accessToken"></param>
-        /// <returns></returns>
-        /// <exception cref="AppException"></exception>
-        public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
+		/// <summary>
+		/// 请求POST数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="url"></param>
+		/// <param name="httpContent"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="formatData">特定的格式化</param>
+		/// <returns></returns>
+		/// <exception cref="AppException"></exception>
+		public virtual async Task<T> PostAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
 
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -167,8 +171,8 @@ namespace RsCode
                 options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
                 JsonDocument doc = JsonDocument.Parse(s);
                 var root = doc.RootElement;
-                return GetValue<T>(root,formatData);
-
+                var target= GetValue<T>(root,formatData);
+                return target;
             }
             else
             {
@@ -182,16 +186,17 @@ namespace RsCode
 
 
 
-        /// <summary>
-        /// PUT数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <param name="httpContent"></param>
-        /// <param name="accessToken"></param>
-        /// <returns></returns>
-        /// <exception cref="AppException"></exception>
-        public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
+		/// <summary>
+		/// PUT数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="url"></param>
+		/// <param name="httpContent"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="formatData">特定的格式化</param>
+		/// <returns></returns>
+		/// <exception cref="AppException"></exception>
+		public virtual async Task<T> PutAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
 
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, url);
@@ -232,6 +237,7 @@ namespace RsCode
         /// <param name="url"></param>
         /// <param name="httpContent"></param>
         /// <param name="accessToken"></param>
+        /// <param name="formatData">是否对数据进行特定的格式化</param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
         public virtual async Task<T> DeleteAsync<T>(string url, HttpContent httpContent, string accessToken = "", bool formatData = true)
@@ -336,11 +342,20 @@ namespace RsCode
             options.Converters.Add(new DateTimeConverterUsingDateTimeParse());
 
             JsonElement result;
-            var ret = root.TryGetProperty("result", out result);
-            if (ret&&formatData)
+            JsonElement success;
+            var ret = root.TryGetProperty(resultTag, out result);
+			 root.TryGetProperty("success", out success);
+			if (ret&&formatData)
             {
-                var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
-                return data;
+                if(success.GetBoolean())
+                {
+					var data = JsonSerializer.Deserialize<T>(result.JsonSerialize(), options);
+					return data;
+				}else
+                {
+                    var err=JsonSerializer.Deserialize<ReturnInfo>(root.JsonSerialize(),options);
+                    throw new AppException(err.code,err.Msg);
+                }
             }
             else
             {

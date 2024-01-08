@@ -107,8 +107,8 @@ namespace RsCode
 			{
 				encryptKey = StringHelper.SubString(encryptKey, 32);
 				encryptKey = encryptKey.PadRight(32, ' ');
-				SymmetricAlgorithm bytes = Rijndael.Create();
 				byte[] numArray = Encoding.UTF8.GetBytes(encryptStr);
+				SymmetricAlgorithm bytes = Rijndael.Create();
 				bytes.Key = Encoding.UTF8.GetBytes(encryptKey);
 				bytes.IV = SecureHelper._aeskeys;
 				byte[] array = null;

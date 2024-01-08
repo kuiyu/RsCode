@@ -7,7 +7,7 @@
     <Description>RsCode云存储业务</Description>
     <PackageReleaseNotes>RsCode云存储业务</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/kuiyu/RsCode.git</PackageProjectUrl>
-    <Version>1.6.0</Version>
+    <Version>1.6.1</Version>
     <PackageIconUrl></PackageIconUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
     <AssemblyVersion>1.6.0.0</AssemblyVersion>

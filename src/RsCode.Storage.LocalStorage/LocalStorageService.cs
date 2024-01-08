@@ -152,5 +152,10 @@ namespace RsCode.Storage.LocalStorage
         {
             throw new NotImplementedException();
         }
-    }
+
+		public Task<UploadResult> UploadAsync(Stream stream, string key, string token)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

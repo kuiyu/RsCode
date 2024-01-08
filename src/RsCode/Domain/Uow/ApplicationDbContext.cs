@@ -20,19 +20,23 @@ using PetaPoco;
 using PetaPoco.Core;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RsCode.Domain.Uow
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class ApplicationDbContext : IApplicationDbContext
+	/// <summary>
+	/// 
+	/// </summary>
+	public class ApplicationDbContext : IApplicationDbContext
     {
         IEnumerable<IDatabase> databases;
         IServiceProvider serviceProvider;
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        /// <param name="databases"></param>
+        /// <param name="serviceProvider"></param>
         public ApplicationDbContext(IEnumerable<IDatabase> databases, IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
@@ -40,7 +44,7 @@ namespace RsCode.Domain.Uow
         }
 
 
-
+        IDatabase db;
         /// <summary>
         /// 当前数据库连接
         /// </summary>
@@ -48,8 +52,12 @@ namespace RsCode.Domain.Uow
         {
             get
             {
-                var db = GetDatabase();
-                return db;
+				db = GetDatabase();
+				return db;
+            }
+            private set
+            {
+                db=value;
             }
         }
 
@@ -65,7 +73,7 @@ namespace RsCode.Domain.Uow
             if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception("ConnectionString not fund");
 
 
-            var db = CallContext<IDatabase>.GetData(connName);
+             db = CallContext<IDatabase>.GetData(connName);
             if (db == null)
             {
                 db = databases.FirstOrDefault(x => x.ConnectionString == connStr);
@@ -73,11 +81,22 @@ namespace RsCode.Domain.Uow
             if (db == null)
                 throw new System.Exception("ConnectionString not fund");
 
-            CallContext<IDatabase>.SetData(connName, db);
+			if (db.Connection == null)
+			{
+				db.OpenSharedConnection();
+			}
+
+			CallContext<IDatabase>.SetData(connName, db);
+
             return db;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="primaryKeyValue"></param>
+        /// <returns></returns>
         public virtual async Task<T> GetAsync<T>(object primaryKeyValue)
         {
             var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
