@@ -10,7 +10,7 @@ namespace RsCode.AspNetCore.Tests
     public  class ThreadTest
     {
         [Fact]
-        public async Task AsyncLockTest()
+        public  void AsyncLockTest()
         {
             AsyncLock m = new AsyncLock();
             
@@ -26,7 +26,7 @@ namespace RsCode.AspNetCore.Tests
                         try
                         {
                             Console.WriteLine($"第{index}个人正在过桥。");
-                            Thread.Sleep(5000); // 模拟过桥需要花费的时间
+                            Thread.Sleep(2000); // 模拟过桥需要花费的时间
                         }
                         finally
                         {

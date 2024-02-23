@@ -6,6 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
@@ -15,9 +16,12 @@ namespace RsCode.Douyin.Core
     {
         public HttpClient httpClient { get; private set; }
         ILogger log;
-        public DouyinHttpClient(HttpClient client, ILogger<DouyinHttpClient> logger)
+        IHttpClientFactory httpClientFactory;
+
+		public DouyinHttpClient(IHttpClientFactory httpClientFactory,  ILogger<DouyinHttpClient> logger)
         {
-            httpClient = client;
+            this.httpClientFactory = httpClientFactory;
+            httpClient = httpClientFactory.CreateClient("douyin");
             log = logger;
         }
 

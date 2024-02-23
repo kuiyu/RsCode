@@ -23,6 +23,7 @@ namespace RsCode.Douyin
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddHttpClient<DouyinHttpClient>();
+            services.AddTransient<DouyinHttpClientHandler>();
             services.AddScoped<IDouyinClient, DouyinClient>();
 
 
