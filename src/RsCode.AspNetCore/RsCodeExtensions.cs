@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -42,7 +43,8 @@ namespace RsCode.AspNetCore
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            //services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddExceptionLogging();
             //添加内存缓存
             services.AddMemoryCaches();

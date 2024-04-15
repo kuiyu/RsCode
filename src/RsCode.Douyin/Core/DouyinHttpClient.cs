@@ -18,10 +18,11 @@ namespace RsCode.Douyin.Core
         ILogger log;
         IHttpClientFactory httpClientFactory;
 
-		public DouyinHttpClient(IHttpClientFactory httpClientFactory,  ILogger<DouyinHttpClient> logger)
+		public DouyinHttpClient(HttpClient httpClient,  ILogger<DouyinHttpClient> logger)
         {
             this.httpClientFactory = httpClientFactory;
-            httpClient = httpClientFactory.CreateClient("douyin");
+            //httpClient = httpClientFactory.CreateClient("douyin");
+            this.httpClient = httpClient;
             log = logger;
         }
 

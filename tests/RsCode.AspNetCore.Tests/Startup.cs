@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PetaPoco;
 using PetaPoco.Providers;
 using System;
+ 
 
 namespace RsCode.AspNetCore.Tests
 {
@@ -38,9 +41,10 @@ namespace RsCode.AspNetCore.Tests
         public void ConfigureHost(IHostBuilder hostBuilder)
         {
             hostBuilder
-                .ConfigureAppConfiguration(builder =>
+                .ConfigureAppConfiguration((context,config) =>
                 {
                     // 注册配置
+                    config.AddJsonFile("appsettings.json", false, true);
                     
                 })
                 .ConfigureServices((context, services) =>
@@ -55,6 +59,18 @@ namespace RsCode.AspNetCore.Tests
                     services.AddSingleton<IA, C>();
                     
                     services.AddDatabase<MySqlDatabaseProvider>("Server=127.0.0.1;uid=root;pwd=123456;database=rswl_pan;port=3306;");
+
+                    //services.AddDatabase<SQLiteDatabaseProvider>("DataSource=rscode.db");
+                    services.AddDatabase<SQLiteDatabaseProvider>("Data Source=rscode.db");
+
+                    //services.AddPe(option =>
+                    //{
+                    //    option.UsingProvider<SQLiteDatabaseProvider>()
+                    //    .UsingConnectionString("Data Source=rscode.db");
+
+
+                    //});
+                    
                     services.AddUnitOfWork();
                     services.AddScoped<IUserService, UserService>();
                 })

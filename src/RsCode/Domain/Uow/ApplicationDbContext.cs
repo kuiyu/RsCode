@@ -31,16 +31,17 @@ namespace RsCode.Domain.Uow
 	public class ApplicationDbContext : IApplicationDbContext
     {
         IEnumerable<IDatabase> databases;
-        IServiceProvider serviceProvider;
-        /// <summary>
-        /// 数据库上下文
-        /// </summary>
-        /// <param name="databases"></param>
-        /// <param name="serviceProvider"></param>
-        public ApplicationDbContext(IEnumerable<IDatabase> databases, IServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
+      
+        IConfiguration Configuration;
+		/// <summary>
+		/// 数据库上下文
+		/// </summary>
+		/// <param name="databases"></param>
+		/// <param name="configuration"></param>
+		public ApplicationDbContext(IEnumerable<IDatabase> databases, IConfiguration configuration)
+        { 
             this.databases = databases;
+            Configuration = configuration;
         }
 
 
@@ -69,8 +70,10 @@ namespace RsCode.Domain.Uow
         /// <returns></returns>
         public virtual IDatabase GetDatabase(string connName = "DefaultConnection")
         {
-            var connStr = serviceProvider.GetService<IConfiguration>().GetConnectionString(connName);
-            if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception("ConnectionString not fund");
+
+            //var connStr = serviceProvider.GetService<IConfiguration>().GetConnectionString(connName);
+            var connStr=Configuration.GetConnectionString(connName);
+            if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception($"ConnectionString {connName} not fund");
 
 
              db = CallContext<IDatabase>.GetData(connName);
@@ -79,7 +82,7 @@ namespace RsCode.Domain.Uow
                 db = databases.FirstOrDefault(x => x.ConnectionString == connStr);
             }
             if (db == null)
-                throw new System.Exception("ConnectionString not fund");
+                throw new System.Exception($"{connName} db is  not exist");
 
 			if (db.Connection == null)
 			{

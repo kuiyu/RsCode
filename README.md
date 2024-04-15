@@ -73,7 +73,8 @@ RsCode是开箱即用的.net工具库，可高效完成.net项目开发
 - [gitee](https://gitee.com/kuiyu/RsCode/issues)
 
 
-- 技术人互动群(微信)  
-  <img src="https://www.hnrswl.com/res/static/img/tq.png" width="300" alt="技术赚钱群">
-- [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
+- 微信添加好友，聊聊技术变现 
+  <img src="./friend.jpg" width="300" alt="技术赚钱群">
+  
+  
 
