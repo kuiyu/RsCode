@@ -42,7 +42,10 @@ namespace RsCode.AspNetCore
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            });
+            })
+          
+            ;
+           
             //services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddExceptionLogging();

@@ -87,8 +87,15 @@ namespace RsCode.AspNetCore
             }
             else
             {
-                var url = options.ExceptionHandlingPath.Value ?? "~/404.html";
-                context.Result = new RedirectResult(url);
+                //var url = options.ExceptionHandlingPath.Value ?? "~/404.html";
+                //context.Result = new RedirectResult(url);
+
+                context.Result = new ContentResult
+                {
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    ContentType = "application/json;charset=utf-8",
+                    Content = context.Exception.Message
+                };
             }
 
             context.ExceptionHandled = true;

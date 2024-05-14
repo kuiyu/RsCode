@@ -47,7 +47,7 @@ namespace RsCode.AspNetCore
                                 ex.InnerException ?? ex,
                                  ex.InnerException != null ? ex.InnerException.Message : ex.Message
                                  );
-
+                       
             if (context.Request.Path.StartsWithSegments("/api"))
             {
                 var options = new JsonSerializerOptions()

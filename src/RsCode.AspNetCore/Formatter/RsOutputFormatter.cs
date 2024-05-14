@@ -44,49 +44,59 @@ namespace RsCode.AspNetCore
         //指定序列化的类型
         protected override bool CanWriteType(Type type)
         {
-            return base.CanWriteType(type);
+            if(type == typeof(AppException))
+            {
+                return true;
+            }else
+            {
+                return false;
+            }
+           
         }
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             var response = context.HttpContext.Response;
-
-            var resultInfo = new ReturnInfo() { 
-              Success=true,
-              code=response.StatusCode,
-              Msg="操作成功",
-              Result=context.Object
-            };
-            if (context.Object == null)
-            {
-                resultInfo.Success = false;
-                resultInfo.Result = null;
-            }
-            else
-            if(context.ObjectType==typeof(ReturnInfo))
-            {
-                resultInfo = context.Object as ReturnInfo;
-            }
-            else if(context.ObjectType==typeof(AppException))
-            {
-                resultInfo.Success = false;
-                resultInfo.Msg =context.Object==null?"":context.Object as string;
-                resultInfo.Result = null;
-            } 
-
-            var options = new JsonSerializerOptions()
-            {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                IgnoreNullValues = true,
-                WriteIndented = true,
-                AllowTrailingCommas = true,
-                PropertyNameCaseInsensitive= _CameCasePropertyName,
-                PropertyNamingPolicy= JsonNamingPolicy.CamelCase //小写开头
-            };
-            options.WriteIndented = true; 
             
-            options.Converters.Add(new DateTimeConverter(_dateFormat));
-            string s = JsonSerializer.Serialize(resultInfo, options);
-            await response.WriteAsync(s, Encoding.UTF8);
+                var resultInfo = new ReturnInfo()
+                {
+                    Success = true,
+                    code = response.StatusCode,
+                    Msg = "操作成功",
+                    Result = context.Object
+                };
+                if (context.Object == null)
+                {
+                    resultInfo.Success = false;
+                    resultInfo.Result = null;
+                }
+
+                if (context.ObjectType == typeof(ReturnInfo))
+                {
+                    resultInfo = context.Object as ReturnInfo;
+                }
+
+                 if (context.ObjectType == typeof(AppException))
+                {
+                    resultInfo.Success = false;
+                    resultInfo.Msg = context.Object == null ? "" : context.Object as string;
+                    resultInfo.Result = null;
+                }
+
+                var options = new JsonSerializerOptions()
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    IgnoreNullValues = true,
+                    WriteIndented = true,
+                    AllowTrailingCommas = true,
+                    PropertyNameCaseInsensitive = _CameCasePropertyName,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase //小写开头
+                };
+                options.WriteIndented = true;
+
+                options.Converters.Add(new DateTimeConverter(_dateFormat));
+                string s = JsonSerializer.Serialize(resultInfo, options);
+                await response.WriteAsync(s, Encoding.UTF8);
+           
         }
     }
 

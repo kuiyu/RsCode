@@ -915,27 +915,6 @@
             响应消息
             </summary>
         </member>
-        <member name="T:RsCode.AspNetCore.NotifyMessage">
-            <summary>
-            统一响应消息
-            </summary>
-        </member>
-        <member name="M:RsCode.AspNetCore.NotifyMessage.#ctor(System.String,System.Int32,System.Boolean,System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="P:RsCode.AspNetCore.NotifyMessage.Code">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:RsCode.AspNetCore.NotifyMessage.Message">
-            <summary>
-            响应消息
-            </summary>
-        </member>
         <member name="M:RsCode.ExceptionExtensions.AddExceptionLogging(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             添加异常记录

@@ -56,7 +56,7 @@ namespace RsCode.AspNetCore
             
             bool isAjax = IsAjax(context.Request);
             
-            var api = context.Request.Path.StartsWithSegments("/api");
+            var api = context.Request.Path.StartsWithSegments("/api/");
             if (api || isAjax)
             {
                 await WriteExceptionAsync(context, exception).ConfigureAwait(false);
