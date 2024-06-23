@@ -10,7 +10,9 @@
  */
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Text;
@@ -44,19 +46,26 @@ namespace RsCode.AspNetCore
         //指定序列化的类型
         protected override bool CanWriteType(Type type)
         {
-            if(type == typeof(AppException))
-            {
-                return true;
-            }else
-            {
-                return false;
-            }
-           
+            return true;
         }
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             var response = context.HttpContext.Response;
-            
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                IgnoreNullValues = true,
+                WriteIndented = true,
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive = _CameCasePropertyName,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase //小写开头
+            };
+            options.WriteIndented = true;
+            options.Converters.Add(new DateTimeConverter(_dateFormat));
+
+            bool api = context.HttpContext.Request.Path.Value.ToLower().StartsWith("/api/");
+            if(api)
+            {
                 var resultInfo = new ReturnInfo()
                 {
                     Success = true,
@@ -64,39 +73,15 @@ namespace RsCode.AspNetCore
                     Msg = "操作成功",
                     Result = context.Object
                 };
-                if (context.Object == null)
-                {
-                    resultInfo.Success = false;
-                    resultInfo.Result = null;
-                }
-
-                if (context.ObjectType == typeof(ReturnInfo))
-                {
-                    resultInfo = context.Object as ReturnInfo;
-                }
-
-                 if (context.ObjectType == typeof(AppException))
-                {
-                    resultInfo.Success = false;
-                    resultInfo.Msg = context.Object == null ? "" : context.Object as string;
-                    resultInfo.Result = null;
-                }
-
-                var options = new JsonSerializerOptions()
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    IgnoreNullValues = true,
-                    WriteIndented = true,
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = _CameCasePropertyName,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase //小写开头
-                };
-                options.WriteIndented = true;
-
-                options.Converters.Add(new DateTimeConverter(_dateFormat));
                 string s = JsonSerializer.Serialize(resultInfo, options);
                 await response.WriteAsync(s, Encoding.UTF8);
-           
+            }else
+            {
+                string s = JsonSerializer.Serialize(context.Object??"{}", options);
+                await response.WriteAsync(s, Encoding.UTF8);
+
+            }
+
         }
     }
 

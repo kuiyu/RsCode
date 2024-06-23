@@ -44,17 +44,20 @@ namespace RsCode.AspNetCore
         {
             if (context.ExceptionHandled) return;
             var api = context.Filters.FirstOrDefault(f => f.GetType() == typeof(ApiControllerAttribute));
+
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                IgnoreNullValues = true,
+                WriteIndented = true,
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase //小写开头
+            }; options.WriteIndented = true;
+
             if (api != null)
             {
-                var options = new JsonSerializerOptions()
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    IgnoreNullValues = true,
-                    WriteIndented = true,
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = false,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase //小写开头
-                }; options.WriteIndented = true;
+               
 
                 if (context.Exception is AppException)
                 {
@@ -87,14 +90,13 @@ namespace RsCode.AspNetCore
             }
             else
             {
-                //var url = options.ExceptionHandlingPath.Value ?? "~/404.html";
-                //context.Result = new RedirectResult(url);
-
+                var e=context.Exception as AppException;
+                var err = e.Message;
                 context.Result = new ContentResult
                 {
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = 200,
                     ContentType = "application/json;charset=utf-8",
-                    Content = context.Exception.Message
+                    Content = JsonSerializer.Serialize(new ReturnInfo(200, err), options)
                 };
             }
 

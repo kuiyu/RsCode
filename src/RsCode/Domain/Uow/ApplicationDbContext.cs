@@ -15,20 +15,18 @@
  */
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using PetaPoco;
 using PetaPoco.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RsCode.Domain.Uow
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ApplicationDbContext : IApplicationDbContext
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ApplicationDbContext : IApplicationDbContext
     {
         IEnumerable<IDatabase> databases;
       
@@ -53,7 +51,11 @@ namespace RsCode.Domain.Uow
         {
             get
             {
-				db = GetDatabase();
+                db = ObjectContext<IDatabase>.Current; 
+                if(db==null)
+                {
+                    db = GetDatabase();
+                }
 				return db;
             }
             private set
@@ -70,11 +72,8 @@ namespace RsCode.Domain.Uow
         /// <returns></returns>
         public virtual IDatabase GetDatabase(string connName = "DefaultConnection")
         {
-
-            //var connStr = serviceProvider.GetService<IConfiguration>().GetConnectionString(connName);
             var connStr=Configuration.GetConnectionString(connName);
             if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception($"ConnectionString {connName} not fund");
-
 
              db = CallContext<IDatabase>.GetData(connName);
             if (db == null)
@@ -89,6 +88,7 @@ namespace RsCode.Domain.Uow
 				db.OpenSharedConnection();
 			}
 
+            ObjectContext<IDatabase> context = new ObjectContext<IDatabase>(db);
 			CallContext<IDatabase>.SetData(connName, db);
 
             return db;

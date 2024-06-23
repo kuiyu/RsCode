@@ -40,19 +40,30 @@ namespace RsCode
             this.DbConnectionStringName = connName; 
         }
         public override int Order { get; set; } = -10000;
-        public bool Transaction { get; set; } = true;
 
         public string DbConnectionStringName { get; set; } = "DefaultConnection";
 
        
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
+            try
+            {
                 using (Uow)
                 {
                     Uow.Open(DbConnectionStringName);
                     await next(context);
                     Uow.Commit();
                 }
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                Uow.Dispose();
+            }
+                
            
         }
 

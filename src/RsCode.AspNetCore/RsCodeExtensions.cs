@@ -18,8 +18,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
-using System;
-using System.Linq;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -32,6 +30,7 @@ namespace RsCode.AspNetCore
         {
             services.AddLogging();
             services.AddMvc(config => {
+                config.RespectBrowserAcceptHeader = true;
                 config.Filters.Add<AntiXSSAttribute>();
                 config.Filters.Add<ModelValidateFilter>();
                 config.Filters.Add<AppExceptionFilter>();
@@ -43,7 +42,10 @@ namespace RsCode.AspNetCore
             {
                 options.SuppressModelStateInvalidFilter = true;
             })
-          
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            })
             ;
            
             //services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
