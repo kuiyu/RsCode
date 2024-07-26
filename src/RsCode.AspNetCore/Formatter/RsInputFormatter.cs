@@ -17,6 +17,7 @@ using AspectCore.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using RsCode.AspNetCore.Formatter;
 using System;
 using System.IO;
 using System.Text;
@@ -31,22 +32,29 @@ namespace RsCode.AspNetCore
          
         public RsInputFormatter()
         {
-            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json")); 
         }
         public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
             string s = "";
-
+            var contextType = context.HttpContext.Request.ContentType;
+            
             try
             {
                 var request = context.HttpContext.Request;
                 var type = context.ModelType;
+              
                 using (var reader = new StreamReader(request.Body, Encoding.UTF8))
                 {
                     s = await reader.ReadToEndAsync();
                     JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
-                    jsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                    jsonSerializerOptions.Converters.Add( new DateTimeConverter());
+                    jsonSerializerOptions.Converters.Add(new BoolConverter());
+                    jsonSerializerOptions.Converters.Add(new IntConverter());
+                    jsonSerializerOptions.Converters.Add(new Int64Converter());
+                    jsonSerializerOptions.Converters.Add(new DecimalConverter());
                     jsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                    jsonSerializerOptions.IgnoreNullValues = true;
                     var obj = JsonSerializer.Deserialize(s, type,jsonSerializerOptions);
                     return await InputFormatterResult.SuccessAsync(obj);
                 }

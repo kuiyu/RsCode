@@ -91,13 +91,27 @@ namespace RsCode.AspNetCore
             else
             {
                 var e=context.Exception as AppException;
-                var err = e.Message;
-                context.Result = new ContentResult
+                if(e!=null)
                 {
-                    StatusCode = 200,
-                    ContentType = "application/json;charset=utf-8",
-                    Content = JsonSerializer.Serialize(new ReturnInfo(200, err), options)
-                };
+                    var err = e.Message;
+                    context.Result = new ContentResult
+                    {
+                        StatusCode = 200,
+                        ContentType = "application/json;charset=utf-8",
+                        Content = JsonSerializer.Serialize(new ReturnInfo(200, err), options)
+                    };
+
+                }else
+                {
+                    var err = context.Exception; 
+                    context.Result = new ContentResult
+                    {
+                        StatusCode = 200,
+                        ContentType = "application/json;charset=utf-8",
+                        Content = JsonSerializer.Serialize(new ReturnInfo(200, err.Message), options)
+                    };
+                }
+              
             }
 
             context.ExceptionHandled = true;

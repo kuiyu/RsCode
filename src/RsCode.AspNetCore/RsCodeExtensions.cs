@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
+using System;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -48,8 +49,8 @@ namespace RsCode.AspNetCore
             })
             ;
            
-            //services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+           services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+       
             services.AddExceptionLogging();
             //添加内存缓存
             services.AddMemoryCaches();
