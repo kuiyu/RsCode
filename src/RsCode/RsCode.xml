@@ -946,78 +946,99 @@
             服务器返回的数据对像
             </summary>
         </member>
-        <member name="T:RsCode.Helper.IdGenerate">
+        <member name="T:RsCode.BusHelper">
             <summary>
-            类似 Twitter Snowflake(41 + 10 + 12) 算法的 Id 生成器。
-            格式：{32 位时间戳, 0-10 位机器码, 0-12 位递增系列号}。
-            注意：程序启动前请确保系统时间正确。
+            发布与订阅服务
             </summary>
         </member>
-        <member name="M:RsCode.Helper.IdGenerate.#ctor(System.Byte,System.Byte,System.Byte)">
+        <member name="F:RsCode.BusHelper.PCaches">
             <summary>
-            The constructor of <see cref="!:IdGen"/>.
-            </summary>
-            <param name="machineId">当前机器码</param>
-            <param name="machineIdBits">机器码位数（0-10之间）</param>
-            <param name="sequenceBits">
-            序列号位数（0-20之间）
-            注意：
-            1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
-            2. 每台机器此参数务必相同。
-            </param>
-        </member>
-        <member name="M:RsCode.Helper.IdGenerate.NewId">
-            <summary>
-            Generate a new sequence id.
-            </summary>
-            <returns>The generated id.</returns>
-        </member>
-        <member name="M:RsCode.Helper.IdGenerate.NewSequenceId">
-            <summary>
-            生成新的ID
-            </summary>
-            <returns>ID</returns>
-        </member>
-        <member name="T:RsCode.Helper.XmlHelper">
-            <summary>
-            xml helper
+            通知总想清单
             </summary>
         </member>
-        <member name="M:RsCode.Helper.XmlHelper.DeserializeFromXML(System.Type,System.String)">
+        <member name="M:RsCode.BusHelper.Subscription``1(RsCode.IModule,RsCode.PublishedInterface{``0},System.Action{``0})">
             <summary>
-            将指定xml文件的内容转对象
+            订阅消息：订阅者监听数据提供方的信息
             </summary>
-            <param name="type"></param>
-            <param name="filePath"></param>
-            <returns></returns>
+            <param name="subscriber">订阅者</param>
+            <param name="pi">发布的接口</param>
+            <param name="callback">回调函数，能快速执行完毕，如果不能一定要使用异步。如果要操作UI，需要使用委托this.Invoke(new MethodInvoker(() =>{}));</param>
         </member>
-        <member name="M:RsCode.Helper.XmlHelper.SerializeToXml(System.Object,System.String)">
+        <member name="M:RsCode.BusHelper.SubscriptionRemove``1(RsCode.IModule,RsCode.PublishedInterface)">
             <summary>
-            将指定xml文件的内容序列化
+            移除某个订阅
             </summary>
-            <param name="obj"></param>
-            <param name="filePath"></param>
-            <returns></returns>
+            <param name="subscriber"></param>
+            <param name="pi"></param>
         </member>
-        <member name="M:RsCode.Helper.XmlHelper.Deserializer``1(System.String,System.String)">
+        <member name="M:RsCode.BusHelper.Publishing``1(RsCode.PublishedInterface{``0},``0)">
             <summary>
-            将xml字符串转化对象
+            发布消息：数据提供放向订阅者推送数据
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="xml"></param>
-            <param name="xmlRoot"></param>
-            <returns></returns>
+            <param name="pi">发布的接口</param>
+            <param name="obj">参数</param>
         </member>
-        <member name="M:RsCode.Helper.XmlHelper.Serializer``1(``0,System.String,System.String,System.String)">
+        <member name="T:RsCode.PublishedInterface`1">
             <summary>
-            将对象转成xml字符串
+            发布接口
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <param name="xsd"></param>
-            <param name="xsi"></param>
-            <param name="xmlRoot"></param>
-            <returns></returns>
+        </member>
+        <member name="M:RsCode.PublishedInterface`1.Subscription(RsCode.IModule,System.Action{`0})">
+            <summary>
+            订阅消息：订阅者监听数据提供方的信息
+            </summary>
+            <param name="subscriber">订阅者</param>
+            <param name="pi">发布的接口</param>
+            <param name="callback">回调函数，能快速执行完毕，如果不能一定要使用异步。如果要操作UI，需要使用委托this.Invoke(new MethodInvoker(() =>{}));</param>
+        </member>
+        <member name="M:RsCode.PublishedInterface`1.SubscriptionRemove(RsCode.IModule)">
+            <summary>
+            移除某个订阅
+            </summary>
+            <param name="subscriber"></param>
+            <param name="pi"></param>
+        </member>
+        <member name="M:RsCode.PublishedInterface`1.Publishing(`0)">
+            <summary>
+            发布消息：数据提供放向订阅者推送数据
+            </summary>
+            <param name="pi">发布的接口</param>
+            <param name="obj">参数</param>
+        </member>
+        <member name="T:RsCode.SubscriberInfo`1">
+            <summary>
+            订阅者的信息及回调函数
+            </summary>
+        </member>
+        <member name="P:RsCode.SubscriberInfo`1.Subscriber">
+            <summary>
+            订阅模块
+            </summary>
+        </member>
+        <member name="P:RsCode.SubscriberInfo`1.Callback">
+            <summary>
+            回调函数
+            </summary>
+        </member>
+        <member name="P:RsCode.IModule.Name">
+            <summary>
+            模块名称
+            </summary>
+        </member>
+        <member name="P:RsCode.IModule.Text">
+            <summary>
+            模块标题
+            </summary>
+        </member>
+        <member name="P:RsCode.IModule.IsDisposed">
+            <summary>
+            模块是否已经卸载
+            </summary>
+        </member>
+        <member name="P:RsCode.IModule.DontDestroy">
+            <summary>
+            模块在面板关闭后是否被消灭
+            </summary>
         </member>
         <member name="T:RsCode.HttpHelper">
             <summary>
@@ -1094,6 +1115,79 @@
             <summary>
             日期格式处理
             </summary>
+        </member>
+        <member name="T:RsCode.Helper.IdGenerate">
+            <summary>
+            类似 Twitter Snowflake(41 + 10 + 12) 算法的 Id 生成器。
+            格式：{32 位时间戳, 0-10 位机器码, 0-12 位递增系列号}。
+            注意：程序启动前请确保系统时间正确。
+            </summary>
+        </member>
+        <member name="M:RsCode.Helper.IdGenerate.#ctor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            The constructor of <see cref="!:IdGen"/>.
+            </summary>
+            <param name="machineId">当前机器码</param>
+            <param name="machineIdBits">机器码位数（0-10之间）</param>
+            <param name="sequenceBits">
+            序列号位数（0-20之间）
+            注意：
+            1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
+            2. 每台机器此参数务必相同。
+            </param>
+        </member>
+        <member name="M:RsCode.Helper.IdGenerate.NewId">
+            <summary>
+            Generate a new sequence id.
+            </summary>
+            <returns>The generated id.</returns>
+        </member>
+        <member name="M:RsCode.Helper.IdGenerate.NewSequenceId">
+            <summary>
+            生成新的ID
+            </summary>
+            <returns>ID</returns>
+        </member>
+        <member name="T:RsCode.Helper.XmlHelper">
+            <summary>
+            xml helper
+            </summary>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.DeserializeFromXML(System.Type,System.String)">
+            <summary>
+            将指定xml文件的内容转对象
+            </summary>
+            <param name="type"></param>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.SerializeToXml(System.Object,System.String)">
+            <summary>
+            将指定xml文件的内容序列化
+            </summary>
+            <param name="obj"></param>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.Deserializer``1(System.String,System.String)">
+            <summary>
+            将xml字符串转化对象
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="xml"></param>
+            <param name="xmlRoot"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Helper.XmlHelper.Serializer``1(``0,System.String,System.String,System.String)">
+            <summary>
+            将对象转成xml字符串
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="xsd"></param>
+            <param name="xsi"></param>
+            <param name="xmlRoot"></param>
+            <returns></returns>
         </member>
         <member name="M:RsCode.RandomHelper.RandAmount(System.Double,System.Int32)">
             <summary>

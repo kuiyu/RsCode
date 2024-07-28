@@ -23,6 +23,7 @@ namespace System
     /// 改用Mapster,
     /// 为了防止之前应用报错
     /// </summary>
+    [Obsolete("己弃用，改为Mapster")]
     public static class AutoMapperExtensions
     {
 

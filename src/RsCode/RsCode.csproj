@@ -4,8 +4,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>1.6.1.0</AssemblyVersion>
+    <FileVersion>2.0.1.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>快速高效的开发.net就用RsCode,文档访问https://rscode.cn</Description>
     <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
