@@ -36,13 +36,13 @@
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 2.0.3
+  $ dotnet add package RsCode --version 2.0.6
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 2.0.3
+  Install-Package RsCode.AspNetCore -Version 2.0.10
   ```
 
   > 推荐使用 Visual Studio 2022 开发。

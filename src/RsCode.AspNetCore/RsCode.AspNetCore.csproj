@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>2.0.10</Version>
+    <Version>2.0.11</Version>
     <Authors>Tony</Authors>
     <Company>河南软商网络科技有限公司</Company>
     <PackageIcon>rscode64_64.png</PackageIcon>

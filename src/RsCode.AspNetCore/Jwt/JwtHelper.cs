@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace RsCode.AspNetCore
@@ -77,6 +78,9 @@ namespace RsCode.AspNetCore
             string securityKey =jwt.SecurityKey;//安全码
             string issuer =jwt.Issuer;//发行者
             string audience =jwt.Audience;//接收者 
+
+            if(securityKey.Length<32)
+                throw new ArgumentException("SecurityKey长度最少32位");
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"));
             claims.Add(new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddMinutes(minutes)).ToUnixTimeSeconds()}"));
