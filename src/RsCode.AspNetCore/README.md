@@ -19,7 +19,7 @@
 
 ## 🖥 支持环境
 
-- .NET Core 3.1以上
+- .NET Core 6.0以上
 
 
 ## 💿 当前版本
@@ -37,13 +37,13 @@
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 2.0.2
+  $ dotnet add package RsCode --version 2.1.0
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 2.0.2
+  Install-Package RsCode.AspNetCore -Version 2.1.0
   ```
 
   > 推荐使用 Visual Studio 2022 开发。

@@ -67,7 +67,7 @@ internal class PluginSetup : IPluginSetup
  &lt;/PropertyGroup&gt;
     
 	&lt;PropertyGroup Condition=&quot;&#39;$(Configuration)|$(Platform)&#39;==&#39;Debug|AnyCPU&#39;&quot;&gt;
-		&lt;OutputPath&gt;..\..\Applications\Application.WebMvc\Plugins\Plugin.Discount&lt;/OutputPath&gt;
+		&lt;OutputPath&gt;..\..\Application.WebMvc\Plugins\Plugin.Discount&lt;/OutputPath&gt;
 		&lt;OutDir&gt;$(OutputPath)&lt;/OutDir&gt;
 	&lt;/PropertyGroup&gt;
 &lt;/Project&gt;
@@ -76,7 +76,7 @@ internal class PluginSetup : IPluginSetup
 <p>&nbsp;</p>
 <h2 id='插件调用'>插件调用</h2>
 <p>1.添加插件服务</p>
-<p>打开主项目，<code>Program.cs</code>中增加插件服务 </p>
+<p>打开主项目，引用<code>RsCode.AspNetCore</code> <code>2.1.0</code>以上的版本,<code>Program.cs</code>中增加插件服务 </p>
 <pre><code class='language-csharp' lang='csharp'>using RsCode.AspNetCore;
 
 //添加插件服务
@@ -123,7 +123,7 @@ app.Run();
 <p>这个示例是插件文件夹为<code>Plugins</code>的配置，它把主项目<code>CopyLocalLockFileAssemblies</code>设为<code>true</code>，并复制<code>插件dll</code>到<code>Plugins</code>文件夹下</p>
 <p>3.重新生成插件项目，运行主项目</p>
 <p>示例中提供了对插件禁用与开启的显示</p>
-<blockquote><p><strong>注意：</strong>如果主项目中启用了<code>RsCode</code>,那么插件项目也需要启用<code>RsCode</code>，具体可以这样做</p>
+<blockquote><p><strong>注意1：</strong>如果主项目中启用了<code>RsCode</code>,那么插件项目也需要启用<code>RsCode</code>，具体可以这样做</p>
 </blockquote>
 <p>插件配置示例</p>
 <pre><code class='language-csharp' lang='csharp'>internal class PluginSetup : IPluginSetup
@@ -140,7 +140,23 @@ app.Run();
     }
 }
 </code></pre>
-<p>&nbsp;</p>
+<blockquote><p><strong>注意2</strong>：插件项目与主项目生成的位置</p>
+</blockquote>
+<blockquote><p><strong>注意3:</strong> 应用程序之间控制器名称不能重复</p>
+</blockquote>
+<p>示例项目结构，仅供参考</p>
+<pre><code>.
+├── plugins								  # 插件项目文件夹         
+│     └── Plugin.A						# 插件项目A
+│     └── Plugin.B						# 插件项目B
+├── MainWebProject  					  # 主项目
+│     └── Plugins      		       # 插件应用文件夹 (动态生成)
+│			    └── Plugin.A			# 插件A
+│				    └── Plugin.A.dll       
+│			    └── Plugin.B			# 插件B
+│				    └── Plugin.B.dll
+└── xxx.sln                
+</code></pre>
 <h2 id='插件api'>插件API</h2>
 <p>通过注入接口<code>IPluginManager</code>，可以管理插件信息,</p>
 <pre><code class='language-csharp' lang='csharp'> public interface IPluginManager

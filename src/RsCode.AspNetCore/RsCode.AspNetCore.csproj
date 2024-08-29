@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Library</OutputType>
+	  <IsPackable>true</IsPackable>
 
 	  <Version>2.1.00</Version>
 	  <Authors>Tony</Authors>
@@ -14,8 +15,8 @@
 	  <Copyright>河南软商网络科技有限公司</Copyright>
 	  <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
 	  <PackageReleaseNotes>软商网络asp.net core项目开发工具包</PackageReleaseNotes>
-	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-	  <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
 	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
 	  <FileVersion>2.1.0.0</FileVersion>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -23,11 +24,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.33" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RsCode\RsCode.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="rscode64_64.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
