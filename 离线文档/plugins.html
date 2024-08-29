@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>插件管理</title>
+<link rel="stylesheet" href="https://rscode.cn/mdtht/mdtht.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script src="https://rscode.cn/mdtht/mdtht.min.js"></script></head>
+<body>
+<p><code>RsCode.AspnetCore</code>提供的插件服务，支持动态加载，可以方便的安装与卸载插件程序。</p>
+<h2 id='插件原理'>插件原理</h2>
+<p>默认情况下，当一个<code>ASP.NET Core MVC</code>应用启动时，它只会尝试在当前应用启动的项目及引用的项目中加载控制器，如果想从未直接引用的程序集中加载控制器和预编译Razor视图，我们就需要借助<code>ApplicationPart</code>了。</p>
+<p><code>ApplocationPart</code>可以发现程序集中包含的控制器、视图组件、TagHelper和预编译Razor视图等MVC功能。</p>
+<p>程序运行期间，动态加载和卸载程序集，可以使用<code>AssemblyLoadContext</code> , 它表示程序集加载上下文的类，允许你控制程序集是如何被加载和卸载的</p>
+<pre><code class='language-csharp' lang='csharp'>//创建一下可以被垃圾收集的AssemblyLoadContext
+var context=new AssemblyLoadContext(true);
+
+// 确保没有强引用指向这个AssemblyLoadContext
+// 当没有任何强引用指向它时，垃圾收集器最终会清理它
+context = null;
+</code></pre>
+<h2 id='插件演示'>插件演示</h2>
+<p>&nbsp;</p>
+<p><img src="https://rscode.cn/assets/images/plugin.gif" referrerpolicy="no-referrer" alt="插件演示"></p>
+<h2 id='插件开发'>插件开发</h2>
+<p><strong>插件项目开发步骤：</strong></p>
+<p>1.创建<code>asp.net core Web</code>应用项目做为插件项目,修改<code>应用程序</code>-<code>输出类型</code>为<code>类库</code></p>
+<p>2.引用<code>RsCode.AspNetCore</code> <code>2.1.0</code>以上的版本</p>
+<p>3.实现<code>IPluginSetup</code>接口</p>
+<p>   添加文件<code>PluginSetup.cs</code>,内容如下：</p>
+<pre><code class='language-csharp' lang='csharp'>using RsCode.AspNetCore.Plugin;
+
+internal class PluginSetup : IPluginSetup
+ {
+     public int Order =&gt; 200; //插件顺序
+     public void Configure(IApplicationBuilder app, IHostEnvironment env)
+     {
+         
+     }
+     public void ConfigureServices(IServiceCollection services)
+     {
+         
+     }
+ }
+</code></pre>
+<p>4.添加插件描述<code>PluginInfo.json</code>，</p>
+<p><code>PluginInfo.json</code>内容如下：</p>
+<pre><code class='language-json' lang='json'>{
+  &quot;Name&quot;: &quot;Plugin.Discount&quot;,      //插件项目英文名称
+  &quot;Version&quot;: &quot;1.0.0&quot;,           //插件项目版本号
+  &quot;Description&quot;: &quot;Plugin Discount&quot;  //插件项目说明
+}
+</code></pre>
+<p>删除非必要文件<code>Program.cs</code>, <code>appsettings.json</code>, </p>
+<p>5.将插件生成到主项目的<code>Plugins</code>文件夹，将插件生成到主项目的<code>Plugins</code>文件夹下,不复制重复的程序集</p>
+<p>打开vs，执行<code>编辑项目文件</code>, 修改<code>OutputPath</code>为插件程序输出位置,并将插件项目<code>CopyLocalLockFileAssemblies</code>设置为<code>false</code></p>
+<pre><code class='language-xml' lang='xml'>&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+
+    &lt;PropertyGroup&gt;
+	   &lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
+	  &lt;AddRazorSupportForMvc&gt;true&lt;/AddRazorSupportForMvc&gt;
+	   &lt;Nullable&gt;enable&lt;/Nullable&gt;
+	   &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+	   &lt;OutputType&gt;Library&lt;/OutputType&gt;
+	  &lt;CopyLocalLockFileAssemblies&gt;false&lt;/CopyLocalLockFileAssemblies&gt;
+ &lt;/PropertyGroup&gt;
+    
+	&lt;PropertyGroup Condition=&quot;&#39;$(Configuration)|$(Platform)&#39;==&#39;Debug|AnyCPU&#39;&quot;&gt;
+		&lt;OutputPath&gt;..\..\Applications\Application.WebMvc\Plugins\Plugin.Discount&lt;/OutputPath&gt;
+		&lt;OutDir&gt;$(OutputPath)&lt;/OutDir&gt;
+	&lt;/PropertyGroup&gt;
+&lt;/Project&gt;
+
+</code></pre>
+<p>&nbsp;</p>
+<h2 id='插件调用'>插件调用</h2>
+<p>1.添加插件服务</p>
+<p>打开主项目，<code>Program.cs</code>中增加插件服务 </p>
+<pre><code class='language-csharp' lang='csharp'>using RsCode.AspNetCore;
+
+//添加插件服务
+builder.Services.AddPlugins();
+//把默认插件位置Plugins改其Modules
+//builder.Services.AddPlugins(Path.Combine(AppContext.BaseDirectory, &quot;Modules&quot;););
+
+//添加插件配置
+app.UsePlugins(builder.Environment);
+app.UseEndpoints(endpoints =&gt;
+{
+    endpoints.MapControllerRoute(
+        name: &quot;areas&quot;,
+        pattern: &quot;{area:exists}/{controller=Home}/{action=Index}/{id?}&quot;);
+
+    endpoints.MapControllerRoute(
+        name: &quot;default&quot;,
+        pattern: &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+});
+app.Run();
+</code></pre>
+<p>2.复制<code>插件dll</code>到<code>bin</code></p>
+<p>打开主项目，vs执行<code>编辑项目文件</code>，<code>增加</code>内容</p>
+<pre><code class='language-xml' lang='xml'>&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+   &lt;PropertyGroup&gt;
+  		&lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
+  		&lt;Nullable&gt;enable&lt;/Nullable&gt;
+ 		&lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+ 		&lt;CopyLocalLockFileAssemblies&gt;true&lt;/CopyLocalLockFileAssemblies&gt;
+	&lt;/PropertyGroup&gt;
+    &lt;ItemGroup&gt;
+        &lt;Folder Include=&quot;Plugins\&quot; /&gt;
+        &lt;Content Remove=&quot;Plugins\**\Properties\*.json&quot; /&gt;
+        &lt;Content Include=&quot;Plugins\**\*.dll&quot;&gt;
+            &lt;CopyToOutputDirectory&gt;PreserveNewest&lt;/CopyToOutputDirectory&gt;
+        &lt;/Content&gt;
+    &lt;/ItemGroup&gt;
+    &lt;Target Name=&quot;CreatePluginFolder&quot; AfterTargets=&quot;AfterPublish&quot;&gt;
+    	&lt;MakeDir Directories=&quot;$(PublishDir)Plugins&quot; Condition=&quot;!Exists(&#39;$(PublishDir)Plugins&#39;)&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+<p>这个示例是插件文件夹为<code>Plugins</code>的配置，它把主项目<code>CopyLocalLockFileAssemblies</code>设为<code>true</code>，并复制<code>插件dll</code>到<code>Plugins</code>文件夹下</p>
+<p>3.重新生成插件项目，运行主项目</p>
+<p>示例中提供了对插件禁用与开启的显示</p>
+<blockquote><p><strong>注意：</strong>如果主项目中启用了<code>RsCode</code>,那么插件项目也需要启用<code>RsCode</code>，具体可以这样做</p>
+</blockquote>
+<p>插件配置示例</p>
+<pre><code class='language-csharp' lang='csharp'>internal class PluginSetup : IPluginSetup
+{
+    public int Order =&gt; 200;
+    public void Configure(IApplicationBuilder app, IHostEnvironment env)
+    {
+    }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        //添加RsCode
+        services.AddRsCode();
+    }
+}
+</code></pre>
+<p>&nbsp;</p>
+<h2 id='插件api'>插件API</h2>
+<p>通过注入接口<code>IPluginManager</code>，可以管理插件信息,</p>
+<pre><code class='language-csharp' lang='csharp'> public interface IPluginManager
+ {
+     /// &lt;summary&gt;
+     /// 获取所有插件信息
+     /// &lt;/summary&gt;
+     /// &lt;returns&gt;&lt;/returns&gt;
+     List&lt;T&gt; GetAllPlugins&lt;T&gt;() where T : PluginInfo;
+     /// &lt;summary&gt;
+     /// 禁用单个插件
+     /// &lt;/summary&gt;
+     /// &lt;param name=&quot;pluginName&quot;&gt;&lt;/param&gt;
+     void DisablePlugin(string pluginName);
+     /// &lt;summary&gt;
+     /// 启用插件
+     /// &lt;/summary&gt;
+     /// &lt;param name=&quot;pluginName&quot;&gt;&lt;/param&gt;
+     void EnablePlugin(string pluginName);
+ }
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/0.1.0-beta.5/libs/cn/index.js"></script>
+<script>
+const bot_id = '7395755727056338994';
+                // 自定义Bot名称和icon
+                const title = '24小时在线客服';
+                const icon = 'https://pan.rs888.net/assets/img/kf.png';
+                const lang = 'zh-CN';
+                const layout = 'pc';
+                const width = 800;
+                
+                new CozeWebSDK.WebChatClient({
+                    config: {
+                        bot_id,
+                    },
+                    componentProps: {
+                        title,
+                        icon,
+                        width,
+                        lang
+                    },
+                });
+</script></body>
+</html>

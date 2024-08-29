@@ -6,19 +6,22 @@
             columns: [
                 {
                     colKey: 'name',
-                    title: '插件名称'
+                    title: '插件名称',
+                    width: 200
                 },
                 {
                     colKey: 'description',
-                    title: '插件描述'
+                    title: '插件描述',
                 },
                 {
                     colKey: 'version',
-                    title: '插件版本号'
+                    title: '插件版本号',
+                    width: 120
                 },
                 {
-                    colKey: 'version',
-                    title: '插件版本号'
+                    colKey: 'status',
+                    title: '插件状态',
+                    width:100
                 },
                 {
                     colKey: 'opt',
