@@ -33,7 +33,10 @@ public class WorkQueue : WorkQueue<Action>
         };
     }
 }
-
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class WorkQueue<T> : IDisposable
 {
     public delegate void WorkQueueProcessHandler(T item);
@@ -46,8 +49,14 @@ public class WorkQueue<T> : IDisposable
     private object _works_lock = new object();
     private Queue<T> _queue = new Queue<T>();
     private object _queue_lock = new object();
-
+    /// <summary>
+    /// 
+    /// </summary>
     public WorkQueue() : this(16, -1) { }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="thread"></param>
     public WorkQueue(int thread)
         : this(thread, -1)
     {

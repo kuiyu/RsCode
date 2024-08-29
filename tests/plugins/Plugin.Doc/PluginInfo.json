@@ -1,0 +1,5 @@
+﻿{
+  "Name": "Plugin.Doc", //插件项目英文名称
+  "Version": "1.0.0", //插件项目版本号
+  "Description": "RsCode插件文档项目测试" //插件项目说明
+}

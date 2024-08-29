@@ -4,7 +4,7 @@
  * RsCode is .net core platform rapid development framework
  * Apache License 2.0
  * 
- * 作者：lrj
+ * 作者：hnrswl
  * 
  * 项目己托管于
  * gitee
@@ -13,15 +13,10 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RsCode.AspNetCore.Jwt;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace RsCode.AspNetCore

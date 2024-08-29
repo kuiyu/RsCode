@@ -13,12 +13,9 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using System.Threading.Tasks;
 
 namespace RsCode.AspNetCore
 {

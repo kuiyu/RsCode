@@ -4,10 +4,23 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	 <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RsCode.AspNetCore\RsCode.AspNetCore.csproj" />
   </ItemGroup>
+
+
+	<ItemGroup>
+		<Folder Include="Plugins\" />
+		<Content Remove="Plugins\**\Properties\*.json" />
+		<Content Include="Plugins\**\*.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<Target Name="CreatePluginFolder" AfterTargets="AfterPublish">
+		<MakeDir Directories="$(PublishDir)Plugins" Condition="!Exists('$(PublishDir)Plugins')" />
+	</Target>
 
 </Project>

@@ -269,6 +269,75 @@
             <param name="name"></param>
             <returns></returns>
         </member>
+        <member name="T:RsCode.Cache.CacheType">
+            <summary>
+            缓存类型
+            </summary>
+        </member>
+        <member name="F:RsCode.Cache.CacheType.Memory">
+            <summary>
+            内存缓存
+            </summary>
+        </member>
+        <member name="F:RsCode.Cache.CacheType.Redis">
+            <summary>
+            redis缓存
+            </summary>
+        </member>
+        <member name="F:RsCode.Cache.CacheType.Memcached">
+            <summary>
+            memcached缓存
+            </summary>
+        </member>
+        <member name="F:RsCode.Cache.CacheType.SqlServer">
+            <summary>
+            sqlserver缓存
+            </summary>
+        </member>
+        <member name="T:RsCode.ICacheProvider">
+            <summary>
+            缓存接口定义
+            </summary>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Set(System.String,System.Object,System.Int32)">
+            <summary>
+            缓存数据
+            </summary>
+            <param name="key">缓存key</param>
+            <param name="obj">要缓存的数据</param>
+            <param name="seconds">默认缓存时长300秒</param>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Set(System.String,System.Object,System.DateTime)">
+            <summary>
+            缓存数据到指定时间
+            </summary>
+            <param name="key"></param>
+            <param name="obj"></param>
+            <param name="endDate">结束时间</param>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Exists(System.String)">
+            <summary>
+            判断key是否存在
+            </summary>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Get(System.String)">
+            <summary>
+            获得指定键的缓存值
+            </summary>
+            <param name="key">缓存键</param>
+            <returns>缓存值</returns>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Get``1(System.String)">
+            <summary>
+            获得指定键的缓存值
+            </summary>
+        </member>
+        <member name="M:RsCode.ICacheProvider.Remove(System.String)">
+            <summary>
+            从缓存中移除指定键的缓存值
+            </summary>
+            <param name="key">缓存键</param>
+        </member>
         <member name="T:RsCode.Config.AppConfig">
             <summary>
             
@@ -2311,6 +2380,23 @@
             </summary>
             <param name="thread"></param>
             <param name="capacity"></param>
+        </member>
+        <member name="T:WorkQueue`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:WorkQueue`1.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:WorkQueue`1.#ctor(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="thread"></param>
         </member>
     </members>
 </doc>

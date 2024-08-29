@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tdesign-vue-next/dist/tdesign.min.css" />
+    <script src="https://unpkg.com/tdesign-vue-next/dist/tdesign.min.js"></script>
+    <script src="https://unpkg.com/axios@1.7.5/dist/axios.min.js"></script>
+   
+    <title>RsCode插件管理</title>
+</head>
+
+<body>
+    <div id="app">
+        <t-table row-key="name" :data="list" :columns="columns" lazy-load >
+            <template #opt="{row}">
+                <t-space v-if="row.status==0" size="small" align="center">
+                    <t-tag>己禁用</t-tag> <t-button variant="outline" theme="primary" @@click="open(1,row)">启用</t-button> 
+                    <a v-if="row.name=='Plugin.Discount'" href="/discounts/index" target="_blank">Discounts/Index 当前不能访问</a>
+                    <a v-if="row.name=='Plugin.Doc'" href="/api/doc/index" target="_blank">/api/doc/Index 当前不能访问</a>
+                </t-space>
+                <t-space v-if="row.status==1" size="small" align="center">
+                    <t-tag>己启用</t-tag> <t-button variant="outline" theme="danger" @@click="open(0,row)">禁用</t-button>
+                    <a v-if="row.name=='Plugin.Discount'" href="/discounts/index" target="_blank">Discounts/Index 当前正常访问</a>
+                    <a v-if="row.name=='Plugin.Doc'" href="/api/doc/index" target="_blank">/api/doc/Index 当前正常访问</a>
+                </t-space>
+            </template>
+        </t-table>
+    </div>
+    <script src="~/js/site.js"></script>
+</body>
+
+</html>
+
+
+
