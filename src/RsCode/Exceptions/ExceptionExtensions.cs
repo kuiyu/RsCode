@@ -16,10 +16,7 @@
  * 文档 https://rscode.cn/
  */
 
-using AspectCore.Configuration;
-using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using RsCode.Exceptions;
 
 namespace RsCode
 {

@@ -19,6 +19,7 @@
 
 using AspectCore.DependencyInjection;
 using AspectCore.DynamicProxy;
+using FreeSql;
 using RsCode.Domain.Uow;
 using System;
 using System.Threading.Tasks;
@@ -28,45 +29,39 @@ namespace RsCode
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Interface)]
     public sealed class UnitOfWorkAttribute : AbstractInterceptorAttribute
     {
+
+        [FromServiceContext]
+        public IApplicationDbContext applicationDbContext { get; set; }
+
         public UnitOfWorkAttribute()
         {
-            
-        }
-        [FromServiceContext]
-        public IUnitOfWork Uow { get; set; }
 
-        public UnitOfWorkAttribute(string connName)
+        }
+        public UnitOfWorkAttribute(string connName = "DefaultConnection")
         {
-            this.DbConnectionStringName = connName; 
+            applicationDbContext.ChangeDatabase(connName);
         }
         public override int Order { get; set; } = -10000;
 
-        public string DbConnectionStringName { get; set; } = "DefaultConnection";
 
-       
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
-            try
+            using (var uow = applicationDbContext.CreateUnitOfWork())
             {
-                using (Uow)
+                try
                 {
-                    Uow.Open(DbConnectionStringName);
                     await next(context);
-                    Uow.Commit();
+                    uow.Commit();
+                }
+                catch (Exception)
+                {
+                    uow.Rollback();
+                }
+                finally
+                {
+                    CallContext<IRepositoryUnitOfWork>.SetData("rscode-uow", null);
                 }
             }
-            catch (Exception e)
-            {
-
-            }
-            finally
-            {
-                Uow.Dispose();
-            }
-                
-           
         }
-
-
     }
 }

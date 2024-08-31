@@ -93,9 +93,9 @@ namespace RsCode
 		/// <param name="formatData">特定的格式化</param>
 		/// <returns></returns>
 		/// <exception cref="AppException"></exception>
-		public virtual async Task<Page<T>> GetPageAsync<T>(string url, string accessToken = "", bool formatData = true)
+		public virtual async Task<PageData<T>> GetPageAsync<T>(string url, string accessToken = "", bool formatData = true)
         {
-            Page<T> page = new Page<T>();
+            PageData<T> page = new PageData<T>();
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             if (!string.IsNullOrWhiteSpace(accessToken))
             {
@@ -125,7 +125,6 @@ namespace RsCode
                 page.Items = data;
                 page.TotalItems = long.Parse(result.GetProperty("totalItems").ToString());
                 page.TotalPages = long.Parse(result.GetProperty("totalPages").ToString());
-                page.ItemsPerPage = long.Parse(result.GetProperty("itemsPerPage").ToString());
                 page.CurrentPage = long.Parse(result.GetProperty("currentPage").ToString());
             }
             else

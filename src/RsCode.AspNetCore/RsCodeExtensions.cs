@@ -13,6 +13,7 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
+using AspectCore.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
@@ -25,6 +26,7 @@ namespace RsCode.AspNetCore
     {
         public static void AddRsCode(this IServiceCollection services)
         {
+            services.BuildDynamicProxyProvider();
             services.AddLogging();
             services.AddMvc(config => {
                 config.RespectBrowserAcceptHeader = true;

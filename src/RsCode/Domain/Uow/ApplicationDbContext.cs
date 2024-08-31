@@ -2,9 +2,9 @@
  * RsCode
  * 
  * RsCode is .net core platform rapid development framework
- * Apache License 2.0
+ * MIT License
  * 
- * 作者：lrj
+ * 作者：河南软商网络科技有限公司
  * 
  * 项目己托管于
  * gitee
@@ -14,12 +14,7 @@
    https://github.com/kuiyu/RsCode.git
  */
 
-using Microsoft.Extensions.Configuration;
-using PetaPoco;
-using PetaPoco.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FreeSql;
 
 namespace RsCode.Domain.Uow
 {
@@ -28,34 +23,29 @@ namespace RsCode.Domain.Uow
     /// </summary>
     public class ApplicationDbContext : IApplicationDbContext
     {
-        IEnumerable<IDatabase> databases;
-      
-        IConfiguration Configuration;
+       FreeSqlCloud<string> fsqlCloud;
+
+        IFreeSql db;
 		/// <summary>
 		/// 数据库上下文
 		/// </summary>
 		/// <param name="databases"></param>
 		/// <param name="configuration"></param>
-		public ApplicationDbContext(IEnumerable<IDatabase> databases, IConfiguration configuration)
-        { 
-            this.databases = databases;
-            Configuration = configuration;
+		public ApplicationDbContext()
+        {
+            db = DbServiceCollectionExtensions.fsql; 
+            fsqlCloud = DbServiceCollectionExtensions.fsql; 
         }
 
 
-        IDatabase db;
+     
         /// <summary>
         /// 当前数据库连接
         /// </summary>
-        public IDatabase Current
+        public IFreeSql Current
         {
             get
             {
-                db = ObjectContext<IDatabase>.Current; 
-                if(db==null)
-                {
-                    db = GetDatabase();
-                }
 				return db;
             }
             private set
@@ -70,86 +60,46 @@ namespace RsCode.Domain.Uow
         /// </summary>
         /// <param name="connName">默认值为DefaultConnection</param>
         /// <returns></returns>
-        public virtual IDatabase GetDatabase(string connName = "DefaultConnection")
+        public virtual IFreeSql ChangeDatabase(string connName = "DefaultConnection")
         {
-            var connStr=Configuration.GetConnectionString(connName);
-            if (string.IsNullOrWhiteSpace(connStr)) throw new System.Exception($"ConnectionString {connName} not fund");
+           return fsqlCloud.Change(connName);
+        }
 
-             db = CallContext<IDatabase>.GetData(connName);
-            if (db == null)
+        public IRepositoryUnitOfWork CreateUnitOfWork()
+        {
+            var uow = db.CreateUnitOfWork();
+            CallContext<IRepositoryUnitOfWork>.SetData("rscode-uow", uow);
+            return uow;
+        }
+      
+
+        public IBaseRepository<TEntity> GetRepository<TEntity>()
+            where TEntity : class
+        {
+            var uow = CallContext<IRepositoryUnitOfWork>.GetData("rscode-uow");
+            if(uow==null)
             {
-                db = databases.FirstOrDefault(x => x.ConnectionString == connStr);
+                return db.GetRepository<TEntity>();
+            }else
+            {
+                return uow.GetRepository<TEntity>();    
             }
-            if (db == null)
-                throw new System.Exception($"{connName} db is  not exist");
-
-			if (db.Connection == null)
-			{
-				db.OpenSharedConnection();
-			}
-
-            ObjectContext<IDatabase> context = new ObjectContext<IDatabase>(db);
-			CallContext<IDatabase>.SetData(connName, db);
-
-            return db;
+            
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKeyValue"></param>
-        /// <returns></returns>
-        public virtual async Task<T> GetAsync<T>(object primaryKeyValue)
+        public IBaseRepository<TEntity,TKey> GetRepository<TEntity, TKey>()
+           where TEntity : class
         {
-            var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
-            string key = pd.TableInfo.PrimaryKey;
-            string sql = $"where {key}={primaryKeyValue}";
-            return await Current.FirstOrDefaultAsync<T>(sql);
+            var uow = CallContext<IRepositoryUnitOfWork>.GetData("rscode-uow");
+            if (uow == null)
+            {
+                return db.GetRepository<TEntity,TKey>();
+            }
+            else
+            {
+                return uow.GetRepository<TEntity, TKey>();
+            }
         }
-
-        public virtual async Task<Page<T>> GetPageAsync<T>(int page, int rows)
-        {
-            return await Current.PageAsync<T>(page, rows);
-        }
-
-        /// <summary>
-        /// 新增记录,返回主键值
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        public virtual async Task<object> InsertAsync<T>(T t)
-        {
-            return await Current.InsertAsync(t);
-        }
-        /// <summary>
-        /// 保存记录
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        public virtual async Task SaveAsync<T>(T t)
-        {
-            await Current.SaveAsync(t);
-        }
-
-        public virtual async Task<int> DeleteAsync<T>(object primaryKeyValue)
-        {
-            var pd = PocoData.ForType(typeof(T), Current.DefaultMapper);
-            string key = pd.TableInfo.PrimaryKey;
-            string sql = $"where {key}={primaryKeyValue}";
-            return await Current.DeleteAsync<T>(sql);
-        }
-
-
-
-        //string GetPrimaryKeyValue()
-        //{
-        //    var pkAttr = typeof(TEntity).GetCustomAttributes(typeof(PrimaryKeyAttribute), true).FirstOrDefault() as PrimaryKeyAttribute;
-        //    return pkAttr?.Value;
-        //}
-
 
     }
 }

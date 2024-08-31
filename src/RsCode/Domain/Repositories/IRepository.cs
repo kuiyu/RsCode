@@ -13,237 +13,104 @@
  * github
    https://github.com/kuiyu/RsCode.git
  */
-using PetaPoco;
-
+using FreeSql;
+using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace RsCode.Domain
 {
-    public interface IRepository<T>:IRepository<T,long> where T : IEntity<long>
+
+    public interface IRepository<TEntity>  where TEntity : class
     {
+        PageData<TEntity> Page(int page, int pageSize);
+        PageData<TEntity> Page(int page, int pageSize, Expression<Func<TEntity, bool>> expression);
+        ISelect<TEntity> Select { get; }
 
-    }
-    public interface IRepository<T,TPrimaryKey> where T : IEntity<TPrimaryKey>
-    {
-        IDatabase ChangeDataBase(string connStrName);
-         object ExecuteScalar(Sql sql);
-        object ExecuteScalar(string sql, params object[] args);
-        Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, Sql sql);
-        Task<object> ExecuteScalarAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<object> ExecuteScalarAsync(Sql sql);
-        Task<object> ExecuteScalarAsync(string sql, params object[] args);
-         
-        bool Exists(string sqlCondition, params object[] args);
-        
-        Task<bool> ExistsAsync(CancellationToken cancellationToken, string sqlCondition, params object[] args);
-         
-        Task<bool> ExistsAsync(string sqlCondition, params object[] args);
-        List<T> Fetch();
-        List<T> Fetch(long page, long itemsPerPage);
-        List<T> Fetch(long page, long itemsPerPage, Sql sql);
-        List<T> Fetch(long page, long itemsPerPage, string sql, params object[] args);
-        List<T> Fetch(Sql sql);
-        List<T> Fetch(string sql, params object[] args);
-        List<TRet> Fetch<T2, T3, T4, T5, TRet>(Func<T, T2, T3, T4, T5, TRet> cb, Sql sql);
-        List<TRet> Fetch<T2, T3, T4, T5, TRet>(Func<T, T2, T3, T4, T5, TRet> cb, string sql, params object[] args);
-        List<T> Fetch<T2, T3, T4, T5>(Sql sql);
-        List<T> Fetch<T2, T3, T4, T5>(string sql, params object[] args);
-        List<TRet> Fetch<T2, T3, T4, TRet>(Func<T, T2, T3, T4, TRet> cb, Sql sql);
-        List<TRet> Fetch<T2, T3, T4, TRet>(Func<T, T2, T3, T4, TRet> cb, string sql, params object[] args);
-        List<T> Fetch<T2, T3, T4>(Sql sql);
-        List<T> Fetch<T2, T3, T4>(string sql, params object[] args);
-        List<TRet> Fetch<T2, T3, TRet>(Func<T, T2, T3, TRet> cb, Sql sql);
-        List<TRet> Fetch<T2, T3, TRet>(Func<T, T2, T3, TRet> cb, string sql, params object[] args);
-        List<T> Fetch<T2, T3>(Sql sql);
-        List<T> Fetch<T2, T3>(string sql, params object[] args);
-        List<TRet> Fetch<T2, TRet>(Func<T, T2, TRet> cb, Sql sql);
-        List<TRet> Fetch<T2, TRet>(Func<T, T2, TRet> cb, string sql, params object[] args);
-        List<T> Fetch<T2>(Sql sql);
-        List<T> Fetch<T2>(string sql, params object[] args);
-        Task<List<T>> FetchAsync();
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, CommandType commandType);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, CommandType commandType, Sql sql);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, CommandType commandType, string sql, params object[] args);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, long page, long itemsPerPage);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, long page, long itemsPerPage, Sql sql);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, long page, long itemsPerPage, string sql, params object[] args);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, Sql sql);
-        Task<List<T>> FetchAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<List<T>> FetchAsync(CommandType commandType);
-        Task<List<T>> FetchAsync(CommandType commandType, Sql sql);
-        Task<List<T>> FetchAsync(CommandType commandType, string sql, params object[] args);
-        Task<List<T>> FetchAsync(long page, long itemsPerPage);
-        Task<List<T>> FetchAsync(long page, long itemsPerPage, Sql sql);
-        Task<List<T>> FetchAsync(long page, long itemsPerPage, string sql, params object[] args);
-        Task<List<T>> FetchAsync(Sql sql);
-        Task<List<T>> FetchAsync(string sql, params object[] args);
-        T First(Sql sql);
-        T First(string sql, params object[] args);
-        Task<T> FirstAsync(CancellationToken cancellationToken, Sql sql);
-        Task<T> FirstAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<T> FirstAsync(Sql sql);
-        Task<T> FirstAsync(string sql, params object[] args);
-        T FirstOrDefault(Sql sql);
-        T FirstOrDefault(string sql, params object[] args);
-        Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken, Sql sql);
-        Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<T> FirstOrDefaultAsync(Sql sql);
-        Task<T> FirstOrDefaultAsync(TPrimaryKey primaryKey);
-        Task<T> FirstOrDefaultAsync(string sql, params object[] args);
-        Page<T> Page(long page, long itemsPerPage);
-        Page<T> Page(long page, long itemsPerPage, Sql sql);
-        Page<T> Page(long page, long itemsPerPage, Sql sqlCount, Sql sqlPage);
-        Page<T> Page(long page, long itemsPerPage, string sqlCount, object[] countArgs, string sqlPage, object[] pageArgs);
-        Page<T> Page(long page, long itemsPerPage, string sql, params object[] args);
-        Task<Page<T>> PageAsync(CancellationToken cancellationToken, long page, long itemsPerPage);
-        Task<Page<T>> PageAsync(CancellationToken cancellationToken, long page, long itemsPerPage, Sql sql);
-        Task<Page<T>> PageAsync(CancellationToken cancellationToken, long page, long itemsPerPage, Sql sqlCount, Sql sqlPage);
-        Task<Page<T>> PageAsync(CancellationToken cancellationToken, long page, long itemsPerPage, string sqlCount, object[] countArgs, string sqlPage, object[] pageArgs);
-        Task<Page<T>> PageAsync(CancellationToken cancellationToken, long page, long itemsPerPage, string sql, params object[] args);
-        Task<Page<T>> PageAsync(long page, long itemsPerPage);
-        Task<Page<T>> PageAsync(long page, long itemsPerPage, Sql sql);
-        Task<Page<T>> PageAsync(long page, long itemsPerPage, Sql sqlCount, Sql sqlPage);
-        Task<Page<T>> PageAsync(long page, long itemsPerPage, string sqlCount, object[] countArgs, string sqlPage, object[] pageArgs);
-        Task<Page<T>> PageAsync(long page, long itemsPerPage, string sql, params object[] args);
-        IEnumerable<T> Query();
-        IEnumerable<T> Query(Sql sql);
-        IEnumerable<T> Query(string sql, params object[] args);
-        IEnumerable<TRet> Query<T, T2, T3, T4, T5, TRet>(Func<T, T2, T3, T4, T5, TRet> cb, Sql sql);
-        IEnumerable<TRet> Query<T, T2, T3, T4, T5, TRet>(Func<T, T2, T3, T4, T5, TRet> cb, string sql, params object[] args);
-        IEnumerable<T> Query<T, T2, T3, T4, T5>(Sql sql);
-        IEnumerable<T> Query<T, T2, T3, T4, T5>(string sql, params object[] args);
-        IEnumerable<TRet> Query<T, T2, T3, T4, TRet>(Func<T, T2, T3, T4, TRet> cb, Sql sql);
-        IEnumerable<TRet> Query<T, T2, T3, T4, TRet>(Func<T, T2, T3, T4, TRet> cb, string sql, params object[] args);
-        IEnumerable<T> Query<T, T2, T3, T4>(Sql sql);
-        IEnumerable<T> Query<T, T2, T3, T4>(string sql, params object[] args);
-        IEnumerable<TRet> Query<T, T2, T3, TRet>(Func<T, T2, T3, TRet> cb, Sql sql);
-        IEnumerable<TRet> Query<T, T2, T3, TRet>(Func<T, T2, T3, TRet> cb, string sql, params object[] args);
-        IEnumerable<T> Query<T, T2, T3>(Sql sql);
-        IEnumerable<T> Query<T, T2, T3>(string sql, params object[] args);
-        IEnumerable<TRet> Query<T, T2, TRet>(Func<T, T2, TRet> cb, Sql sql);
-        IEnumerable<TRet> Query<T, T2, TRet>(Func<T, T2, TRet> cb, string sql, params object[] args);
-        IEnumerable<T> Query<T, T2>(Sql sql);
-        IEnumerable<T> Query<T, T2>(string sql, params object[] args);
-        IEnumerable<TRet> Query<TRet>(Type[] types, object cb, string sql, params object[] args);
-        Task<IAsyncReader<T>> QueryAsync();
-        Task QueryAsync(Action<T> receivePocoCallback);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken, CommandType commandType);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken, CommandType commandType, Sql sql);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken, CommandType commandType, string sql, params object[] args);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken, Sql sql);
-        Task QueryAsync(Action<T> receivePocoCallback, CancellationToken cancellationToken, string sql, params object[] args);
-        Task QueryAsync(Action<T> receivePocoCallback, CommandType commandType);
-        Task QueryAsync(Action<T> receivePocoCallback, CommandType commandType, Sql sql);
-        Task QueryAsync(Action<T> receivePocoCallback, CommandType commandType, string sql, params object[] args);
-        Task QueryAsync(Action<T> receivePocoCallback, Sql sql);
-        Task QueryAsync(Action<T> receivePocoCallback, string sql, params object[] args);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken, CommandType commandType);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken, CommandType commandType, Sql sql);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken, CommandType commandType, string sql, params object[] args);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken, Sql sql);
-        Task<IAsyncReader<T>> QueryAsync(CancellationToken cancellationToken, string sql, params object[] args);
-        Task<IAsyncReader<T>> QueryAsync(CommandType commandType);
-        Task<IAsyncReader<T>> QueryAsync(CommandType commandType, Sql sql);
-        Task<IAsyncReader<T>> QueryAsync(CommandType commandType, string sql, params object[] args);
-        Task<IAsyncReader<T>> QueryAsync(Sql sql);
-        Task<IAsyncReader<T>> QueryAsync(string sql, params object[] args);
-        IGridReader QueryMultiple(Sql sql);
-        IGridReader QueryMultiple(string sql, params object[] args);
-       
-        List<T> SkipTake(long skip, long take);
-        List<T> SkipTake(long skip, long take, Sql sql);
-        List<T> SkipTake(long skip, long take, string sql, params object[] args);
-        Task<List<T>> SkipTakeAsync(CancellationToken cancellationToken, long skip, long take);
-        Task<List<T>> SkipTakeAsync(CancellationToken cancellationToken, long skip, long take, Sql sql);
-        Task<List<T>> SkipTakeAsync(CancellationToken cancellationToken, long skip, long take, string sql, params object[] args);
-        Task<List<T>> SkipTakeAsync(long skip, long take);
-        Task<List<T>> SkipTakeAsync(long skip, long take, Sql sql);
-        Task<List<T>> SkipTakeAsync(long skip, long take, string sql, params object[] args);
+        ISelect<TEntity> Where(Expression<Func<TEntity, bool>> exp);
+        ISelect<TEntity> WhereIf(bool condition, Expression<Func<TEntity, bool>> exp);
 
-        #region AlterPoco 
-        /// <summary>
-        /// 增加记录
-        /// </summary>
-        /// <param name="poco"></param>
-        /// <returns>自动分配新记录的主键，对于非自动递增表为空。</returns>
-        TPrimaryKey Insert(T poco);
-
-        Task<TPrimaryKey> InsertAsync(T poco);
+        TEntity Insert(TEntity entity);
+        List<TEntity> Insert(IEnumerable<TEntity> entitys);
 
         /// <summary>
-        /// 增加记录
+        /// 清空状态数据
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <param name="poco">自动分配新记录的主键，对于非自动递增表为空。</param>
-        /// <returns></returns>
-        Task<TPrimaryKey> InsertAsync(CancellationToken cancellationToken, T poco);
+        void FlushState();
         /// <summary>
-        /// 
+        /// 附加实体，可用于不查询就更新或删除
         /// </summary>
-        /// <param name="poco"></param>
-        /// <returns>受影响的行数</returns>
-        int Update(T poco);
-        int Update(Sql sql);
-        int Update(string sql, params object[] args);
+        /// <param name="entity"></param>
+        void Attach(TEntity entity);
+        void Attach(IEnumerable<TEntity> entity);
         /// <summary>
-        /// 
+        /// 附加实体，并且只附加主键值，可用于不更新属性值为null或默认值的字段
         /// </summary>
-        /// <param name="poco"></param>
-        /// <returns>受影响的行数</returns>
-        Task<int> UpdateAsync(T poco);  
-        Task<int>UpdateAsync(string sql, params object[] args); 
-        Task<int> UpdateAsync(Sql sql);
-        Task<int> UpdateAsync(Sql sql,params object[]args); 
+        /// <param name="data"></param>
+        IBaseRepository<TEntity> AttachOnlyPrimary(TEntity data);
+        /// <summary>
+        /// 比较实体，计算出值发生变化的属性，以及属性变化的前后值
+        /// </summary>
+        /// <param name="newdata">最新的实体对象，它将与附加实体的状态对比</param>
+        /// <returns>key: 属性名, value: [旧值, 新值]</returns>
+        Dictionary<string, object[]> CompareState(TEntity newdata);
+
+        int Update(TEntity entity);
+        int Update(IEnumerable<TEntity> entitys);
+
+        TEntity InsertOrUpdate(TEntity entity);
+        /// <summary>
+        /// 保存实体的指定 ManyToMany/OneToMany 导航属性（完整对比）<para></para>
+        /// 场景：在关闭级联保存功能之后，手工使用本方法<para></para>
+        /// 例子：保存商品的 OneToMany 集合属性，SaveMany(goods, "Skus")<para></para>
+        /// 当 goods.Skus 为空(非null)时，会删除表中已存在的所有数据<para></para>
+        /// 当 goods.Skus 不为空(非null)时，添加/更新后，删除表中不存在 Skus 集合属性的所有记录
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <param name="propertyName">属性名</param>
+        void SaveMany(TEntity entity, string propertyName);
+
       
 
-        Task<int> UpdateAsync(CancellationToken cancellationToken, T poco);
-
-
-        Task<int> UpdateAsync(T poco, TPrimaryKey primaryKeyValue);
-
-
-        Task<int> UpdateAsync(CancellationToken cancellationToken, T poco, TPrimaryKey primaryKeyValue);
-
-       
-        Task<int> UpdateAsync(CancellationToken cancellationToken, Sql sql);
+        int Delete(TEntity entity);
+        int Delete(IEnumerable<TEntity> entitys);
+        int Delete(Expression<Func<TEntity, bool>> predicate);
+        /// <summary>
+        /// 根据设置的 OneToOne/OneToMany/ManyToMany 导航属性，级联查询所有的数据库记录，删除并返回它们
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        List<object> DeleteCascadeByDatabase(Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
-        ///     Performs an SQL Delete
+        /// 开始编辑数据，然后调用方法 EndEdit 分析出添加、修改、删除 SQL 语句进行执行<para></para>
+        /// 场景：winform 加载表数据后，一顿添加、修改、删除操作之后，最后才点击【保存】<para></para><para></para>
+        /// 示例：https://github.com/dotnetcore/FreeSql/issues/397<para></para>
+        /// 注意：* 本方法只支持单表操作，不支持导航属性级联保存
         /// </summary>
-        /// <param name="poco">The POCO object specifying the table name and primary key value of the row to be deleted</param>
-        /// <returns>受影响的行数</returns>
-        int Delete(T poco);
-
-        int Delete(TPrimaryKey primaryKey);
-        int Delete(string sql, params object[] args);
-         
-        int Delete(Sql sql); 
-        Task<int> DeleteAsync(T poco);
-
-        Task<int> DeleteAsync(TPrimaryKey primaryKey);
-        Task<int> DeleteAsync(CancellationToken cancellationToken, T poco);
-         
-        Task<int> DeleteAsync(string sql, params object[] args);
- 
-        Task<int> DeleteAsync(CancellationToken cancellationToken, string sql, params object[] args);
-       
-        Task<int> DeleteAsync(Sql sql);
-
-        Task<int> DeleteAsync(CancellationToken cancellationToken, Sql sql);
-
-
-        
-        void Save(T poco); 
-        Task SaveAsync(T poco); 
-       
-        Task SaveAsync(CancellationToken cancellationToken, T poco);
-        #endregion
+        /// <param name="data"></param>
+        void BeginEdit(List<TEntity> data);
+        /// <summary>
+        /// 完成编辑数据，进行保存动作<para></para>
+        /// 该方法根据 BeginEdit 传入的数据状态分析出添加、修改、删除 SQL 语句<para></para>
+        /// 注意：* 本方法只支持单表操作，不支持导航属性级联保存
+        /// </summary>
+        /// <param name="data">可选参数：手工传递最终的 data 值进行对比<para></para>默认：如果不传递，则使用 BeginEdit 传入的 data 引用进行对比</param>
+        /// <returns></returns>
+        int EndEdit(List<TEntity> data = null);
     }
+    public interface IRepository<TEntity, TKey>:IRepository<TEntity>
+        where TEntity : class
+    {
+        TEntity Get(TKey id);
+        TEntity Find(TKey id);
+        int Delete(TKey id);
+        Task<TEntity> GetAsync(TKey id, CancellationToken cancellationToken = default);
+        Task<TEntity> FindAsync(TKey id, CancellationToken cancellationToken = default);
+        Task<int> DeleteAsync(TKey id, CancellationToken cancellationToken = default);
+     
+    }
+  
 }

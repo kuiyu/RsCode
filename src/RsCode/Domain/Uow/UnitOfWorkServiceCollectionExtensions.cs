@@ -2,7 +2,7 @@
  * RsCode
  * 
  * RsCode is .net core platform rapid development framework
- * Apache License 2.0
+ * MIT License 
  * 
  * 作者：lrj
  * 
@@ -18,11 +18,11 @@
 
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using RsCode.Domain.Uow;
 using RsCode.Domain;
 using AspectCore.Extensions.DependencyInjection;
 using AspectCore.Configuration;
+
+
 
 namespace RsCode
 {
@@ -30,23 +30,19 @@ namespace RsCode
     { 
         public static void AddUnitOfWork(this IServiceCollection services) 
         {
-            services.TryAddTransient<IApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            
 
-            services.TryAddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.TryAddScoped<IUnitOfWork, PetaPocoUnitOfWork>();
-
-          
-            services.ConfigureDynamicProxy(config =>
-            {
-                AspectPredicate[] aspectPredicates = new AspectPredicate[]
-                {
-                    Predicates.ForService("*Service"),
-                    Predicates.ForService("*Repository")
-                };
-                config.Interceptors.AddTyped<UnitOfWorkAttribute>(aspectPredicates) ;
-            });
-
+            //services.ConfigureDynamicProxy(config =>
+            //{
+            //    AspectPredicate[] aspectPredicates = new AspectPredicate[]
+            //    {
+            //        Predicates.ForService("*Service"),
+            //        Predicates.ForService("*Repository")
+            //    };
+            //    config.Interceptors.AddTyped<UnitOfWorkAttribute>(aspectPredicates) ; 
+            //});
         }
 
     }

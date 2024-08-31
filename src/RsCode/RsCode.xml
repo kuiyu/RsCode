@@ -751,48 +751,72 @@
             实体类
             </summary>
         </member>
-        <member name="M:RsCode.Domain.IRepository`2.Insert(`0)">
+        <member name="M:RsCode.Domain.IRepository`1.FlushState">
             <summary>
-            增加记录
+            清空状态数据
             </summary>
-            <param name="poco"></param>
-            <returns>自动分配新记录的主键，对于非自动递增表为空。</returns>
         </member>
-        <member name="M:RsCode.Domain.IRepository`2.InsertAsync(System.Threading.CancellationToken,`0)">
+        <member name="M:RsCode.Domain.IRepository`1.Attach(`0)">
             <summary>
-            增加记录
+            附加实体，可用于不查询就更新或删除
             </summary>
-            <param name="cancellationToken"></param>
-            <param name="poco">自动分配新记录的主键，对于非自动递增表为空。</param>
+            <param name="entity"></param>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`1.AttachOnlyPrimary(`0)">
+            <summary>
+            附加实体，并且只附加主键值，可用于不更新属性值为null或默认值的字段
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`1.CompareState(`0)">
+            <summary>
+            比较实体，计算出值发生变化的属性，以及属性变化的前后值
+            </summary>
+            <param name="newdata">最新的实体对象，它将与附加实体的状态对比</param>
+            <returns>key: 属性名, value: [旧值, 新值]</returns>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`1.SaveMany(`0,System.String)">
+            <summary>
+            保存实体的指定 ManyToMany/OneToMany 导航属性（完整对比）<para></para>
+            场景：在关闭级联保存功能之后，手工使用本方法<para></para>
+            例子：保存商品的 OneToMany 集合属性，SaveMany(goods, "Skus")<para></para>
+            当 goods.Skus 为空(非null)时，会删除表中已存在的所有数据<para></para>
+            当 goods.Skus 不为空(非null)时，添加/更新后，删除表中不存在 Skus 集合属性的所有记录
+            </summary>
+            <param name="entity">实体对象</param>
+            <param name="propertyName">属性名</param>
+        </member>
+        <member name="M:RsCode.Domain.IRepository`1.DeleteCascadeByDatabase(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            根据设置的 OneToOne/OneToMany/ManyToMany 导航属性，级联查询所有的数据库记录，删除并返回它们
+            </summary>
+            <param name="predicate"></param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.Domain.IRepository`2.Update(`0)">
+        <member name="M:RsCode.Domain.IRepository`1.BeginEdit(System.Collections.Generic.List{`0})">
             <summary>
-            
+            开始编辑数据，然后调用方法 EndEdit 分析出添加、修改、删除 SQL 语句进行执行<para></para>
+            场景：winform 加载表数据后，一顿添加、修改、删除操作之后，最后才点击【保存】<para></para><para></para>
+            示例：https://github.com/dotnetcore/FreeSql/issues/397<para></para>
+            注意：* 本方法只支持单表操作，不支持导航属性级联保存
             </summary>
-            <param name="poco"></param>
-            <returns>受影响的行数</returns>
+            <param name="data"></param>
         </member>
-        <member name="M:RsCode.Domain.IRepository`2.UpdateAsync(`0)">
+        <member name="M:RsCode.Domain.IRepository`1.EndEdit(System.Collections.Generic.List{`0})">
             <summary>
-            
+            完成编辑数据，进行保存动作<para></para>
+            该方法根据 BeginEdit 传入的数据状态分析出添加、修改、删除 SQL 语句<para></para>
+            注意：* 本方法只支持单表操作，不支持导航属性级联保存
             </summary>
-            <param name="poco"></param>
-            <returns>受影响的行数</returns>
-        </member>
-        <member name="M:RsCode.Domain.IRepository`2.Delete(`0)">
-            <summary>
-                Performs an SQL Delete
-            </summary>
-            <param name="poco">The POCO object specifying the table name and primary key value of the row to be deleted</param>
-            <returns>受影响的行数</returns>
+            <param name="data">可选参数：手工传递最终的 data 值进行对比<para></para>默认：如果不传递，则使用 BeginEdit 传入的 data 引用进行对比</param>
+            <returns></returns>
         </member>
         <member name="T:RsCode.Domain.Uow.ApplicationDbContext">
             <summary>
             
             </summary>
         </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor(System.Collections.Generic.IEnumerable{PetaPoco.IDatabase},Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor">
             <summary>
             数据库上下文
             </summary>
@@ -804,35 +828,11 @@
             当前数据库连接
             </summary>
         </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetDatabase(System.String)">
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.ChangeDatabase(System.String)">
             <summary>
             指定数据库连接字符串key,获取数据库配置
             </summary>
             <param name="connName">默认值为DefaultConnection</param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetAsync``1(System.Object)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="primaryKeyValue"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.InsertAsync``1(``0)">
-            <summary>
-            新增记录,返回主键值
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.SaveAsync``1(``0)">
-            <summary>
-            保存记录
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
             <returns></returns>
         </member>
         <member name="T:RsCode.Domain.Uow.IUnitOfWork">
@@ -856,105 +856,63 @@
             <param name="t2">辅表</param>
             <returns></returns>
         </member>
-        <member name="T:RsCode.Domain.Uow.PetaPocoUnitOfWork">
-            <summary>
-            PetaPoco UnitOfWork
-            </summary>
-        </member>
-        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.#ctor(RsCode.IApplicationDbContext)">
-            <summary>
-            
-            </summary>
-            <param name="dbContext"></param>
-        </member>
-        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Commit">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Dispose">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:RsCode.Domain.Uow.PetaPocoUnitOfWork.Open(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="connName"></param>
-            <returns></returns>
-        </member>
         <member name="P:RsCode.Domain.Uow.UnitOfWorkOptions.DefaultConnection">
             <summary>
             连接字符串名称
             </summary>
         </member>
-        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="T:RsCode.PageData`1">
+            <summary>
+            分页数据
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:RsCode.PageData`1.CurrentPage">
+            <summary>
+            当前页
+            </summary>
+        </member>
+        <member name="P:RsCode.PageData`1.TotalPages">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:RsCode.PageData`1.TotalItems">
+            <summary>
+            总记录数
+            </summary>
+        </member>
+        <member name="P:RsCode.PageData`1.Items">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,FreeSql.DataType,System.Boolean)">
+            <summary>
+            添加单个数据库配置
+            </summary>
+            <param name="services"></param>
+            <param name="dataType">数据库类型</param>
+            <param name="syncStructure"></param>
+        </member>
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,FreeSql.DataType,System.String,System.Boolean)">
             <summary>
             添加数据库配置
             </summary>
-            <typeparam name="TDatabaseProvider"></typeparam>
             <param name="services"></param>
-            <param name="configuration"></param>
+            <param name="dataType"></param>
+            <param name="connName">数据库连接名称</param>
+            <param name="syncStructure"></param>
         </member>
-        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-            <summary>
-            使用默认配置添加数据库
-            </summary>
-            <typeparam name="TDatabaseProvider"></typeparam>
-            <param name="services"></param>
-        </member>
-        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,PetaPoco.IMapper)">
-            <summary>
-            添加数据库配置
-            </summary>
-            <typeparam name="TDatabaseProvider"></typeparam>
-            <param name="services"></param>
-            <param name="connString">数据库连接字符串</param>
-        </member>
-        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{PetaPoco.Database})">
+        <member name="M:RsCode.DbServiceCollectionExtensions.AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,FreeSql.DataType,System.String,System.Boolean,System.Action{System.Data.Common.DbCommand})">
             <summary>
             添加数据库配置
             </summary>
             <param name="services"></param>
-            <param name="func"></param>
-        </member>
-        <member name="T:RsCode.RsCodeMapper">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:RsCode.IApplicationDbContext.GetAsync``1(System.Object)">
-            <summary>
-            获取单条记录
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="primaryKeyValue">主键值</param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.IApplicationDbContext.InsertAsync``1(``0)">
-            <summary>
-            新增记录
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns>返回新增记录主键值</returns>
-        </member>
-        <member name="M:RsCode.IApplicationDbContext.SaveAsync``1(``0)">
-            <summary>
-            保存记录
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.IApplicationDbContext.DeleteAsync``1(System.Object)">
-            <summary>
-            删除记录
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="primaryKeyValue"></param>
-            <returns>返回删除记录条数</returns>
+            <param name="dataType">数据库类型</param>
+            <param name="connName"></param>
+            <param name="syncStructure"></param>
+            <param name="exeuting"></param>
         </member>
         <member name="T:RsCode.AspNetCore.AppException">
             <summary>
