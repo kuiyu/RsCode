@@ -2,7 +2,7 @@
  * RsCode
  * 
  * RsCode is .net core platform rapid development framework
- * Apache License 2.0
+ * MIT License 
  * 
  * 作者：lrj
  * 

@@ -3,18 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using RsCode.AspNetCore;
 using RsCode.AspNetCore.Plugin;
 using RsCode.Domain;
+using WebApplicationDemo.Models;
 
 namespace WebApplicationDemo.Controllers
 {
     public class HomeController : Controller
     {
-     
-    
-        public HomeController()
+
+        IUserTestService userTestService;
+        public HomeController(IUserTestService userTestService)
         {
-          
+          this.userTestService = userTestService;
         }
-      
+       
 
         public IActionResult err()
         {

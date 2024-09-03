@@ -2,7 +2,7 @@
  * RsCode
  * 
  * RsCode is .net core platform rapid development framework
- * Apache License 2.0
+ * MIT License
  * 
  * 作者：lrj
  * 
@@ -20,8 +20,8 @@
 using AspectCore.DependencyInjection;
 using AspectCore.DynamicProxy;
 using FreeSql;
-using RsCode.Domain.Uow;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace RsCode
@@ -33,13 +33,19 @@ namespace RsCode
         [FromServiceContext]
         public IApplicationDbContext applicationDbContext { get; set; }
 
+        string NewConnName = "DefaultConnection";
+
+
         public UnitOfWorkAttribute()
         {
-
+            
         }
         public UnitOfWorkAttribute(string connName = "DefaultConnection")
         {
+            NewConnName = connName;
+            applicationDbContext =CallContext<IApplicationDbContext>.GetData("rswl-IApplicationDbContext");
             applicationDbContext.ChangeDatabase(connName);
+            
         }
         public override int Order { get; set; } = -10000;
 
@@ -53,13 +59,19 @@ namespace RsCode
                     await next(context);
                     uow.Commit();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     uow.Rollback();
                 }
                 finally
                 {
                     CallContext<IRepositoryUnitOfWork>.SetData("rscode-uow", null);
+
+                    string connName = CallContext<string>.GetData("rswl-connName");
+                    if (connName != NewConnName)
+                    {
+                        applicationDbContext.ChangeDatabase(connName);
+                    }
                 }
             }
         }

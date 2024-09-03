@@ -16,6 +16,7 @@
 
 using FreeSql;
 
+
 namespace RsCode.Domain.Uow
 {
     /// <summary>
@@ -29,12 +30,12 @@ namespace RsCode.Domain.Uow
 		/// <summary>
 		/// 数据库上下文
 		/// </summary>
-		/// <param name="databases"></param>
-		/// <param name="configuration"></param>
 		public ApplicationDbContext()
         {
             db = DbServiceCollectionExtensions.fsql; 
-            fsqlCloud = DbServiceCollectionExtensions.fsql; 
+            fsqlCloud = DbServiceCollectionExtensions.fsql;
+            CallContext<string>.SetData("rswl-connName", "DefaultConnection");
+            CallContext<IApplicationDbContext>.SetData("rswl-IApplicationDbContext",this);
         }
 
 
@@ -56,15 +57,23 @@ namespace RsCode.Domain.Uow
 
 
         /// <summary>
-        /// 指定数据库连接字符串key,获取数据库配置
+        /// 把数据库更换为指定数据库连接字符串key的数据库配置
         /// </summary>
         /// <param name="connName">默认值为DefaultConnection</param>
+        /// <param name="forever">是否永久更换</param>
         /// <returns></returns>
-        public virtual IFreeSql ChangeDatabase(string connName = "DefaultConnection")
+        public virtual IFreeSql ChangeDatabase(string connName = "DefaultConnection",bool forever=false)
         {
+            if(forever)
+            {
+                CallContext<string>.SetData("rswl-connName", connName);
+            }
            return fsqlCloud.Change(connName);
         }
-
+        /// <summary>
+        /// 创建UnitOfWork
+        /// </summary>
+        /// <returns></returns>
         public IRepositoryUnitOfWork CreateUnitOfWork()
         {
             var uow = db.CreateUnitOfWork();
@@ -72,7 +81,11 @@ namespace RsCode.Domain.Uow
             return uow;
         }
       
-
+        /// <summary>
+        /// 获取仓储服务实例
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
         public IBaseRepository<TEntity> GetRepository<TEntity>()
             where TEntity : class
         {

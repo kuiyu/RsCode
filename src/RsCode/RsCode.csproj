@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp.Css" Version="0.14.1" />
-    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
+    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.4.0" />
     <PackageReference Include="Caching.CSRedis" Version="3.8.800" />
     <PackageReference Include="FreeSql.Cloud" Version="1.9.1" />
     <PackageReference Include="log4net" Version="2.0.15" />
@@ -48,12 +48,7 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.23" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PetaPoco.Compiled" Version="6.0.532" />
     <PackageReference Include="System.Collections" Version="4.3.0" />

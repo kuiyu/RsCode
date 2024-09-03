@@ -34,12 +34,12 @@ namespace RsCode.Domain
         {
             this.applicationDbContext = applicationDbContext;
         }
-        public PageData<TEntity> Page(int page, int pageSize)
+        public async Task< PageData<TEntity>> PageAsync(int page, int pageSize)
         {
-            var list = applicationDbContext.GetRepository<TEntity>().Select
+            var list =await applicationDbContext.GetRepository<TEntity>().Select
                  .Count(out var total)
                  .Page(page, pageSize)
-                 .ToList();
+                 .ToListAsync();
             PageData<TEntity> pageInfo = new PageData<TEntity>
             {
                 Items = list,
@@ -54,14 +54,11 @@ namespace RsCode.Domain
             return pageInfo;
         }
 
-        public PageData<TEntity> Page(int page, int pageSize, Expression<Func<TEntity, bool>> expression)
-             
-        {
-            var list = applicationDbContext.GetRepository<TEntity>().Select
+        public async Task<PageData<TEntity>> PageAsync(int page, int pageSize,ISelect<TEntity> pageSelect)
+        { 
+            var list =await pageSelect
                .Count(out var total)
-               .Page(page, pageSize)
-               .Where(expression)
-               .ToList();
+               .ToListAsync();
             PageData<TEntity> pageInfo = new PageData<TEntity>
             {
                 Items = list,
@@ -75,6 +72,8 @@ namespace RsCode.Domain
             pageInfo.TotalPages = totalPages;
             return pageInfo;
         }
+
+       
         public ISelect<TEntity> Select =>applicationDbContext.GetRepository<TEntity>().Select;
 
         

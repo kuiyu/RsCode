@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AspectCore.Extensions.DependencyInjection;
+using AspectCore.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PetaPoco;
-using PetaPoco.Providers;
 using System;
- 
+
 
 namespace RsCode.AspNetCore.Tests
 {
@@ -41,6 +41,7 @@ namespace RsCode.AspNetCore.Tests
         public void ConfigureHost(IHostBuilder hostBuilder)
         {
             hostBuilder
+                .UseServiceProviderFactory(new DynamicProxyServiceProviderFactory())
                 .ConfigureAppConfiguration((context,config) =>
                 {
                     // 注册配置
@@ -49,6 +50,7 @@ namespace RsCode.AspNetCore.Tests
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    
                     // 注册自定义服务
                     services.AddRsCode();
                     services.AddSchedulerJob();
@@ -58,23 +60,15 @@ namespace RsCode.AspNetCore.Tests
                     services.AddSingleton<IA, B>();
                     services.AddSingleton<IA, C>();
                     
-                    services.AddDatabase<MySqlDatabaseProvider>("Server=127.0.0.1;uid=root;pwd=123456;database=rswl_pan;port=3306;");
-
-                    //services.AddDatabase<SQLiteDatabaseProvider>("DataSource=rscode.db");
-                    services.AddDatabase<SQLiteDatabaseProvider>("Data Source=rscode.db");
-
-                    //services.AddPe(option =>
-                    //{
-                    //    option.UsingProvider<SQLiteDatabaseProvider>()
-                    //    .UsingConnectionString("Data Source=rscode.db");
-
-
-                    //});
-                    
+                    services.AddDatabase(FreeSql.DataType.MySql, "DefaultConnection");
+                    services.AddDatabase(FreeSql.DataType.Sqlite, "DefaultConnection2",true);
                     services.AddUnitOfWork();
+
                     services.AddScoped<IUserService, UserService>();
+                    services.AddAspectServiceContext();
                 })
                 ;
+
         }
 
         // 支持的形式：

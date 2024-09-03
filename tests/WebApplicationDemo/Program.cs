@@ -1,9 +1,21 @@
+using AspectCore.Extensions.DependencyInjection;
+using AspectCore.Extensions.Hosting;
 using RsCode.AspNetCore;
+using RsCode;
+using WebApplicationDemo.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Host
+    .UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+
+builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUserTestService, UsertTestService>();
+
+builder.Services.AddDatabase(FreeSql.DataType.MySql, "DefaultConnection");
+builder.Services.AddDatabase(FreeSql.DataType.Sqlite, "DefaultConnection2", true);
+builder.Services.AddUnitOfWork();
 
 
 builder.Services.AddRsCode();

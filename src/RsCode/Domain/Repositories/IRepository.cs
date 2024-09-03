@@ -25,8 +25,9 @@ namespace RsCode.Domain
 
     public interface IRepository<TEntity>  where TEntity : class
     {
-        PageData<TEntity> Page(int page, int pageSize);
-        PageData<TEntity> Page(int page, int pageSize, Expression<Func<TEntity, bool>> expression);
+        Task<PageData<TEntity>> PageAsync(int page, int pageSize);
+        Task<PageData<TEntity>> PageAsync(int page, int pageSize, ISelect<TEntity> pageSelect);
+       
         ISelect<TEntity> Select { get; }
 
         ISelect<TEntity> Where(Expression<Func<TEntity, bool>> exp);

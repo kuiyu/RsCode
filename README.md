@@ -9,6 +9,8 @@ RsCode是开箱即用的.net工具库，可高效完成.net项目开发
 
 - 🎨 集成第三方平台业务API，例：微信开发，第三方支付，第三方存储,抖音相关开发SDK等
 
+- ​     支持插件式开发
+
 ## 💿 当前版本
 
 - 正式发布: [![RsCode](https://img.shields.io/nuget/v/RsCode.svg?color=red&style=flat-square)](https://www.nuget.org/packages/RsCode/)

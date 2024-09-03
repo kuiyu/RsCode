@@ -820,19 +820,31 @@
             <summary>
             数据库上下文
             </summary>
-            <param name="databases"></param>
-            <param name="configuration"></param>
         </member>
         <member name="P:RsCode.Domain.Uow.ApplicationDbContext.Current">
             <summary>
             当前数据库连接
             </summary>
         </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.ChangeDatabase(System.String)">
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.ChangeDatabase(System.String,System.Boolean)">
             <summary>
-            指定数据库连接字符串key,获取数据库配置
+            把数据库更换为指定数据库连接字符串key的数据库配置
             </summary>
             <param name="connName">默认值为DefaultConnection</param>
+            <param name="forever">是否永久更换</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.CreateUnitOfWork">
+            <summary>
+            创建UnitOfWork
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.GetRepository``1">
+            <summary>
+            获取仓储服务实例
+            </summary>
+            <typeparam name="TEntity"></typeparam>
             <returns></returns>
         </member>
         <member name="T:RsCode.Domain.Uow.IUnitOfWork">
@@ -913,6 +925,44 @@
             <param name="connName"></param>
             <param name="syncStructure"></param>
             <param name="exeuting"></param>
+        </member>
+        <member name="T:RsCode.IApplicationDbContext">
+            <summary>
+            数据库上下文
+            </summary>
+        </member>
+        <member name="P:RsCode.IApplicationDbContext.Current">
+            <summary>
+            当前数据库连接
+            </summary>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.ChangeDatabase(System.String,System.Boolean)">
+            <summary>
+            把数据库更换为指定数据库连接字符串key的数据库配置
+            </summary>
+            <param name="connName">默认值为DefaultConnection</param>
+            <param name="forever">是否永久更换</param>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.CreateUnitOfWork">
+            <summary>
+            创建UnitOfWork
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.GetRepository``1">
+            <summary>
+            获取仓储服务实例
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:RsCode.IApplicationDbContext.GetRepository``2">
+            <summary>
+            获取仓储服务实例
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <returns></returns>
         </member>
         <member name="T:RsCode.AspNetCore.AppException">
             <summary>
