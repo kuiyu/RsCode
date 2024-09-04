@@ -1,3 +1,4 @@
+RsCode是快速开发.net应用的工具库,其丰富的功能和易用性，能够显著提高.net开发的效率和质量
 
 ## ✨ 特性
 
@@ -18,7 +19,7 @@
 
 ## 🖥 支持环境
 
-- .NET Core 3.1以上
+- .NET Core 6.0以上
 
 
 ## 💿 当前版本
@@ -29,23 +30,23 @@
 
 ## 📦 使用RsCode
 
-- 先安装 [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1?WT.mc_id=DT-MVP-5003987) 3.1.300 以上版本
+- 先安装 [.NET Core SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) 6.0 以上版本
 
 ### 在已有项目中引入 RsCode
 
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 2.0.6
+  $ dotnet add package RsCode --version 2.2.0
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 2.0.10
+  Install-Package RsCode.AspNetCore -Version 2.2.0
   ```
 
-  > 推荐使用 Visual Studio 2022 开发。
+  > 推荐使用 Visual Studio 2022 开发
 
 在Program.cs中
 
@@ -55,7 +56,10 @@ using RsCode.AspNetCore;
 using AspectCore.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+
+builder.Services.AddControllers().AddControllersAsServices();
 
 //添加RsCode
 builder.Services.AddRsCode();
@@ -63,14 +67,17 @@ builder.Services.AddRsCode();
 string[] assemblies = new string[] { "your.project.Core", "应用程序集名称" }; //todo 替换成实际业务类程序集名称
 builder.Services.AutoInject(assemblies); 
 //添加数据库，以MySql为例
-builder.Services.AddDatabase<MySqlDatabaseProvider>();
+builder.Services.AddDatabase(FreeSql.DataType.MySql, "DefaultConnection");
+//添加unitofwork
 builder.Services.AddUnitOfWork();
+//添加插件支持
+builder.Services.AddPlugins();
 
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
-	//启用swaggerui
+	//启用swaggerui api文档
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -82,7 +89,18 @@ app.UseAuthorization();
 //异常处理
 app.UseErrorHandler();
 
-app.MapControllers();
+//添加插件支持
+app.UsePlugins(builder.Environment);
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 app.Run();
 ```
 
@@ -108,7 +126,7 @@ app.Run();
 - 技术人互动群(微信)  
   <img src="https://www.hnrswl.com/res/static/img/tq.png" width="300" alt="技术赚钱群">
 - [![QQ群957285164](https://pub.idqqimg.com/wpa/images/group.png)](https://shang.qq.com/wpa/qunwpa?idkey=f5c24beb6bd16bf59e008df38db80e437763ccf1beb28379dd0ddcfdc94a8a46) [![QQ群244416471](https://pub.idqqimg.com/wpa/images/group.png)](https://qm.qq.com/cgi-bin/qm/qr?k=kbkmTzvTQeBYR1KIyprP5ol4tfMFyOpK&jump_from=webapi)
-
+- 作者微信：runsoft1024
 
 
 
@@ -116,6 +134,3 @@ app.Run();
 
 [![RsCode](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://github.com/kuiyu/RsCode/blob/master/LICENSE)
 
-## 友情链接
-
-[稀缺资源下载](https://pan.rs888.net)   [AI工具箱](https://ai.rs888.net)

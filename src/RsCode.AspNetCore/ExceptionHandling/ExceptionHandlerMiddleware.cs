@@ -1,17 +1,23 @@
 ﻿/*
- * 项目:.Net项目开发工具库 
- * 协议:MIT License 2.0 
- * 作者:河南软商网络科技有限公司 
- * 项目己托管于  
+ * RsCode
+ * 
+ * RsCode是快速开发.net应用的工具库,其丰富的功能和易用性，能够显著提高.net开发的效率和质量。
+ * 协议：MIT License
+ * 作者：runsoft1024
+ * 微信：runsoft1024
+ * 文档 https://rscode.cn/
+ * 
+ * 项目己托管于
+ * gitee
+ * https://gitee.com/rswl/RsCode.git
  * github
    https://github.com/kuiyu/RsCode.git
+
  */
 
-using Microsoft.AspNetCore.Http;
-using System;
+
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 namespace RsCode.AspNetCore
 {
     /// <summary>

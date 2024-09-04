@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>数据库配置</title>
+<link rel="stylesheet" href="https://rscode.cn/mdtht/mdtht.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script src="https://rscode.cn/mdtht/mdtht.min.js"></script></head>
+<body>
+<p><code>RsCode</code>中对数据库的操作，使用<code>FreeSql</code>,支持国产，并使用它做了一些封装,包括：多数据库管理，分页查询,<code>UnitOfWork</code>扩展等</p>
+<h2 id='配置数据库'>配置数据库</h2>
+<h3 id='11-appsettingsjson中配置数据库连接'>1.1 appsettings.json中，配置数据库连接</h3>
+<pre><code class='language-json' lang='json'>{
+  //数据库连接 
+  &quot;ConnectionStrings&quot;: {
+    &quot;DefaultConnection&quot;: &quot;Server=127.0.0.1;Uid=root;Pwd=123456;Database=test;Port=3306;&quot;,
+    &quot;DefaultConnection2&quot;: &quot;Data Source=rscode.db;&quot;
+  } 
+}
+</code></pre>
+<h3 id='12-添加数据库服务'>1.2 添加数据库服务</h3>
+<pre><code class='language-csharp' lang='csharp'>builder.Services.AddDatabase(FreeSql.DataType.MySql, &quot;DefaultConnection&quot;);
+builder.Services.AddDatabase(FreeSql.DataType.Sqlite, &quot;DefaultConnection2&quot;);
+</code></pre>
+<h3 id='13-添加数据库提供程序'>1.3 添加数据库提供程序</h3>
+<p>需要访问什么数据库，就安装对应的 <code>FreeSql.Provider.XX</code>，也可直接安装 <code>FreeSql.All</code></p>
+<figure class='table-figure'><table>
+<thead>
+<tr><th>Package Name</th><th>说明</th></tr></thead>
+<tbody><tr><td>FreeSql.Provider.MySql</td><td>基于 MySql.Data（Oracle 官方）</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-mysqlconnector.html'>FreeSql.Provider.MySqlConnector</a></td><td>基于 MySqlConnector（开源社区，推荐++） <em>MySQL, MariaDB, Percona, Amazon Aurora, Azure Database for MySQL, Google Cloud SQL for MySQL, OceanBase, Doris, Tidb 等等</em></td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-postgresql.html'>FreeSql.Provider.PostgreSQL</a></td><td>基于 PostgreSQL 9.5+</td></tr><tr><td>FreeSql.Provider.SqlServer</td><td>基于 SqlServer 2005+</td></tr><tr><td>FreeSql.Provider.SqlServerForSystem</td><td>基于 System.Data.SqlClient + SqlServer 2005+</td></tr><tr><td>FreeSql.Provider.Sqlite</td><td>基于 System.Data.SQLite.Core</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-sqlitecore.html'>FreeSql.Provider.SqliteCore</a></td><td>基于 Microsoft.Data.Sqlite.Core，需安装 bundle_xxx</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-duckdb.html'>FreeSql.Provider.Duckdb</a></td><td>基于 DuckDB.NET.Data.Full</td></tr><tr><td>FreeSql.Provider.ClickHouse</td><td>基于 ClickHouse.Client</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-questdb.html'>FreeSql.Provider.QuestDb</a></td><td>基于 Npgsql 和 RestApi</td></tr><tr><td>FreeSql.Provider.Oracle</td><td>&nbsp;</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-oracle.html'>FreeSql.Provider.OracleOledb</a></td><td>基于 Oledb 解决 US7ASCII 中文乱码问题</td></tr><tr><td>FreeSql.Provider.Firebird</td><td>&nbsp;</td></tr><tr><td>FreeSql.Provider.MsAccess</td><td>&nbsp;</td></tr><tr><td>FreeSql.Provider.Dameng</td><td>基于 达梦数据库</td></tr><tr><td>FreeSql.Provider.ShenTong</td><td>基于 神舟通用数据库</td></tr><tr><td>FreeSql.Provider.KingbaseES</td><td>基于 人大金仓数据库</td></tr><tr><td>FreeSql.Provider.GBase</td><td>基于 南大通用GBase数据库</td></tr><tr><td>FreeSql.Provider.Xugu</td><td>基于 虚谷数据库</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-odbc.html'>FreeSql.Provider.Odbc</a></td><td>基于 ODBC</td></tr><tr><td><a href='https://freesql.net/guide/freesql-provider-custom.html'>FreeSql.Provider.Custom</a></td><td>自定义适配 <em>SqlServer2000, PolarDB, KunDB, 其它国产数据库 等等</em></td></tr></tbody>
+</table></figure>
+<p>&nbsp;</p>
+<h2 id='操作数据库'>操作数据库</h2>
+<h3 id='21使用iapplicationdbcontext访问数据'>2.1使用IApplicationDbContext访问数据</h3>
+<p>在构造中注入<code>IApplicationDbContext</code> 
+<code>IApplicationDbContext.Current</code>代表当前使用的数据库，默认值是<code>DefaultConnection</code>
+<code>IApplicationDbContext.ChangeDatabase(&quot;dbConnStr&quot;)</code>方法可以更换当前使用的数据库</p>
+<p>实例代码:</p>
+<pre><code class='language-csharp' lang='csharp'>//注入IApplicationDbContext实例
+IApplicationDbContext dbContext;
+//略
+
+//当前数据库连接
+dbContext.Current;
+//更换数据库
+dbContext.ChangeDatabase(connName=&quot;DefaultConnection&quot;);
+//create unitofwork
+dbContext.CreateUnitOfWork();
+//获取Repository
+dbContext.GetRepository&lt;TEntity&gt;();
+dbContext.GetRepository&lt;TEntity,TKey&gt;();
+</code></pre>
+<p>&nbsp;</p>
+<h3 id='22-实体特性'>2.2 实体特性</h3>
+<pre><code class='language-csharp' lang='csharp'>[Table(Name =&quot;rswl_user_info&quot;)]
+public class UserModel
+{
+    [Column(IsPrimary =true)]
+    //[Column(IsIdentity =true)]//自增长的主键
+    public string UserId { get; set; }   
+    public string UserName { get; set; }
+    
+    //导航属性  用户相关文章
+     [Navigate(nameof(User.ArticleId))]
+    public List&lt;Article&gt; Articles { get; set; }
+    
+    [Column(IsIgnore=true)]  //是否不映射
+    [Column(IsNullable = false)] //手动设置是否为空
+    public string age{get;set;}
+    
+    //乐观锁的原理，是利用实体某字段，如：long version，更新前先查询数据，此时 version 为 1，更新时产生的 SQL 会附加 where version = 1，当修改失败时（即 Affrows == 0）抛出异常（DbUpdateVersionException）。
+//每个实体只支持一个乐观锁属性，支持 int/long/string/Guid
+//适用 SetSource 更新数据，无论使用什么方法更新 version 的值都会增加 1
+     [Column(IsVersion = true)]
+    public int Version { get; set; }
+}
+</code></pre>
+<h3 id='23-常用sql操作'>2.3 常用sql操作</h3>
+<pre><code class='language-csharp' lang='csharp'>public class Demo
+{
+    IFreeSql db;
+    public void Demo(IApplicationDbContext dbContext)
+    {
+        db=dbContext.Current;
+    }
+    
+    public async Task Test()
+    {
+        await db.Select&lt;UserModel&gt;().FirstAsync();
+         //OneToOne、ManyToOne
+    		db.Select&lt;Tag&gt;().Where(a =&gt; a.Parent.Parent.Name == &quot;English&quot;).ToList();
+
+        //OneToMany
+        db.Select&lt;Tag&gt;().IncludeMany(a =&gt; a.Tags, then =&gt; then.Where(sub =&gt; sub.Name == &quot;foo&quot;)).ToList();
+         //ManyToMany
+        db.Select&lt;Song&gt;()
+            .IncludeMany(a =&gt; a.Tags, then =&gt; then.Where(sub =&gt; sub.Name == &quot;foo&quot;))
+            .Where(s =&gt; s.Tags.Any(t =&gt; t.Name == &quot;Chinese&quot;))
+            .ToList();
+
+        //Other
+        db.Select&lt;YourType&gt;()
+            .Where(a =&gt; a.IsDelete == 0)
+            .WhereIf(keyword != null, a =&gt; a.UserName.Contains(keyword))
+            .WhereIf(role_id &gt; 0, a =&gt; a.RoleId == role_id)
+            .Where(a =&gt; a.Nodes.Any(t =&gt; t.Parent.Id == t.UserId))
+            .Count(out var total)
+            .Page(page, size)
+            .OrderByDescending(a =&gt; a.Id)
+            .ToList();
+    }
+     
+}
+</code></pre>
+<pre><code class='language-csharp' lang='csharp'>//OneToOne、ManyToOne
+db.Select&lt;Tag&gt;().Where(a =&gt; a.Parent.Parent.Name == &quot;English&quot;).ToList();
+
+//OneToMany
+db.Select&lt;Tag&gt;().IncludeMany(a =&gt; a.Tags, then =&gt; then.Where(sub =&gt; sub.Name == &quot;foo&quot;)).ToList();
+
+//ManyToMany
+db.Select&lt;Song&gt;()
+  .IncludeMany(a =&gt; a.Tags, then =&gt; then.Where(sub =&gt; sub.Name == &quot;foo&quot;))
+  .Where(s =&gt; s.Tags.Any(t =&gt; t.Name == &quot;Chinese&quot;))
+  .ToList();
+
+//Other
+db.Select&lt;YourType&gt;()
+  .Where(a =&gt; a.IsDelete == 0)
+  .WhereIf(keyword != null, a =&gt; a.UserName.Contains(keyword))
+  .WhereIf(role_id &gt; 0, a =&gt; a.RoleId == role_id)
+  .Where(a =&gt; a.Nodes.Any(t =&gt; t.Parent.Id == t.UserId))
+  .Count(out var total)
+  .Page(page, size)
+  .OrderByDescending(a =&gt; a.Id)
+  .ToList();
+</code></pre>
+<p>未设置导航属性关系的，临时指定关系（只支持一对多）：</p>
+<pre><code class='language-csharp' lang='csharp'>db.Select&lt;Goods&gt;().IncludeMany(a =&gt; a.Comment.Where(b =&gt; b.TagId == a.Id));
+</code></pre>
+<p>只查询每项子集合的前几条数据，避免像 EfCore 加载所有数据导致 IO 性能低下（比如某商品下有 2000 条评论）：</p>
+<pre><code class='language-csharp' lang='csharp'>db.Select&lt;Goods&gt;().IncludeMany(a =&gt; a.Comment.Take(10));
+</code></pre>
+<p>更多操作查看<a href='freesql.md'>freesql文档</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3 id='24仓储模式'>2.4仓储模式</h3>
+<p>RsCode自定义封装了一些数据库常用操作，使用<code>FreeSql</code>做为<code>orm</code></p>
+<h4 id='开启unitofwork服务'>开启UnitOfWork服务</h4>
+<pre><code class='language-csharp' lang='csharp'>//必要步骤：添加动态代理
+builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+
+builder.Services.AddDatabase(FreeSql.DataType.MySql, &quot;DefaultConnection&quot;);
+builder.Services.AddUnitOfWork();
+</code></pre>
+<h4 id='定义userinfo实体类'>定义UserInfo实体类</h4>
+<pre><code class='language-csharp' lang='csharp'>[TableName(&quot;rswl_user_info&quot;)]
+public partial class UserModel
+{
+    [Column(Identity=true)]
+    public  long Id { get; set; }
+    public string UserName { get; set; } 
+}
+</code></pre>
+<h4 id='实现repository'>实现Repository</h4>
+<pre><code class='language-csharp' lang='csharp'>public interface IUserRepository
+{
+}
+
+public class UserRepository:IUserRepository 
+{      
+    IRepository&lt;UserModel&gt; repository;
+    public UserRepository(IRepository&lt;UserModel&gt; repository)
+    {
+        this.repository=repository;
+    }
+    []
+    public async Task&lt;UserModel&gt; CreateAndGetUserByRepository(string name)
+     {
+         repository.Insert(new UserModel()
+         {
+              UserId=Guid.NewGuid().ToString(&quot;N&quot;),
+              UserName=name
+         });
+         return await  repository.Select.Where(x =&gt; x.UserName == name).FirstAsync();
+     }
+    
+    public async Task&lt;PageData&lt;UserModel&gt;&gt; PageInfoAsync(int page,int pageSize)
+    {
+        //分页查询
+    		ISelect&lt;UserModel&gt; select=repository.Page(1,10).Where(x=&gt;x.UserId==&quot;xxx&quot;);
+        return await repository.PageAsync(page,pageSize,select);
+    }
+}
+
+//或者
+public interface IUserRepository:IRepository&lt;UserModel&gt;
+{}
+public class UserRepository:Repository&lt;UserModel&gt;,IUserRepository
+{
+    public UserRepository(IApplicationDbContext applicationDbContext):base(applicationDbContext){}
+    //其它资源可通过属性注入
+    [FromServiceContext]
+    public IRepository&lt;UserExtInfo&gt; userExtRepository { get; set; }
+}
+</code></pre>
+<p>&nbsp;</p>
+<h2 id='参考文档'>参考文档：</h2>
+<p><a href='freesql.md'>Freesql文档</a>  <a href='https://freesql.net/'>Freesql官方文档</a></p>
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/0.1.0-beta.5/libs/cn/index.js"></script>
+<script>
+const bot_id = '7395755727056338994';
+                // 自定义Bot名称和icon
+                const title = '24小时在线客服';
+                const icon = 'https://pan.rs888.net/assets/img/kf.png';
+                const lang = 'zh-CN';
+                const layout = 'pc';
+                const width = 800;
+                
+                new CozeWebSDK.WebChatClient({
+                    config: {
+                        bot_id,
+                    },
+                    componentProps: {
+                        title,
+                        icon,
+                        width,
+                        lang
+                    },
+                });
+</script></body>
+</html>
