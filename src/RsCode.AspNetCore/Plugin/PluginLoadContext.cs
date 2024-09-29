@@ -20,9 +20,9 @@ using System.Runtime.Loader;
 
 namespace RsCode.AspNetCore.Plugin
 {
-    public class PluginAssemblyLoadContext : AssemblyLoadContext
+    public class PluginLoadContext : AssemblyLoadContext
     {
-        public PluginAssemblyLoadContext() : base(isCollectible: true)
+        public PluginLoadContext() : base(isCollectible: true)
         {
 
         }

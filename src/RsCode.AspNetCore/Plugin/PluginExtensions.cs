@@ -17,9 +17,9 @@
 
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Newtonsoft.Json;
 using RsCode.AspNetCore.Plugin;
 using System.Reflection;
+using System.Text.Json;
 
 namespace RsCode.AspNetCore
 {
@@ -33,8 +33,8 @@ namespace RsCode.AspNetCore
         /// <summary>
         /// Loaded plugin list as dictionary key:plugin assembly full path, value:plugin Setup.cs
         /// </summary>
-        internal static Dictionary<string, IPluginSetup> Plugins => _Plugins ?? (_Plugins = new Dictionary<string, IPluginSetup>());
-        static Dictionary<string, PluginAssemblyLoadContext> pluginContext = new Dictionary<string, PluginAssemblyLoadContext>();
+        internal static Dictionary<string, IPluginSetup> PluginSetup => _Plugins ?? (_Plugins = new Dictionary<string, IPluginSetup>());
+        static Dictionary<string, PluginLoadContext> PluginAssemblyContext = new Dictionary<string, PluginLoadContext>();
 
         public static string PluginsRootFolder = Path.Combine(AppContext.BaseDirectory, "Plugins");
         /// <summary>
@@ -44,26 +44,31 @@ namespace RsCode.AspNetCore
         /// <param name="pluginsRootFolder">Plugins root path</param>
         public static void AddPlugins(this IServiceCollection services, string pluginsRootFolder = "")
         {
-            services.AddScoped<IPluginManager, PluginManager>();
+            services.AddSingleton<IPluginManager, PluginManager>();
             services.AddSingleton<IActionDescriptorChangeProvider>(RsCodeActionDescriptionChangeProvider.Instance);
             services.AddSingleton(RsCodeActionDescriptionChangeProvider.Instance);
+            services.AddSingleton<IReferenceLoader, DefaultReferenceLoader>();
+            services.AddSingleton<IReferenceContainer, DefaultReferenceContainer>();
 
-            LoadPlugins(pluginsRootFolder);
+            LoadPlugins(services,pluginsRootFolder);
 
-            foreach (var plugin in Plugins)
+            foreach (var plugin in PluginSetup)
             {
                 services.LoadViews(plugin);
                 services.LoadControllers(plugin);
 
-                foreach (var pluginSetup in Plugins.Select(x => x.Value))
+                foreach (var pluginSetup in PluginSetup.Select(x => x.Value))
                     pluginSetup.ConfigureServices(services);
+
             }
+
+            services.AddControllers().AddControllersAsServices();
         }
         /// <summary>
         /// Load all plugins assembly full path and plugins Setup.cs as dictionary
         /// </summary>
         /// <param name="pluginsRootFolder">Plugins root path</param>
-        private static void LoadPlugins(string pluginsRootFolder = "")
+        private static void LoadPlugins(IServiceCollection services, string pluginsRootFolder = "")
         {
             if (!string.IsNullOrEmpty(pluginsRootFolder))
             {
@@ -74,34 +79,40 @@ namespace RsCode.AspNetCore
             foreach (var pluginInfo in pluginInfos)
             {
                 var pluginPath = pluginInfo.Key.Replace("PluginInfo.json", $"{pluginInfo.Value.Name}.dll");
-                var context = new PluginAssemblyLoadContext();
+                var assembly=LoadPlugin(pluginPath);
 
-                Assembly assembly;
-                using (var fs = new FileStream(pluginPath, FileMode.Open))
-                {
-                    assembly = context.LoadFromStream(fs);
-                    pluginContext.Add(pluginPath, context);
-                }
-
-
-                TypeInfo typeInfo;
-                try
-                {
-                    typeInfo = assembly.DefinedTypes.First((dt) => dt.ImplementedInterfaces.Any(ii => ii == typeof(IPluginSetup)));
-                }
-                catch (Exception ex)
-                {
-                    throw new TypeLoadException($"{nameof(LoadPlugins)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}", ex);
-                }
-
-                if (typeInfo == null)
-                    throw new TypeUnloadedException($"{nameof(LoadPlugins)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}");
-
-                var pluginSetup = (IPluginSetup)assembly.CreateInstance(typeInfo.FullName);
-                Plugins.Add(pluginPath, pluginSetup);
-
-
+                var context = GetPluginContext(pluginPath);
+                
             }
+        }
+
+        private static Assembly LoadPlugin(string pluginPath)
+        {
+            Assembly assembly;
+            using (var fs = new FileStream(pluginPath, FileMode.Open))
+            {
+                var context = new PluginLoadContext();
+                assembly = context.LoadFromStream(fs);
+                PluginAssemblyContext.Add(pluginPath, context);
+            }
+
+            TypeInfo typeInfo;
+            try
+            {
+                typeInfo = assembly.DefinedTypes.First((dt) => dt.ImplementedInterfaces.Any(ii => ii == typeof(IPluginSetup)));
+            }
+            catch (Exception ex)
+            {
+                throw new TypeLoadException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}", ex);
+            }
+
+            if (typeInfo == null)
+                throw new TypeUnloadedException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}");
+
+            var pluginSetup = (IPluginSetup)assembly.CreateInstance(typeInfo.FullName);
+            PluginSetup.Add(pluginPath, pluginSetup);
+
+            return assembly;
         }
         /// <summary>
         /// Load all plugins info as PluginInfo.json
@@ -115,13 +126,17 @@ namespace RsCode.AspNetCore
                 PluginsRootFolder = pluginsRootFolder;
             }
             if (!Directory.Exists(PluginsRootFolder))
-                throw new DirectoryNotFoundException($"{nameof(GetPluginInfos)}: no Plugins folder found");
+                Directory.CreateDirectory(PluginsRootFolder);
 
             var pluginInfos = new Dictionary<string, PluginInfo>();
             var jsonPluginInfoPaths = Directory.GetFiles(PluginsRootFolder, "*PluginInfo.json", SearchOption.AllDirectories);
             foreach (var jsonPath in jsonPluginInfoPaths)
             {
-                var pluginInfo = JsonConvert.DeserializeObject<PluginInfo>(File.ReadAllText(jsonPath));
+                string json = File.ReadAllText(jsonPath);
+                var pluginInfo =JsonSerializer.Deserialize <PluginInfo>(json,new JsonSerializerOptions
+                {
+                     PropertyNameCaseInsensitive= true,
+                });
                 pluginInfos.Add(jsonPath, pluginInfo);
             }
 
@@ -134,19 +149,19 @@ namespace RsCode.AspNetCore
         /// <param name="plugin">plugin object key:plugin full path, value:plugin Setup.cs</param>
         private static void LoadViews(this IServiceCollection services, KeyValuePair<string, IPluginSetup> plugin)
         {
-            string viewAssembypath = plugin.Key.Replace(".dll", ".Views.dll");
+            string viewAssembypath = plugin.Key;//.Replace(".dll", ".Views.dll");
             if (File.Exists(viewAssembypath))
             {
                 string pluginPath = plugin.Key;
-                var pluginContext = GetPluginContext(pluginPath);
-                var assembly = pluginContext.Assemblies.FirstOrDefault();
+                var pluginContext = GetPluginContext(pluginPath);                   
+                var assembly =pluginContext.LoadFromAssemblyPath(pluginPath);
 
-                services.AddMvcCore().ConfigureApplicationPartManager(apm =>
+                var partManager = services.BuildServiceProvider().GetRequiredService<ApplicationPartManager>();
+                var compiledRazorAssemblyApplicationParts = new CompiledRazorAssemblyApplicationPartFactory().GetApplicationParts(assembly);
+                foreach (var item in compiledRazorAssemblyApplicationParts)
                 {
-                    var compiledRazorAssemblyApplicationParts = new CompiledRazorAssemblyApplicationPartFactory().GetApplicationParts(assembly);
-                    foreach (var craapf in compiledRazorAssemblyApplicationParts)
-                        apm.ApplicationParts.Add(craapf);
-                });
+                    partManager.ApplicationParts.Add(item);
+                }
             }
         }
         /// <summary>
@@ -159,7 +174,7 @@ namespace RsCode.AspNetCore
         { 
             string pluginPath = plugin.Key;
             var pluginContext = GetPluginContext(pluginPath);
-            var assembly = pluginContext.Assemblies.FirstOrDefault();
+            var assembly = pluginContext.Assemblies.First();
             var assemblyPart = new PluginAssemblyPart(assembly);
             services
                 .AddMvcCore()
@@ -175,9 +190,19 @@ namespace RsCode.AspNetCore
         /// <returns>Defines a class that provides the mechanisms to configure an application's request pipeline.</returns>
         public static IApplicationBuilder UsePlugins(this IApplicationBuilder app, IHostEnvironment env)
         {
-            foreach (var plugin in Plugins.OrderBy(x => x.Value.Order).Select(x => x.Value))
+            foreach (var plugin in PluginSetup.OrderBy(x => x.Value.Order).Select(x => x.Value))
                 plugin.Configure(app, env);
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
             return app;
         }
         /// <summary>
@@ -185,51 +210,87 @@ namespace RsCode.AspNetCore
         /// </summary>
         /// <param name="pluginName"></param>
         /// <returns></returns>
-        public static PluginAssemblyPart GetPluginAssemblyPart(string pluginName)
+        public static PluginAssemblyPart GetControllerPart(string pluginName)
         {
             var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
-            var context = new PluginAssemblyLoadContext();
-            var plugin = pluginContext.FirstOrDefault(x => x.Key == pluginPath);
+            var context = new PluginLoadContext();
+            var plugin = PluginAssemblyContext.FirstOrDefault(x => x.Key == pluginPath);
 
-            if (plugin.Key == null)
-            {
-                using (var fs = new FileStream(pluginPath, FileMode.Open))
-                {
-                    var assembly = context.LoadFromStream(fs);
-                    pluginContext.Add(pluginPath, context);
-                    var assemblyPart = new PluginAssemblyPart(assembly);
-                    return assemblyPart;
-                }
-            }
-            else
-            {
-                var assembly = plugin.Value.Assemblies.FirstOrDefault();
-                return new PluginAssemblyPart(assembly);
-            }
+            //if (plugin.Key == null)
+            //{
+            //    using (var fs = new FileStream(pluginPath, FileMode.Open))
+            //    {
+            //        var assembly = context.LoadFromStream(fs);
+            //        PluginAssemblyContext.Add(pluginPath, context);
+            //        var assemblyPart = new PluginApplicationPart(assembly);
+            //        return assemblyPart;
+            //    }
+            //}
+            //else
+            //{
+            //   var assembly = plugin.Value.Assemblies.FirstOrDefault();
+            //    return new PluginApplicationPart(assembly);
+            //}
 
+
+            var pluginContext = GetPluginContext(pluginPath);
+            var assembly = pluginContext.Assemblies.First();
+
+            return new PluginAssemblyPart(assembly);
+            
+        }
+         
+        public static IEnumerable<ApplicationPart> GetRazorPart(string pluginName)
+        {
+            List<ApplicationPart> parts = new List<ApplicationPart>();
+            var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
+            var pluginContext = GetPluginContext(pluginPath);
+            var assembly=pluginContext.Assemblies.FirstOrDefault();
+            return new CompiledRazorAssemblyApplicationPartFactory().GetApplicationParts(assembly);
         }
 
-        public static PluginAssemblyPart UpdatePluginAssemblyPart(string pluginName)
+        public static PluginLoadContext? GetPluginContext(string pluginPath)
+        {
+            try
+            {
+                return PluginAssemblyContext[pluginPath];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+
+        public static void InitPlugin(string pluginName)
         {
             var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
-            var context = new PluginAssemblyLoadContext();
-            var plugin = pluginContext.FirstOrDefault(x => x.Key == pluginPath);
-            if (plugin.Key != null)
-                pluginContext.Remove(pluginPath);
-
-            using (var fs = new FileStream(pluginPath, FileMode.Open))
+            
+            var pluginContext = GetPluginContext(pluginPath);
+            if(pluginContext==null)
             {
-                var assembly = context.LoadFromStream(fs);
-                pluginContext.Add(pluginPath, context);
-                var assemblyPart = new PluginAssemblyPart(assembly);
-                return assemblyPart;
+                LoadPlugin(pluginPath);
             }
         }
-        public static PluginAssemblyLoadContext GetPluginContext(string pluginName)
+     
+
+        public static List<ApplicationPart> UpdatePlugin(string pluginName)
         {
-            return pluginContext[pluginName];
+            List<ApplicationPart>parts = new List<ApplicationPart>();
+
+            var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
+           
+            PluginAssemblyContext.Remove(pluginPath);
+            PluginSetup.Remove(pluginPath);
+            //初始化
+            InitPlugin(pluginName);
+
+            
+            parts.AddRange(GetRazorPart(pluginName));
+            parts.Add(GetControllerPart(pluginName));
+            return parts;
         }
-
-
     }
+    
+
 }

@@ -834,6 +834,13 @@
             <param name="forever">是否永久更换</param>
             <returns></returns>
         </member>
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.UseDatabase(System.String)">
+            <summary>
+            临时变更数据库
+            </summary>
+            <param name="connName"></param>
+            <returns></returns>
+        </member>
         <member name="M:RsCode.Domain.Uow.ApplicationDbContext.CreateUnitOfWork">
             <summary>
             创建UnitOfWork
@@ -944,6 +951,13 @@
             <param name="forever">是否永久更换</param>
             <returns></returns>
         </member>
+        <member name="M:RsCode.IApplicationDbContext.UseDatabase(System.String)">
+            <summary>
+            临时更换
+            </summary>
+            <param name="connName"></param>
+            <returns></returns>
+        </member>
         <member name="M:RsCode.IApplicationDbContext.CreateUnitOfWork">
             <summary>
             创建UnitOfWork
@@ -964,30 +978,30 @@
             <typeparam name="TEntity"></typeparam>
             <returns></returns>
         </member>
-        <member name="T:RsCode.AspNetCore.AppException">
+        <member name="T:RsCode.AppException">
             <summary>
             
             </summary>
         </member>
-        <member name="M:RsCode.AspNetCore.AppException.#ctor(System.String)">
+        <member name="M:RsCode.AppException.#ctor(System.String)">
             <summary>
             
             </summary>
             <param name="msg"></param>
         </member>
-        <member name="M:RsCode.AspNetCore.AppException.#ctor(System.Int32,System.String)">
+        <member name="M:RsCode.AppException.#ctor(System.Int32,System.String)">
             <summary>
             
             </summary>
             <param name="status"></param>
             <param name="msg"></param>
         </member>
-        <member name="P:RsCode.AspNetCore.AppException.Status">
+        <member name="P:RsCode.AppException.Status">
             <summary>
             
             </summary>
         </member>
-        <member name="P:RsCode.AspNetCore.AppException.Message">
+        <member name="P:RsCode.AppException.Message">
             <summary>
             响应消息
             </summary>
@@ -1131,7 +1145,7 @@
             <param name="accessToken"></param>
             <param name="formatData">特定的格式化</param>
             <returns></returns>
-            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+            <exception cref="T:RsCode.AppException"></exception>
         </member>
         <member name="M:RsCode.HttpHelper.GetPageAsync``1(System.String,System.String,System.Boolean)">
             <summary>
@@ -1142,7 +1156,7 @@
             <param name="accessToken"></param>
             <param name="formatData">特定的格式化</param>
             <returns></returns>
-            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+            <exception cref="T:RsCode.AppException"></exception>
         </member>
         <member name="M:RsCode.HttpHelper.PostAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
@@ -1154,7 +1168,7 @@
             <param name="accessToken"></param>
             <param name="formatData">特定的格式化</param>
             <returns></returns>
-            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+            <exception cref="T:RsCode.AppException"></exception>
         </member>
         <member name="M:RsCode.HttpHelper.PutAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
@@ -1166,7 +1180,7 @@
             <param name="accessToken"></param>
             <param name="formatData">特定的格式化</param>
             <returns></returns>
-            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+            <exception cref="T:RsCode.AppException"></exception>
         </member>
         <member name="M:RsCode.HttpHelper.DeleteAsync``1(System.String,System.Net.Http.HttpContent,System.String,System.Boolean)">
             <summary>
@@ -1178,7 +1192,7 @@
             <param name="accessToken"></param>
             <param name="formatData">是否对数据进行特定的格式化</param>
             <returns></returns>
-            <exception cref="T:RsCode.AspNetCore.AppException"></exception>
+            <exception cref="T:RsCode.AppException"></exception>
         </member>
         <member name="M:RsCode.HttpHelper.GetUrlParamValue(System.String,System.String)">
             <summary>
@@ -1339,15 +1353,6 @@
             </summary>
             <param name="type">验证码类型：数字，字符，符合</param>
             <returns></returns>
-        </member>
-        <member name="M:RsCode.VerifyCodeHelper.CreateBitmapByImgVerifyCode(System.String,System.Int32,System.Int32)">
-            <summary>
-            验证码图片 => Bitmap
-            </summary>
-            <param name="verifyCode">验证码</param>
-            <param name="width">宽</param>
-            <param name="height">高</param>
-            <returns>Bitmap</returns>
         </member>
         <member name="M:RsCode.VerifyCodeHelper.CreateByteByImgVerifyCode(System.String,System.Int32,System.Int32)">
             <summary>

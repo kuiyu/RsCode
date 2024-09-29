@@ -34,4 +34,6 @@ namespace RsCode.AspNetCore.Plugin
             return new CancellationChangeToken(TokenSource.Token);
         }
     }
+
+    
 }

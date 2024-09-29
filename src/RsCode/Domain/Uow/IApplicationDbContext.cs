@@ -35,6 +35,13 @@ namespace RsCode
         /// <param name="forever">是否永久更换</param>
         /// <returns></returns>
         IFreeSql ChangeDatabase(string connName = "DefaultConnection", bool forever = false);
+
+        /// <summary>
+        /// 临时更换
+        /// </summary>
+        /// <param name="connName"></param>
+        /// <returns></returns>
+        IFreeSql UseDatabase(string connName = "DefaultConnection");
         /// <summary>
         /// 创建UnitOfWork
         /// </summary>

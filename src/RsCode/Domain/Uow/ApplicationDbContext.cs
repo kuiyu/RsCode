@@ -72,6 +72,15 @@ namespace RsCode.Domain.Uow
            return fsqlCloud.Change(connName);
         }
         /// <summary>
+        /// 临时变更数据库
+        /// </summary>
+        /// <param name="connName"></param>
+        /// <returns></returns>
+        public virtual IFreeSql UseDatabase(string connName="DefaultConnection")
+        {
+            return fsqlCloud.Use(connName);
+        }
+        /// <summary>
         /// 创建UnitOfWork
         /// </summary>
         /// <returns></returns>

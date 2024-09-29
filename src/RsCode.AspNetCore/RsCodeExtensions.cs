@@ -15,7 +15,6 @@
 
  */
 using AspectCore.Extensions.DependencyInjection;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 using System.Text.Encodings.Web;
@@ -27,9 +26,25 @@ namespace RsCode.AspNetCore
     {
         public static void AddRsCode(this IServiceCollection services)
         {
-            services.BuildDynamicProxyProvider();
             services.AddLogging();
-            services.AddMvc(config => {
+            //         //添加内存缓存
+            services.AddMemoryCaches();
+            services.AddSingleton<CacheHelper>();
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.TryAddTransient<IdGenerate>();
+            //解决中文被编码
+            services.TryAddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
+
+            //添加AI幂等处理
+
+            //添加跨域支持
+
+            services.AddControllersWithViews();
+            services.AddControllers().AddControllersAsServices();
+            services.AddMvc(config =>
+            {
                 config.RespectBrowserAcceptHeader = true;
                 config.Filters.Add<AntiXSSAttribute>();
                 config.Filters.Add<ModelValidateFilter>();
@@ -37,8 +52,7 @@ namespace RsCode.AspNetCore
                 config.Filters.Add<QpsAttribute>();
                 config.OutputFormatters.Insert(0, new RsOutputFormatter());
                 config.InputFormatters.Insert(0, new RsInputFormatter());
-            }).AddControllersAsServices()
-            .ConfigureApiBehaviorOptions(options =>
+            }).ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             })
@@ -47,23 +61,9 @@ namespace RsCode.AspNetCore
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             })
             ;
-           
-           services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-       
-            services.AddExceptionLogging();
-            //添加内存缓存
-            services.AddMemoryCaches();
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.TryAddTransient<IdGenerate>();
-			//解决中文被编码
-			services.TryAddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 
-            //添加AI幂等处理
-
-            //添加跨域支持
-
-           
-		}
+            services.BuildDynamicProxyProvider();
+        }
     }
 }

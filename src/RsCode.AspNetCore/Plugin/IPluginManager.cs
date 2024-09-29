@@ -19,6 +19,11 @@ using RsCode.AspNetCore.Plugin;
 
 namespace RsCode.AspNetCore
 {
+    /// <summary>
+    /// 插件项目管理
+    /// 可以对运行的插件开启与关闭
+    /// TODO:动态添加
+    /// </summary>
     public interface IPluginManager
     {
         /// <summary>
@@ -36,5 +41,17 @@ namespace RsCode.AspNetCore
         /// </summary>
         /// <param name="pluginName"></param>
         void EnablePlugin(string pluginName);
+        /// <summary>
+        /// 重新加载插件
+        /// </summary>
+        /// <param name="pluginName"></param>
+        void UpdatePlugin(string pluginName);
+
+        /// <summary>
+        /// 插件是否加载
+        /// </summary>
+        /// <param name="pluginName"></param>
+        /// <returns></returns>
+        bool IsLoad(string pluginName);
     }
 }

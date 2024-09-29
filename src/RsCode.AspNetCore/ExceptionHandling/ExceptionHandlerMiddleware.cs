@@ -74,7 +74,7 @@ namespace RsCode.AspNetCore
                 if(exception is AppException)
                 {
                     statusCode = 0;
-                    msg = ((RsCode.AspNetCore.AppException)exception).Message;
+                    msg = ((RsCode.AppException)exception).Message;
                 }
                 
                 context.Response.Clear();

@@ -15,7 +15,7 @@
 
  */
 using System;
-namespace RsCode.AspNetCore
+namespace RsCode
 {
     /// <summary>
     /// 

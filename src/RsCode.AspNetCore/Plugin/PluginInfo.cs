@@ -36,5 +36,10 @@ namespace RsCode.AspNetCore.Plugin
         /// 插件描述
         /// </summary>
         [JsonPropertyName("description")] public string Description { get; set; }
+        /// <summary>
+        /// 是否己加载
+        /// </summary>
+        [JsonPropertyName("loaded")]
+        public bool Loaded { get; set; } = false;
     }
 }

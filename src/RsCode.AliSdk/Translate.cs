@@ -94,7 +94,7 @@ namespace RsCode.AliSdk
 		/// <returns></returns>
 		public async Task<TranslateImageResponse> TranslateImage(TranslateImageRequest request)
         {
-            //var ext = new { needEditorData =true};
+            //var ext = new { needEditorData = true };
             //TranslateImageRequest translateImageRequest = new TranslateImageRequest
             //{
             //    ImageUrl = "https://intranetproxy.alipay.com/skylark/lark/0/2021/png/31856549/1634545448871-573a861d-acb1-48ed-b792-8d5e091a8972.png",

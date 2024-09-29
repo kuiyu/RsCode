@@ -16,8 +16,6 @@
  */
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 
 namespace RsCode.AspNetCore
 {

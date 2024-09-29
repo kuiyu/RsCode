@@ -16,8 +16,6 @@
  */
 
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace RsCode.AspNetCore.Plugin
@@ -28,4 +26,5 @@ namespace RsCode.AspNetCore.Plugin
 
         public IEnumerable<string> GetReferencePaths() => Array.Empty<string>();
     }
+
 }
