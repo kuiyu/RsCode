@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RsCode;
 using RsCode.AspNetCore;
 
 namespace WebApplicationDemo.Controllers
