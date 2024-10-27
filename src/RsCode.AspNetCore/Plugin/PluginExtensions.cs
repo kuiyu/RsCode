@@ -15,9 +15,11 @@
 
  */
 
+using log4net.Plugin;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using RsCode.AspNetCore.Plugin;
+using System.Net.Security;
 using System.Reflection;
 using System.Text.Json;
 
@@ -47,8 +49,7 @@ namespace RsCode.AspNetCore
             services.AddSingleton<IPluginManager, PluginManager>();
             services.AddSingleton<IActionDescriptorChangeProvider>(RsCodeActionDescriptionChangeProvider.Instance);
             services.AddSingleton(RsCodeActionDescriptionChangeProvider.Instance);
-            services.AddSingleton<IReferenceLoader, DefaultReferenceLoader>();
-            services.AddSingleton<IReferenceContainer, DefaultReferenceContainer>();
+             
 
             LoadPlugins(services,pluginsRootFolder);
 
@@ -93,9 +94,16 @@ namespace RsCode.AspNetCore
             {
                 var context = new PluginLoadContext();
                 assembly = context.LoadFromStream(fs);
+                var assemblyName = assembly.GetName().Name;
+                string dllPath = pluginPath.Replace(assemblyName + ".dll", "");
+                // var assemblyName = assembly.GetName().Name;
+                ReferenceLoader.LoadStreamsIntoContext(context, assembly,dllPath);
+                
                 PluginAssemblyContext.Add(pluginPath, context);
             }
-
+            
+           
+         
             TypeInfo typeInfo;
             try
             {
