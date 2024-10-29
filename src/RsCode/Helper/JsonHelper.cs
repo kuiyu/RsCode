@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json.Nodes;
 
 namespace System.Text.Json
 {
@@ -118,7 +119,15 @@ namespace System.Text.Json
             var json = document.RootElement.GetRawText();
             return JsonSerializer.Deserialize<T>(json);
         }
-         
-   
+
+        public static T GetObject<T>(string json,string key)
+            where T: class
+        {
+            var jObj= JsonObject.Parse(json);
+            var obj = jObj[key];
+            if(obj==null)return null;
+
+            return obj as T;
+        }
     }
 }

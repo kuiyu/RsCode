@@ -23,14 +23,12 @@ namespace RsCode.AspNetCore.Plugin
 {
     public class PluginManager : IPluginManager
     {
-        IReferenceLoader loader;
+        
          ApplicationPartManager partManager;
        
-        public PluginManager(ApplicationPartManager applicationPartManager,IReferenceLoader _loader)
+        public PluginManager(ApplicationPartManager applicationPartManager)
         {
-            partManager = applicationPartManager;
-            this.loader = _loader;
-            
+            partManager = applicationPartManager; 
         }
         /// <summary>
         /// 获取所有插件信息

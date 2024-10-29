@@ -15,11 +15,10 @@
 
  */
 
-using log4net.Plugin;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using RsCode.AspNetCore.Plugin;
-using System.Net.Security;
 using System.Reflection;
 using System.Text.Json;
 
@@ -43,15 +42,16 @@ namespace RsCode.AspNetCore
         /// Add all plugins ConfigureServices and run plugins ConfigureServices method
         /// </summary>
         /// <param name="services">Specifies the contract for a collection of service descriptors.</param>
+        /// <param name="sharedAssemblyNames">主项目与子项目共用的程序集名称</param>
         /// <param name="pluginsRootFolder">Plugins root path</param>
-        public static void AddPlugins(this IServiceCollection services, string pluginsRootFolder = "")
+        public static void AddPlugins(this IServiceCollection services,string[] sharedAssemblyNames=null, string pluginsRootFolder = "")
         {
             services.AddSingleton<IPluginManager, PluginManager>();
             services.AddSingleton<IActionDescriptorChangeProvider>(RsCodeActionDescriptionChangeProvider.Instance);
             services.AddSingleton(RsCodeActionDescriptionChangeProvider.Instance);
-             
 
-            LoadPlugins(services,pluginsRootFolder);
+            ReferenceLoader.AddSharedAssembly(sharedAssemblyNames);
+            LoadPlugins(services, pluginsRootFolder);
 
             foreach (var plugin in PluginSetup)
             {
@@ -96,21 +96,22 @@ namespace RsCode.AspNetCore
                 assembly = context.LoadFromStream(fs);
                 var assemblyName = assembly.GetName().Name;
                 string dllPath = pluginPath.Replace(assemblyName + ".dll", "");
-                // var assemblyName = assembly.GetName().Name;
+               
                 ReferenceLoader.LoadStreamsIntoContext(context, assembly,dllPath);
                 
+               
                 PluginAssemblyContext.Add(pluginPath, context);
             }
+
             
-           
-         
             TypeInfo typeInfo;
             try
             {
-                typeInfo = assembly.DefinedTypes.First((dt) => dt.ImplementedInterfaces.Any(ii => ii == typeof(IPluginSetup)));
+                typeInfo = assembly.DefinedTypes.FirstOrDefault((dt) => dt.ImplementedInterfaces.Any(ii => ii == typeof(IPluginSetup)));
             }
             catch (Exception ex)
             {
+                var err = ex.Message;Console.WriteLine(err);
                 throw new TypeLoadException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}", ex);
             }
 

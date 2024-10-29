@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Helper;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-
+using MediatR;
 namespace RsCode.AspNetCore
 {
     public static class RsCodeExtensions
@@ -27,8 +27,10 @@ namespace RsCode.AspNetCore
         public static void AddRsCode(this IServiceCollection services)
         {
             services.AddLogging();
-            //         //添加内存缓存
-            services.AddMemoryCaches();
+       
+                services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+                //         //添加内存缓存
+                services.AddMemoryCaches();
             services.AddSingleton<CacheHelper>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -61,7 +63,7 @@ namespace RsCode.AspNetCore
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             })
             ;
-
+            
 
             services.BuildDynamicProxyProvider();
         }

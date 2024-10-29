@@ -40,7 +40,6 @@ namespace RsCode
         
         public static string Get(string key, string JsonFilePath = "appsettings.json")
         {
-            
                 SetJsonFile(JsonFilePath);
             return config.GetValue<string>(key);
         }

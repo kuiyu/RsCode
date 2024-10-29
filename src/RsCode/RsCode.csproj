@@ -4,14 +4,14 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <AssemblyVersion>2.2.2.0</AssemblyVersion>
+    <FileVersion>2.2.2.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>快速高效的开发.net就用RsCode,文档访问https://rscode.cn</Description>
     <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.2.1</Version>
+    <Version>2.2.2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -45,9 +45,10 @@
     <PackageReference Include="FreeSql.Cloud" Version="1.9.1" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Mapster" Version="7.3.0" />
-    <PackageReference Include="MediatR" Version="12.3.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.23" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PetaPoco.Compiled" Version="6.0.532" />

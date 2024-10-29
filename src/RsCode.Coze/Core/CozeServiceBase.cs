@@ -8,9 +8,9 @@
  */
 
 using Flurl.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.OpenSsl;
+using RsCode.Coze.Core;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -25,6 +25,17 @@ namespace RsCode.Coze
         public string CozeUrl { get; set; } = "https://api.coze.cn";
         public static string Token { get; set; }
 
+        public static async Task<string> GetAccessTokenAsync(string appId)
+        {
+            var configs = Appsettings<CozeAppConfig[]>("ByteDance:Coze");
+            var config=configs.FirstOrDefault(x => x.AppId == appId);
+            if(config == null)
+            {
+                throw new Exception($"未找到节点 ByteDance:Coze AppId={appId}的配置");
+            }
+            return await GetAccessTokenAsync(config.AppId);
+
+        }
         /// <summary>
         /// OAuth JWT授权（开发者） 专业版www.coze.cn
         /// <see cref="https://www.coze.com/docs/developer_guides/oauth_jwt#951585c7"/>
@@ -55,6 +66,11 @@ namespace RsCode.Coze
             }
         }
 
+        public static CozeAppConfig[] GetConfig()
+        {
+            var configs = Appsettings<CozeAppConfig[]>("ByteDance:Coze");
+            return configs;
+        }
         static string GenerateToken(string appId, string publicKeyStr, string privateKeyPath,int hour=24)
         {
             string privateKeyPem=File.ReadAllText(System.IO.Path.Combine(AppContext.BaseDirectory,privateKeyPath));
@@ -80,6 +96,20 @@ namespace RsCode.Coze
             var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return token;
         }
-      
+
+        
+
+        static T Appsettings<T>(string key) where T:class
+        { 
+            string jsonFileFullPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            if (!File.Exists(jsonFileFullPath))
+                throw new ArgumentException("not find " + jsonFileFullPath);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                       .AddJsonFile(jsonFileFullPath, optional: false, reloadOnChange: true)
+                       .Build();
+
+            return config.GetSection(key).Get<T>();
+        }
     }
 }
