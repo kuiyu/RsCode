@@ -14,15 +14,17 @@ namespace RsCode.Coze
     /// Bot
     /// <see cref="https://www.coze.cn/docs/developer_guides/get_metadata"/>
     /// </summary>
-    public class BotService:CozeServiceBase
+    public class BotService
     {
+        string Token = CallContext<string>.GetData("cozeToken");
         /// <summary>
         /// 获取指定 Bot 的配置信息。
         /// </summary>
         /// <param name="botId"></param>
         /// <returns></returns>
-        public static async Task<object> GetOnlineInfoAsync(string botId)
-        { 
+        public  async Task<object> GetOnlineInfoAsync(string botId)
+        {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/bot/get_online_info?bot_id={botId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -35,8 +37,9 @@ namespace RsCode.Coze
         /// </summary>
         /// <param name="spaceId"></param>
         /// <returns></returns>
-        public static async Task<object> PublishedOnlineListAsync(string spaceId,int page,int pageSize)
+        public  async Task<object> PublishedOnlineListAsync(string spaceId,int page,int pageSize)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/space/published_bots_list?space_id={spaceId}&page_size={pageSize}&page_index={page}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")

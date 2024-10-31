@@ -8,7 +8,8 @@
  */
 
 using Flurl.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RsCode.Coze.Core;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,23 +18,48 @@ using System.Security.Cryptography;
 
 namespace RsCode.Coze
 {
-    public class CozeServiceBase
+    public class CozeManager
     {
+        public List<CozeAppConfig> CozeConfigs { get; private set; } = new List<CozeAppConfig>();
         /// <summary>
         /// 基础版url https://api.coze.com  专业版 https://api.coze.cn
         /// </summary>
         public string CozeUrl { get; set; } = "https://api.coze.cn";
-        public static string Token { get; set; }
 
-        public static async Task<string> GetAccessTokenAsync(string appId)
+       
+
+        IMemoryCache cache;
+        public CozeManager(IOptionsSnapshot<List<CozeAppConfig>> optionsSnapshot,IMemoryCache memoryCache)
         {
-            var configs = Appsettings<CozeAppConfig[]>("ByteDance:Coze");
-            var config=configs.FirstOrDefault(x => x.AppId == appId);
+            CozeConfigs = optionsSnapshot.Value;
+            cache=memoryCache;
+           
+        }
+        public void RefreshToken(string appId)
+        {
+            var token = RefreshTokenAsync(appId).Result;
+            CallContext<string>.SetData("cozeToken", token);
+        }
+        public async Task<string> RefreshTokenAsync(string appId)
+        {
+            string cacheKey = $"CozeToken{appId}";
+            if(! cache.TryGetValue(cacheKey,out string token))
+            {
+                token = await GetAccessTokenAsync(appId);
+                
+            }
+            return token;
+        }
+
+        
+        public  async Task<string> GetAccessTokenAsync(string appId)
+        {
+            var config=CozeConfigs.FirstOrDefault(x => x.AppId == appId);
             if(config == null)
             {
                 throw new Exception($"未找到节点 ByteDance:Coze AppId={appId}的配置");
             }
-            return await GetAccessTokenAsync(config.AppId);
+            return await GetAccessTokenAsync(config.AppId,config.PublicKey,config.PrivateKeyPath);
 
         }
         /// <summary>
@@ -42,7 +68,7 @@ namespace RsCode.Coze
         /// </summary>
         /// <param name="publicKey">应用配置</param>
         /// <returns></returns>
-        public static async Task<string> GetAccessTokenAsync(string appId,string publicKey,string privateKeyPath)
+          async Task<string> GetAccessTokenAsync(string appId,string publicKey,string privateKeyPath)
         {
            var jwt= GenerateToken(appId, publicKey,privateKeyPath);
            var api= "https://api.coze.cn/api/permission/oauth2/token";
@@ -57,7 +83,7 @@ namespace RsCode.Coze
             try
             {
                 var tokenInfo = await res.GetJsonAsync<OAuthToken>();
-                Token = tokenInfo.AccessToken;
+               
                 return tokenInfo.AccessToken;
             }
             catch (Exception ex)
@@ -66,12 +92,8 @@ namespace RsCode.Coze
             }
         }
 
-        public static CozeAppConfig[] GetConfig()
-        {
-            var configs = Appsettings<CozeAppConfig[]>("ByteDance:Coze");
-            return configs;
-        }
-        static string GenerateToken(string appId, string publicKeyStr, string privateKeyPath,int hour=24)
+       
+         string GenerateToken(string appId, string publicKeyStr, string privateKeyPath,int hour=24)
         {
             string privateKeyPem=File.ReadAllText(System.IO.Path.Combine(AppContext.BaseDirectory,privateKeyPath));
             var rsa = RSA.Create(); 
@@ -97,19 +119,7 @@ namespace RsCode.Coze
             return token;
         }
 
-        
 
-        static T Appsettings<T>(string key) where T:class
-        { 
-            string jsonFileFullPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-            if (!File.Exists(jsonFileFullPath))
-                throw new ArgumentException("not find " + jsonFileFullPath);
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                       .AddJsonFile(jsonFileFullPath, optional: false, reloadOnChange: true)
-                       .Build();
-
-            return config.GetSection(key).Get<T>();
-        }
+      
     }
 }

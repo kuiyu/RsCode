@@ -7,6 +7,8 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Flurl.Http;
+using Microsoft.Extensions.Options;
+using RsCode.Coze.Core;
 
 namespace RsCode.Coze
 {
@@ -14,14 +16,16 @@ namespace RsCode.Coze
     /// 文件
     /// <see cref="https://www.coze.cn/docs/developer_guides/retrieve_files"/>
     /// </summary>
-    public class FilesService:CozeServiceBase
+    public class FilesService
     {
+        string Token = CallContext<string>.GetData("cozeToken");
         /// <summary>
         /// 上传文件
         /// </summary>
         /// <returns></returns>
-        public static async Task<object> UploadAsync()
+        public  async Task<object> UploadAsync()
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/files/upload";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -30,8 +34,9 @@ namespace RsCode.Coze
             return await res.GetJsonAsync<CozeResult<FileObject>>();
         }
 
-        public static async Task<object>RetrieveAsync(string fileId)
+        public  async Task<object>RetrieveAsync(string fileId)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/files/retrieve?file_id={fileId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")

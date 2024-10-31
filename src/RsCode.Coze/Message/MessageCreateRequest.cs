@@ -15,7 +15,7 @@ namespace RsCode.Coze
         /// <summary>
         /// 发送这条消息的实体。取值：user：代表该条消息内容是用户发送的。assistant：代表该条消息内容是 Bot 发送的。
         /// </summary>
-        [JsonPropertyName(" role")]
+        [JsonPropertyName("role")]
         public string role { get; set; }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace RsCode.Coze
         /// <summary>
         /// 创建消息时的附加消息，获取消息时也会返回此附加消息。自定义键值对，应指定为 Map 对象格式。长度为 16 对键值对，其中键（key）的长度范围为 1～64 个字符，值（value）的长度范围为 1～512 个字符。
         /// </summary>
-        [JsonPropertyName(" meta_data")]
+        [JsonPropertyName("meta_data")]
         public object metaData { get; set; }
 
 

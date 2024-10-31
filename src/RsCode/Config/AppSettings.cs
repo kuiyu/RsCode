@@ -20,6 +20,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -145,9 +146,14 @@ namespace RsCode
             WriteJsonFile(jsonFilePath, jsonConents); 
         }
 
+        static Dictionary<string, IConfiguration> cache = new Dictionary<string, IConfiguration>();
         static IConfiguration SetJsonFile(string JsonFile = "appsettings.json")
         {
-             
+            if(cache.ContainsKey(JsonFile))
+            {
+                return cache[JsonFile];
+            }
+
             string jsonFileFullPath = Path.Combine(root, JsonFile);
             if (!File.Exists(jsonFileFullPath))
                 throw new ArgumentException("not find " + jsonFileFullPath);
@@ -157,9 +163,7 @@ namespace RsCode
                 config = new ConfigurationBuilder()
                         .AddJsonFile(jsonFileFullPath, optional: true, reloadOnChange: true)
                         .Build();
-                ChangeToken.OnChange(() => config.GetReloadToken(), () => { 
-                
-                });
+               cache.Add(JsonFile, config);
                 jsonFilePath = jsonFileFullPath;
             }
             return config;

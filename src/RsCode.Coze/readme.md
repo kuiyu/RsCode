@@ -1,6 +1,6 @@
 ﻿# 扣子api SDK
 
-C#版扣子API封装
+C#版扣子API封装,支持多个应用调用
 
 appsettings.json中配置应用信息
 ```json
@@ -18,24 +18,31 @@ appsettings.json中配置应用信息
 代码中调用
 
 ```csharp
- var configs = CozeServiceBase.GetConfig();
+//添加服务 
+services.AddCoze();
 
- //使用指定AppId创建token  
-  await CozeServiceBase.GetAccessTokenAsync("1175343662622");
-  //创建会话
+//构造中注入
+CozeManager cozeManager;ConversationService conversationService;
+public ChatController(CozeManager cozeManager, ConversationService conversationService)
+{
+        this.cozeManager = cozeManager;
+    var configs = cozeManager.CozeConfigs;
+    appId = configs.First().AppId;
+    this.conversationService = conversationService;    
+}
+
+//获取会话id
+public async Task<object> CreateAsync(ChatCreateDto dto)
+{
+    string appId="";
+    cozeManager.RefreshToken(appId); //刷新token
+           
     EnterMessageObject enterMessageObject = new EnterMessageObject();
     enterMessageObject.Role = "user";
     enterMessageObject.Type = "question";//默认question
     enterMessageObject.Content = dto.Content;
     enterMessageObject.ContentType = "text";
-    var ret= await ConversationService.CreateAsync(new EnterMessageObject[] { enterMessageObject });
-    var conversationId=ret.Data.Id;
+    return await conversationService.CreateAsync(new EnterMessageObject[] { enterMessageObject });
+}
 
-  //发送消息
-  await MessageService.CreateAsync(conversationId, new MessageCreateRequest
-            {
-                Content = "你好RsCode",
-                ContentType = dto.ContentType,
-                role = "user",
-            });
 ``

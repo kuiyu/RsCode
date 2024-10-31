@@ -7,6 +7,8 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Flurl.Http;
+using Microsoft.Extensions.Options;
+using RsCode.Coze.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +21,23 @@ namespace RsCode.Coze
     /// 对话
     /// <see cref="https://www.coze.cn/docs/developer_guides/chat_v3"/>
     /// </summary>
-    public class ChatService:CozeServiceBase
+    public class ChatService
     {
-
+        string Token = CallContext<string>.GetData("cozeToken");
         /// <summary>
         /// 调用此接口发起一次对话，支持添加上下文和流式响应
         /// </summary>
         /// <param name="conversationId"></param>
         /// <returns></returns>
-        public static async Task<object> SendAsync(string conversationId,ChatSendRequest request)
+        public  async Task<CozeResult<ChatObject>> SendAsync(string conversationId,ChatSendRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v3/chat?conversation_id={conversationId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
                 .PostJsonAsync(request);
-
-            return await res.GetJsonAsync<ChatSendResponse>();
+            var s =await res.GetStringAsync();
+            return await res.GetJsonAsync<CozeResult<ChatObject>>();
         }
         /// <summary>
         /// 查询对话详情
@@ -42,11 +45,11 @@ namespace RsCode.Coze
         /// <param name="conversationId"></param>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        public static async Task<CozeResult<ChatObject>> RetrieveAsync(string conversationId,string chatId)
+        public  async Task<CozeResult<ChatObject>> RetrieveAsync(string token,string conversationId,string chatId)
         {
             string url = $"https://api.coze.cn/v3/chat/retrieve?conversation_id={conversationId}&chat_id={chatId}";
             var res = await url
-                .WithHeader($"Authorization", $"Bearer {Token}")
+                .WithHeader($"Authorization", $"Bearer {token}")
                 .GetJsonAsync<CozeResult<ChatObject>>();
           
             return res;
@@ -57,12 +60,13 @@ namespace RsCode.Coze
         /// <param name="conversationId"></param>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        public static async Task<object> MessageListAsync(string conversationId, string chatId)
+        public  async Task<CozeResult<MessageObject[]>> MessageListAsync(string conversationId, string chatId)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v3/chat/message/list?conversation_id={conversationId}&chat_id={chatId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
-                .GetJsonAsync<CozeResult<MessageObject>>();
+                .GetJsonAsync < CozeResult <MessageObject[]>>();
          
             return res;
         }
@@ -74,8 +78,9 @@ namespace RsCode.Coze
         /// <param name="chatId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static async Task<object>SubmitToolOutputAsync(string conversationId,string chatId,ToolOutputRequest request)
+        public  async Task<object>SubmitToolOutputAsync(string conversationId,string chatId,ToolOutputRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v3/chat/submit_tool_outputs?conversation_id={conversationId}&chat_id={chatId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")

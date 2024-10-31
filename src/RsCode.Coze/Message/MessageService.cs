@@ -11,17 +11,19 @@ using Flurl.Http;
 
 namespace RsCode.Coze
 {
-    public class MessageService:CozeServiceBase
+    public class MessageService
     {
+        string Token = CallContext<string>.GetData("cozeToken");
         /// <summary>
         /// 创建消息
         /// </summary>
         /// <param name="conversationId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static async Task<CozeResult<MessageObject>> CreateAsync(string conversationId,MessageCreateRequest request)
+        public  async Task<CozeResult<MessageObject>> CreateAsync(string conversationId,MessageCreateRequest request)
         {
-            string url = $"https://api.coze.cn/v1/conversation/message/create";
+            Token = CallContext<string>.GetData("cozeToken");
+            string url = $"https://api.coze.cn/v1/conversation/message/create?conversation_id={conversationId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
                 .PostJsonAsync(request);
@@ -33,8 +35,9 @@ namespace RsCode.Coze
         /// <param name="conversationId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static async Task<MessageListResponse> ListAsync(string conversationId,MessageListRequest request)
+        public  async Task<MessageListResponse> ListAsync(string conversationId,MessageListRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/conversation/message/list?conversation_id={conversationId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -48,8 +51,9 @@ namespace RsCode.Coze
         /// <param name="conversationId"></param>
         /// <param name="messageId"></param>
         /// <returns></returns>
-        public static async Task<object> RetrieveAsync(string conversationId,string messageId)
+        public  async Task<object> RetrieveAsync(string conversationId,string messageId)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/conversation/message/retrieve?conversation_id={conversationId}&message_id={messageId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -63,8 +67,9 @@ namespace RsCode.Coze
         /// <param name="conversationId"></param>
         /// <param name="messageId"></param>
         /// <returns></returns>
-        public static async Task<MessageModifyResponse> ModifyAsync(string conversationId, string messageId,MessageModifyRequest request)
+        public  async Task<MessageModifyResponse> ModifyAsync(string conversationId, string messageId,MessageModifyRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v1/conversation/message/modify?conversation_id={conversationId}&message_id={messageId}";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")

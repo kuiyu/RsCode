@@ -7,13 +7,17 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Flurl.Http;
+using Microsoft.Extensions.Options;
+using RsCode.Coze.Core;
 
 namespace RsCode.Coze
 {
-    public class KnowledgeService:CozeServiceBase
+    public class KnowledgeService
     {
-        public static async Task<DocumentInfoObject> CreateDocumentAsync(DocumentCreateRequest request)
+        string Token = CallContext<string>.GetData("cozeToken");
+        public  async Task<DocumentInfoObject> CreateDocumentAsync(DocumentCreateRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/open_api/knowledge/document/create";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -27,8 +31,9 @@ namespace RsCode.Coze
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static async Task<DocumentUpdateResponse> UpdateDocumentAsync(DocumentUpdateRequest request)
+        public  async Task<DocumentUpdateResponse> UpdateDocumentAsync(DocumentUpdateRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/open_api/knowledge/document/update";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -38,8 +43,9 @@ namespace RsCode.Coze
             return await res.GetJsonAsync<DocumentUpdateResponse>();
         }
 
-        public static async Task<DocumentDeleteResponse> DeleteDocumentAsync(DocumentDeleteRequest request)
+        public  async Task<DocumentDeleteResponse> DeleteDocumentAsync(DocumentDeleteRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/open_api/knowledge/document/delete";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
@@ -48,8 +54,9 @@ namespace RsCode.Coze
 
             return await res.GetJsonAsync<DocumentDeleteResponse>();
         }
-        public static async Task<DocumentListResponse> ListDocumentAsync(DocumentListRequest request)
+        public  async Task<DocumentListResponse> ListDocumentAsync(DocumentListRequest request)
         {
+            Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/open_api/knowledge/document/list";
             var res = await url
                 .WithHeader($"Authorization", $"Bearer {Token}")
