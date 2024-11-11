@@ -18,6 +18,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using RsCode.AspNetCore.Jwt;
 
 namespace RsCode.AspNetCore
 {
@@ -67,7 +68,11 @@ namespace RsCode.AspNetCore
                 });
 
             services.AddScoped<JwtHelper>();
-      
+            var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+            services.Configure<JwtInfo>(options =>
+            {
+                configuration.GetSection("Jwt").Bind(options);
+            });
         }
     }
 }

@@ -69,12 +69,19 @@ namespace RsCode.AspNetCore
 				return;
 			}
 
+			if(context.Result is ContentResult result)
+			{
+				 
+			}else
+			{
+                var contextResult = (ObjectResult)context.Result;
+
+                //缓存:
+                string json = JsonSerializer.Serialize(contextResult.Value);
+                cache.Set(GetDistributedCacheKey(), json, DateTime.Now.AddSeconds(10));
+            }
 			
-			var contextResult =(ObjectResult) context.Result;
-			
-			//缓存:
-			string json = JsonSerializer.Serialize(contextResult.Value);
-			cache.Set(GetDistributedCacheKey(),json,DateTime.Now.AddSeconds(10));
+		
 		}
 
 		public void OnResultExecuting(ResultExecutingContext context)

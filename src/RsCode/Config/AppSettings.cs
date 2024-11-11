@@ -16,7 +16,6 @@
  */
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -31,8 +30,37 @@ namespace RsCode
     /// <summary>
     /// .netcore json config
     /// </summary>
-    public class AppSettings
+    public static class AppSettings
     {
+        static Dictionary <string, IConfiguration> Configurations; 
+        private static IConfiguration _configuration;
+
+        static AppSettings()
+        {
+            Configurations = new Dictionary<string, IConfiguration>();
+            string key = "appsettings.json";
+            LoadConfig(key);
+        }
+
+        static IConfiguration LoadConfig(string jsonFileName)
+        {
+            if(!Configurations.TryGetValue(jsonFileName,out var _config))
+            {
+                string key = jsonFileName;
+                // 加载配置文件
+                _configuration = new ConfigurationBuilder()
+                   .SetBasePath(AppContext.BaseDirectory)
+                   .AddJsonFile(key, optional: false, reloadOnChange: true)
+                   .Build();
+
+                Configurations.Add(key, _configuration);
+                return _configuration;
+            }else
+            {
+                return _config;
+            }
+        }
+
 
         static string root = AppContext.BaseDirectory;
         static string jsonFilePath = "appsettings.json";
@@ -41,8 +69,10 @@ namespace RsCode
         
         public static string Get(string key, string JsonFilePath = "appsettings.json")
         {
-                SetJsonFile(JsonFilePath);
-            return config.GetValue<string>(key);
+             var config=LoadConfig(JsonFilePath);
+            return config[key];
+            //    SetJsonFile(JsonFilePath);
+            //return config.GetValue<string>(key);
         }
         /// <summary>
         /// 
@@ -55,16 +85,7 @@ namespace RsCode
         {
            return  GetSection(Key,JsonFilePath).Get<T>(); 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="JsonFilePath"></param>
-        /// <returns></returns>
-        public static T GetAllValue<T>(string JsonFilePath = "appsettings.json")
-        {
-            return GetSection("").Get<T>();
-        }
+       
         /// <summary>
         /// 
         /// </summary>
@@ -73,23 +94,13 @@ namespace RsCode
         /// <returns></returns>
         public static IConfigurationSection GetSection(string key, string JsonFilePath = "appsettings.json")
         {
-            SetJsonFile(JsonFilePath);
+            //SetJsonFile(JsonFilePath);
+            //return config.GetSection(key);
+           
+            var config= LoadConfig(JsonFilePath);
             return config.GetSection(key);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connStrName"></param>
-        /// <returns></returns>
-        public static string GetConnectionString(string connStrName)
-        {
-            if (config == null)
-            {
-                SetJsonFile();
-            }
-
-            return config.GetValue<string>("ConnectionStrings:" + connStrName);
-        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -101,28 +112,7 @@ namespace RsCode
         {
             return GetSection(key, JsonFilePath).Get<T>();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="JsonFilePath"></param>
-        /// <returns></returns>
-        public static T GetAllSection<T>(string JsonFilePath = "appsettings.json")
-        {
-            SetJsonFile(JsonFilePath);
-            return config.Get<T>();
-        }
-
-        /// <summary>
-        /// 检查节点是否存在
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="JsonFilePath"></param>
-        /// <returns></returns>
-        public static bool Exists(string key, string JsonFilePath = "appsettings.json")
-        {
-            return GetSection(key, JsonFilePath).Exists();
-        }
+        
             
        /// <summary>
        /// 
@@ -131,7 +121,9 @@ namespace RsCode
        /// <returns></returns>
        public static JObject GetJObject(string JsonFilePath = "appsettings.json")
         {
-            SetJsonFile(JsonFilePath);
+            LoadConfig(JsonFilePath);
+            //SetJsonFile(JsonFilePath);
+            jsonFilePath = Path.Combine(root, JsonFilePath);
             using (StreamReader file = new StreamReader(jsonFilePath))
             using (JsonTextReader reader = new JsonTextReader(file))
             {
@@ -147,33 +139,25 @@ namespace RsCode
         }
 
         static Dictionary<string, IConfiguration> cache = new Dictionary<string, IConfiguration>();
-        static IConfiguration SetJsonFile(string JsonFile = "appsettings.json")
-        {
-            if(cache.ContainsKey(JsonFile))
-            {
-                return cache[JsonFile];
-            }
+        //static IConfiguration SetJsonFile(string JsonFile = "appsettings.json")
+        //{
+             
 
-            string jsonFileFullPath = Path.Combine(root, JsonFile);
-            if (!File.Exists(jsonFileFullPath))
-                throw new ArgumentException("not find " + jsonFileFullPath);
+        //    //string jsonFileFullPath = Path.Combine(root, JsonFile);
+        //    //if (!File.Exists(jsonFileFullPath))
+        //    //    throw new ArgumentException("not find " + jsonFileFullPath);
 
-            if (jsonFilePath != jsonFileFullPath)
-            {
-                config = new ConfigurationBuilder()
-                        .AddJsonFile(jsonFileFullPath, optional: true, reloadOnChange: true)
-                        .Build();
-               cache.Add(JsonFile, config);
-                jsonFilePath = jsonFileFullPath;
-            }
-            return config;
-        }
+        //    //if (jsonFilePath != jsonFileFullPath)
+        //    //{
+        //    //    config = new ConfigurationBuilder()
+        //    //            .AddJsonFile(jsonFileFullPath, optional: true, reloadOnChange: true)
+        //    //            .Build();
+        //    //   cache.Add(JsonFile, config);
+        //    //    jsonFilePath = jsonFileFullPath;
+        //    //}
+        //    //return config;
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="jsonConents"></param>
        public static void WriteJsonFile(string path, string jsonConents)
         { 
             using (FileStream fs = new FileStream(path, FileMode.Create, System.IO.FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -187,12 +171,6 @@ namespace RsCode
 
 
     }
-
-    
- 
-
-     
-
 }
 
      

@@ -44,7 +44,7 @@ namespace RsCode.AspNetCore
             var options = new JsonSerializerOptions()
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                IgnoreNullValues = true,
+                DefaultIgnoreCondition= System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
                 WriteIndented = true,
                 AllowTrailingCommas = true,
                 PropertyNameCaseInsensitive = false,

@@ -371,27 +371,12 @@
             <param name="JsonFilePath"></param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.AppSettings.GetAllValue``1(System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="JsonFilePath"></param>
-            <returns></returns>
-        </member>
         <member name="M:RsCode.AppSettings.GetSection(System.String,System.String)">
             <summary>
             
             </summary>
             <param name="key"></param>
             <param name="JsonFilePath"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.AppSettings.GetConnectionString(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="connStrName"></param>
             <returns></returns>
         </member>
         <member name="M:RsCode.AppSettings.GetSection``1(System.String,System.String)">
@@ -403,35 +388,12 @@
             <param name="JsonFilePath"></param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.AppSettings.GetAllSection``1(System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="JsonFilePath"></param>
-            <returns></returns>
-        </member>
-        <member name="M:RsCode.AppSettings.Exists(System.String,System.String)">
-            <summary>
-            检查节点是否存在
-            </summary>
-            <param name="key"></param>
-            <param name="JsonFilePath"></param>
-            <returns></returns>
-        </member>
         <member name="M:RsCode.AppSettings.GetJObject(System.String)">
             <summary>
             
             </summary>
             <param name="JsonFilePath"></param>
             <returns></returns>
-        </member>
-        <member name="M:RsCode.AppSettings.WriteJsonFile(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="path"></param>
-            <param name="jsonConents"></param>
         </member>
         <member name="T:RsCode.DI.AttributeBasedServiceCollectionExtensions">
             <summary>
@@ -1310,21 +1272,51 @@
             <param name="CharList">All char want to generate.</param>
             <param name="CodeLength">Code lenght.</param>
         </member>
-        <member name="M:RsCode.SecureHelper.AESDecrypt(System.String,System.String)">
+        <member name="M:RsCode.SecureHelper.AesEncryptorBase64(System.String,System.String)">
             <summary>
-            解密
+            AES 算法加密(ECB模式) 将明文加密，加密后进行base64编码，返回密文
             </summary>
-            <param name="decryptStr">要解密的字符串</param>
-            <param name="decryptKey">解密使用的key</param>
+            <param name="EncryptStr">明文</param>
+            <param name="Key">密钥</param>
+            <returns>加密后base64编码的密文</returns>
+        </member>
+        <member name="M:RsCode.SecureHelper.AesDecryptorBase64(System.String,System.String)">
+            <summary>
+            AES 算法解密(ECB模式) 将密文base64解码进行解密，返回明文
+            </summary>
+            <param name="DecryptStr">密文</param>
+            <param name="Key">密钥</param>
+            <returns>明文</returns>
+        </member>
+        <member name="M:RsCode.SecureHelper.AesEncryptor_Hex(System.String,System.String)">
+             <summary>
+            AES 算法加密(ECB模式) 将明文加密，加密后进行Hex编码，返回密文
+             </summary>
+             <param name="str">明文</param>
+             <param name="key">密钥</param>
+             <returns>加密后Hex编码的密文</returns>
+        </member>
+        <member name="M:RsCode.SecureHelper.AesDecryptor_Hex(System.String,System.String)">
+             <summary>
+            AES 算法解密(ECB模式) 将密文Hex解码后进行解密，返回明文
+             </summary>
+             <param name="str">密文</param>
+             <param name="key">密钥</param>
+             <returns>明文</returns>
+        </member>
+        <member name="M:RsCode.SecureHelper.ToHexString(System.Byte[])">
+            <summary>
+            byte数组Hex编码
+            </summary>
+            <param name="bytes">需要进行编码的byte[]</param>
             <returns></returns>
         </member>
-        <member name="M:RsCode.SecureHelper.AESEncrypt(System.String,System.String)">
-            <summary>
-            加密
-            </summary>
-            <param name="encryptStr">要加密的字符串</param>
-            <param name="encryptKey">加密使用的key</param>
-            <returns></returns>
+        <member name="M:RsCode.SecureHelper.StrToHexByte(System.String)">
+            <summary> 
+            字符串进行Hex解码(Hex.decodeHex())
+            </summary> 
+            <param name="hexString">需要进行解码的字符串</param> 
+            <returns></returns> 
         </member>
         <member name="M:RsCode.VerifyCodeHelper.CreateNumberVerifyCode(System.Int32)">
             <summary>
