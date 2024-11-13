@@ -36,14 +36,16 @@ namespace RsCode.AliSdk
         /// <param name="generateHumanAnimeStyleRequest"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public GenerateHumanAnimeStyleResponse GenerateHumanAnimeStyle(GenerateHumanAnimeStyleRequest generateHumanAnimeStyleRequest)
+        public async Task< GenerateHumanAnimeStyleResponse> GenerateHumanAnimeStyleAsync(GenerateHumanAnimeStyleAdvanceRequest generateHumanAnimeStyleRequest)
         {
             string msg = "";
             AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
             try
             {
+                return await client.GenerateHumanAnimeStyleAdvanceAsync(generateHumanAnimeStyleRequest, runtime);
                 // 复制代码运行请自行打印 API 的返回值
-                return client.GenerateHumanAnimeStyleWithOptions(generateHumanAnimeStyleRequest,runtime);
+                //return client.GenerateHumanAnimeStyleWithOptions(generateHumanAnimeStyleRequest,runtime);
+
             }
             catch (TeaException error)
             {

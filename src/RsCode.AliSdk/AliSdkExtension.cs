@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
+
 namespace RsCode.AliSdk
 {
     public static class AliSdkExtension
     {
         public static void AddAliSdk(this IServiceCollection services)
         {
+            services.AddHttpClient();
             services.AddScoped<ITranslate, Translate>();
             services.AddScoped<IOcr, Ocr>();
             services.AddScoped<IImageSegment, ImageSegment>();

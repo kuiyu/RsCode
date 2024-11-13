@@ -1,6 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Tea;
 using AlibabaCloud.SDK.Imageenhan20190930.Models;
+using System.Net;
+using Tea.Utils;
+using static AlibabaCloud.SDK.Imageenhan20190930.Models.AssessCompositionResponseBody;
+using static AlibabaCloud.SDK.Imageenhan20190930.Models.GenerateCartoonizedImageResponseBody;
+using AlibabaCloud.SDK.Facebody20191230.Models;
+
 namespace RsCode.AliSdk
 {
     /// <summary>
@@ -9,11 +15,13 @@ namespace RsCode.AliSdk
     /// </summary>
     public class ImageEnhance : IImageEnhance
     {
-        public ImageEnhance(IConfiguration configuration)
+        HttpClient _httpClient;
+        public ImageEnhance(IConfiguration configuration, HttpClient httpClient)
         {
             string accessKeyId = configuration.GetSection("aliyun:accessKeyId").Value;
             string accessKeySecret = configuration.GetSection("aliyun:accessKeySecret").Value;
             client = CreateClient(accessKeyId, accessKeySecret);
+            _httpClient = httpClient;
         }
         AlibabaCloud.SDK.Imageenhan20190930.Client client { get; set; }
         /**
@@ -37,7 +45,14 @@ namespace RsCode.AliSdk
             return new AlibabaCloud.SDK.Imageenhan20190930.Client(config);
         }
 
-
+       
+        void WriteLog(string s)
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "aliyun.txt");
+            List<string> content = new List<string>();
+            content.Add($"{DateTime.Now.ToString()} {s}");
+            File.AppendAllLines(path, content);
+        }
         /// <summary>
         /// 图像隐形文字水印
         /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindCharacterWatermark?params={}"/>
@@ -71,6 +86,39 @@ namespace RsCode.AliSdk
             throw new Exception(msg);
         }
         /// <summary>
+        /// 图像隐形文字水印
+        /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindCharacterWatermark?params={}"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ImageBlindCharacterWatermarkResponse> ImageBlindCharacterWatermarkAsync(ImageBlindCharacterWatermarkAdvanceRequest request)
+        {
+            string msg = "";
+            AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
+            try
+            {
+                // 复制代码运行请自行打印 API 的返回值
+                return await client.ImageBlindCharacterWatermarkAdvanceAsync(request, runtime);
+            }
+            catch (TeaException error)
+            {
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            catch (Exception _error)
+            {
+                TeaException error = new TeaException(new Dictionary<string, object>
+                {
+                    { "message", _error.Message }
+                });
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            throw new Exception(msg);
+        }
+
+        /// <summary>
         /// 图像隐形图片水印
         /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindPicWatermark?params={}"/>
         /// </summary>
@@ -103,6 +151,38 @@ namespace RsCode.AliSdk
             throw new Exception(msg);
         }
 
+        /// <summary>
+        /// 图像隐形图片水印
+        /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindPicWatermark?params={}"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ImageBlindPicWatermarkResponse> ImageBlindPicWatermarkAsync(ImageBlindPicWatermarkAdvanceRequest request)
+        {
+            string msg = "";
+            AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
+            try
+            {
+                // 复制代码运行请自行打印 API 的返回值
+                return await client.ImageBlindPicWatermarkAdvanceAsync(request, runtime);
+            }
+            catch (TeaException error)
+            {
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            catch (Exception _error)
+            {
+                TeaException error = new TeaException(new Dictionary<string, object>
+                {
+                    { "message", _error.Message }
+                });
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            throw new Exception(msg);
+        }
 
 
         /// <summary>
@@ -670,14 +750,14 @@ namespace RsCode.AliSdk
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public GenerateCartoonizedImageResponse GenerateCartoonizedImage(GenerateCartoonizedImageRequest request)
+        public GenerateCartoonizedImageResponse GenerateCartoonizedImage(GenerateCartoonizedImageAdvanceRequest request)
         {
             var msg = "";
             AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
             try
             {
-                // 复制代码运行请自行打印 API 的返回值
-                return client.GenerateCartoonizedImageWithOptions(request, runtime);
+                // 复制代码运行请自行打印 API 的返回值 
+                return client.GenerateCartoonizedImageAdvance(request, runtime);
             }
             catch (TeaException error)
             {

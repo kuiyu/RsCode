@@ -1,5 +1,6 @@
 ﻿
 using AlibabaCloud.SDK.Imageenhan20190930.Models;
+using static AlibabaCloud.SDK.Imageenhan20190930.Models.AssessCompositionResponseBody;
 
 namespace RsCode.AliSdk
 {
@@ -8,6 +9,7 @@ namespace RsCode.AliSdk
     /// </summary>
     public interface IImageEnhance
     {
+       
         /// <summary>
         /// 图像构图美学评分
         /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/AssessComposition?params={}"/>
@@ -87,12 +89,26 @@ namespace RsCode.AliSdk
         /// <returns></returns>
         ImageBlindCharacterWatermarkResponse ImageBlindCharacterWatermark(ImageBlindCharacterWatermarkRequest request);
         /// <summary>
+        /// 图像隐形文字水印
+        /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindCharacterWatermark?params={}"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Task<ImageBlindCharacterWatermarkResponse> ImageBlindCharacterWatermarkAsync(ImageBlindCharacterWatermarkAdvanceRequest request);
+        /// <summary>
         /// 图像隐形图片水印
         /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindPicWatermark?params={}"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         ImageBlindPicWatermarkResponse ImageBlindPicWatermark(ImageBlindPicWatermarkRequest request);
+        /// <summary>
+        /// 图像隐形图片水印
+        /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImageBlindPicWatermark?params={}"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Task<ImageBlindPicWatermarkResponse> ImageBlindPicWatermarkAsync(ImageBlindPicWatermarkAdvanceRequest request);
         /// <summary>
         /// 照图修图
         /// <see cref="https://next.api.aliyun.com/api/imageenhan/2019-09-30/ImitatePhotoStyle?params={}"/>
@@ -149,6 +165,6 @@ namespace RsCode.AliSdk
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        GenerateCartoonizedImageResponse GenerateCartoonizedImage(GenerateCartoonizedImageRequest request);
+        GenerateCartoonizedImageResponse GenerateCartoonizedImage(GenerateCartoonizedImageAdvanceRequest request);
     }
 }
