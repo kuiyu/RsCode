@@ -72,7 +72,7 @@ namespace System.Text.Json
 
 
             //动态赋值
-            jObject.Tencent.WeChat = JObject.FromObject(obj);
+            jObject = JObject.FromObject(obj);
             //序列化原内容
             var jsonContent = JsonConvert.SerializeObject(jObject, Formatting.Indented);
             //保存

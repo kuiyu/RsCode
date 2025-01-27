@@ -1,6 +1,7 @@
 ﻿using AlibabaCloud.SDK.Videoenhan20200320.Models;
 using Microsoft.Extensions.Configuration;
 using Tea;
+using static AlibabaCloud.SDK.Videoenhan20200320.Models.EraseVideoLogoResponseBody;
 
 namespace RsCode.AliSdk
 {
@@ -131,7 +132,7 @@ namespace RsCode.AliSdk
                      JobId = jobId
                 };
                 // 复制代码运行请自行打印 API 的返回值
-               return client.GetAsyncJobResultWithOptions(request, runtime);
+               return client.GetAsyncJobResultWithOptions(request,runtime);
             }
             catch (TeaException error)
             {
@@ -148,6 +149,67 @@ namespace RsCode.AliSdk
                 msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
             }
             throw new Exception(msg);
+        }
+        public async Task<GetAsyncJobResultResponse> GetJobResultAsync(string jobId)
+        {
+            string msg = "";
+            AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
+            try
+            {
+                AlibabaCloud.SDK.Videoenhan20200320.Models.GetAsyncJobResultRequest request = new GetAsyncJobResultRequest()
+                {
+                    JobId = jobId
+                };
+                // 复制代码运行请自行打印 API 的返回值
+                return await client.GetAsyncJobResultAsync(request);
+            }
+            catch (TeaException error)
+            {
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            catch (Exception _error)
+            {
+                TeaException error = new TeaException(new Dictionary<string, object>
+                {
+                    { "message", _error.Message }
+                });
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            throw new Exception(msg);
+        }
+
+        public async Task<EraseVideoLogoResponseBody> EraseLogoAsync(string videoUrl)
+        {
+             
+            AlibabaCloud.SDK.Videoenhan20200320.Models.EraseVideoLogoRequest eraseVideoLogoRequest = new AlibabaCloud.SDK.Videoenhan20200320.Models.EraseVideoLogoRequest
+            {
+                VideoUrl =videoUrl
+            };
+            AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
+            try
+            {
+                AlibabaCloud.SDK.Videoenhan20200320.Models.EraseVideoLogoResponse eraseVideoLogoResponse = await client.EraseVideoLogoAsync(eraseVideoLogoRequest);
+                // 获取单个字段
+                //Console.WriteLine(AlibabaCloud.TeaUtil.Common.ToJSONString(eraseVideoLogoResponse.Body.Data));
+                return eraseVideoLogoResponse.Body;
+            }
+            catch (TeaException error)
+            {
+                Console.WriteLine(error.Message);
+                throw new Exception(error.Message);
+            }
+            catch (Exception _error)
+            {
+                TeaException error = new TeaException(new Dictionary<string, object>
+            {
+              { "message", _error.Message }
+            });
+                // 获取整体报错信息
+
+                throw new Exception(error.Message);
+            }
         }
 
         /**

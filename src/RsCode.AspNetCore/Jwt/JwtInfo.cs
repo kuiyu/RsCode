@@ -30,10 +30,17 @@ namespace RsCode.AspNetCore.Jwt
         /// <summary>
         /// 安全码
         /// </summary>
-        public string SecurityKey { get; set; }
+        public string SecurityKey { get; set; } = "";
         /// <summary>
         /// accesstoken过期时间，以分钟为单位
         /// </summary>
         public int Expire { get; set; }
+
+        public string PublicKey { get; set; } = "";
+        public string PublicKeyPath { get; set; } = "";
+
+        public string PrivateKey { get; set; } = "";
+
+        public string PrivateKeyPath { get; set; } = "";
     }
 }

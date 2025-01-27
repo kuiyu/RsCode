@@ -18,5 +18,7 @@ namespace RsCode.AliSdk
         /// </param>
         /// <returns></returns>
         Task<GenerateHumanAnimeStyleResponse> GenerateHumanAnimeStyleAsync(GenerateHumanAnimeStyleAdvanceRequest generateHumanAnimeStyleRequest);
+
+        GenerateHumanAnimeStyleResponse GenerateHumanAnimeStyle(GenerateHumanAnimeStyleRequest generateHumanAnimeStyleRequest);
     }
 }

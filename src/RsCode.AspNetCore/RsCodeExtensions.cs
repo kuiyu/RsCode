@@ -28,14 +28,15 @@ namespace RsCode.AspNetCore
         {
             services.AddLogging();
        
-                services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies().First());
+                services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+         
                 //         //添加内存缓存
                 services.AddMemoryCaches();
             services.AddSingleton<CacheHelper>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.TryAddTransient<IdGenerate>();
+            services.TryAddSingleton<IdGenerate>();
             //解决中文被编码
             services.TryAddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 

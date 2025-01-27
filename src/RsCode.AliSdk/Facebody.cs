@@ -63,6 +63,34 @@ namespace RsCode.AliSdk
             }
             throw new Exception(msg);
         }
-    
+
+        public  GenerateHumanAnimeStyleResponse GenerateHumanAnimeStyle(GenerateHumanAnimeStyleRequest generateHumanAnimeStyleRequest)
+        {
+            string msg = "";
+            AlibabaCloud.TeaUtil.Models.RuntimeOptions runtime = new AlibabaCloud.TeaUtil.Models.RuntimeOptions();
+            try
+            {
+                return  client.GenerateHumanAnimeStyle(generateHumanAnimeStyleRequest);
+                // 复制代码运行请自行打印 API 的返回值
+                //return client.GenerateHumanAnimeStyleWithOptions(generateHumanAnimeStyleRequest,runtime);
+
+            }
+            catch (TeaException error)
+            {
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            catch (Exception _error)
+            {
+                TeaException error = new TeaException(new Dictionary<string, object>
+                {
+                    { "message", _error.Message }
+                });
+                // 如有需要，请打印 error
+                msg = AlibabaCloud.TeaUtil.Common.AssertAsString(error.Message);
+            }
+            throw new Exception(msg);
+        }
+
     }
 }

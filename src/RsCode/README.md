@@ -37,13 +37,13 @@ RsCode是快速开发.net应用的工具库,其丰富的功能和易用性，能
 - 进入应用的项目文件夹，安装 Nuget 包引用
 
   ```bash
-  $ dotnet add package RsCode --version 2.2.0
+  $ dotnet add package RsCode --version 2.2.3
   ```
 
 - asp.net core项目引用:
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 2.2.0
+  Install-Package RsCode.AspNetCore -Version 2.2.3
   ```
 
   > 推荐使用 Visual Studio 2022 开发

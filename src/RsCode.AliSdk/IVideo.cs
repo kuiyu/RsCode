@@ -1,9 +1,5 @@
 ﻿using AlibabaCloud.SDK.Videoenhan20200320.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static AlibabaCloud.SDK.Videoenhan20200320.Models.EraseVideoLogoResponseBody;
 
 namespace RsCode.AliSdk
 {
@@ -28,5 +24,13 @@ namespace RsCode.AliSdk
         /// <returns></returns>
         MergeVideoModelFaceResponse MergeVideoModelFace(MergeVideoModelFaceRequest request);
         GetAsyncJobResultResponse GetJobResult(string jobId);
+
+        Task<GetAsyncJobResultResponse> GetJobResultAsync(string jobId);
+        /// <summary>
+        /// 移除视频logo
+        /// </summary>
+        /// <param name="videoUrl"></param>
+        /// <returns></returns>
+        Task<EraseVideoLogoResponseBody> EraseLogoAsync(string videoUrl);
     }
 }
