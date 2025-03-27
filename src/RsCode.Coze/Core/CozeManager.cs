@@ -35,10 +35,11 @@ namespace RsCode.Coze
             cache=memoryCache;
            
         }
-        public void RefreshToken(string appId)
+        public string RefreshToken(string appId)
         {
             var token = RefreshTokenAsync(appId).Result;
             CallContext<string>.SetData("cozeToken", token);
+            return token;
         }
         public async Task<string> RefreshTokenAsync(string appId)
         {
@@ -54,7 +55,15 @@ namespace RsCode.Coze
         
         public  async Task<string> GetAccessTokenAsync(string appId)
         {
-            var config=CozeConfigs.FirstOrDefault(x => x.AppId == appId);
+            CozeAppConfig config = null;
+            if(!string.IsNullOrWhiteSpace(appId))
+            {
+                config = CozeConfigs.FirstOrDefault(x => x.AppId == appId);
+            }else
+            {
+                config = CozeConfigs.FirstOrDefault();
+            }
+             
             if(config == null)
             {
                 throw new Exception($"未找到节点 ByteDance:Coze AppId={appId}的配置");

@@ -357,6 +357,13 @@
             <param name="JsonFilePath"></param>
             <returns></returns>
         </member>
+        <member name="M:RsCode.Config.AppConfig.SaveConfig(System.String,System.String)">
+            <summary>
+            winform app.config修改
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
         <member name="T:RsCode.AppSettings">
             <summary>
             .netcore json config

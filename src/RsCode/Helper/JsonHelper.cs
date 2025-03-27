@@ -82,6 +82,11 @@ namespace System.Text.Json
                 sw.WriteLine(jsonContent);
             }
         }
+        public static void Save(string filePath, JObject json)
+        {
+            var newJson = json.ToString(Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(filePath, newJson);
+        }
         /// <summary>
         /// 获取指key的值
         /// </summary>

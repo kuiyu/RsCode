@@ -30,6 +30,7 @@ namespace RsCode.AspNetCore
         /// <param name="services"></param>
         public static  void AddJwt(this IServiceCollection services)
         {
+            JwtHelper.IsRsa = false;
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -84,6 +85,7 @@ namespace RsCode.AspNetCore
         /// <param name="services"></param>
         public static void AddJwtBearer(this IServiceCollection services)
         {
+            JwtHelper.IsRsa = true;
             var  publicKey = JwtHelper.GetPublicKey();
 
             services.AddAuthentication(options =>
@@ -109,7 +111,7 @@ namespace RsCode.AspNetCore
                         ValidIssuer = jwt.Issuer,//有效的发行者 
                         IssuerSigningKeys =new List<SecurityKey> { publicKey },
                         ClockSkew = TimeSpan.FromMinutes(jwt.Expire),
-                        RequireSignedTokens = true,
+                        RequireSignedTokens = false,
                         // 忽略 kid 检查
                         ValidateTokenReplay = false,
                         ValidateActor = false,

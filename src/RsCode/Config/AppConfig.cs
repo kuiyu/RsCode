@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Text;
 
@@ -145,7 +146,26 @@ namespace RsCode.Config
                 }
             }
         }
+        /// <summary>
+        /// winform app.config修改
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void SaveConfig(string key,string value)
+        {
+            try
+            {
+                Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                config.AppSettings.Settings[key].Value = value;
+                config.Save(ConfigurationSaveMode.Modified);
+                System.Configuration.ConfigurationManager.RefreshSection("appSettings");
+            }
+            catch (Exception e)
+            {
+                LogHelper.Info(e.Message);
+            }
 
+        }
     }
 
 

@@ -7,13 +7,8 @@
    https://github.com/kuiyu/RsCode.git
  */
 using Flurl.Http;
-using Microsoft.Extensions.Options;
-using RsCode.Coze.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace RsCode.Coze
 {
@@ -23,6 +18,11 @@ namespace RsCode.Coze
     /// </summary>
     public class ChatService
     {
+        HttpClient _httpClient;
+        public ChatService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
         string Token = CallContext<string>.GetData("cozeToken");
         /// <summary>
         /// 调用此接口发起一次对话，支持添加上下文和流式响应
@@ -34,10 +34,23 @@ namespace RsCode.Coze
             Token = CallContext<string>.GetData("cozeToken");
             string url = $"https://api.coze.cn/v3/chat?conversation_id={conversationId}";
             var res = await url
-                .WithHeader($"Authorization", $"Bearer {Token}")
-                .PostJsonAsync(request);
-            var s =await res.GetStringAsync();
+                               .WithHeader($"Authorization", $"Bearer {Token}")
+                               .PostJsonAsync(request);
+            var s = await res.GetStringAsync();
             return await res.GetJsonAsync<CozeResult<ChatObject>>();
+        }
+
+        public async Task<HttpResponseMessage> SendByStreamAsync(string conversationId, ChatSendRequest request)
+        {
+            Token = CallContext<string>.GetData("cozeToken");
+            string url = $"https://api.coze.cn/v3/chat?conversation_id={conversationId}";
+            var httpContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var res = await url
+                               .WithHeader($"Authorization", $"Bearer {Token}")
+                               .PostAsync(httpContent);
+            var response=res.ResponseMessage;
+            return response;
+            
         }
         /// <summary>
         /// 查询对话详情
@@ -88,5 +101,27 @@ namespace RsCode.Coze
             
             return await res.GetJsonAsync<object>();
         }
+
+        public async IAsyncEnumerable<ChatCompletionCreateResponse> CreateCompletionAsStream(string url,ChatCompletionCreateRequest chatCompletionCreateRequest, string? modelId = null, bool justDataMode = true,
+       [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            // Mark the request as streaming
+            chatCompletionCreateRequest.Stream = true;
+
+            // Send the request to the CompletionCreate endpoint
+            //chatCompletionCreateRequest.ProcessModelId(modelId, _defaultModelId);
+
+            using var response = _httpClient.PostAsStreamAsync(url, chatCompletionCreateRequest, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                yield return await response.HandleResponseContent<ChatCompletionCreateResponse>(cancellationToken);
+                yield break;
+            }
+
+            await foreach (var baseResponse in response.AsStream<ChatCompletionCreateResponse>(cancellationToken: cancellationToken)) yield return baseResponse;
+        }
+
+          
     }
 }

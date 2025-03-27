@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using OpenAI.Chat;
 using RsCode.Coze.Core;
 
 namespace RsCode.Coze
@@ -14,6 +14,7 @@ namespace RsCode.Coze
             services.Configure<List<CozeAppConfig>>(options =>Configuration.GetSection("ByteDance:Coze").Bind(options));
 
             services.AddMemoryCache();
+            services.AddSingleton<CozeHelper>();
             services.AddSingleton<CozeManager>();
             services.AddSingleton<BotService>();
             services.AddSingleton<ChatService>();
@@ -21,7 +22,7 @@ namespace RsCode.Coze
             services.AddSingleton<FilesService>();
             services.AddSingleton<KnowledgeService>();
             services.AddSingleton<MessageService>();
-           
+
         }
     }
 

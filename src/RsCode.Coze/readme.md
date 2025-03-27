@@ -44,5 +44,3 @@ public async Task<object> CreateAsync(ChatCreateDto dto)
     enterMessageObject.ContentType = "text";
     return await conversationService.CreateAsync(new EnterMessageObject[] { enterMessageObject });
 }
-
-``

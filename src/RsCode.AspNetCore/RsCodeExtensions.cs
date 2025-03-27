@@ -29,7 +29,9 @@ namespace RsCode.AspNetCore
             services.AddLogging();
        
                 services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-         
+
+            
+        
                 //         //添加内存缓存
                 services.AddMemoryCaches();
             services.AddSingleton<CacheHelper>();

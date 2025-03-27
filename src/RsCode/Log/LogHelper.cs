@@ -18,6 +18,7 @@
 using log4net;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -28,10 +29,40 @@ namespace RsCode
     /// </summary>
     public static partial class LogHelper
     {
-       
 
+        public static void Info(string message)
+        {
+            try
+            {
+                message = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + message + "\r\n";
+                WriteFile(message);
+            }
+            catch (Exception e)
+            {
+                WriteFile(e.Message);
+            }
 
-       public static void WriteLog(Type type,Exception ex)
+        }
+        static void WriteFile(string s)
+        {
+            try
+            {
+                var dir = System.IO.Path.Combine(AppContext.BaseDirectory, "logs");
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                var file = Path.Combine(dir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                File.AppendAllText(file, s);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+
+        public static void WriteLog(Type type,Exception ex)
         {
             WriteLog(type, ex.Message, Log4NetLevel.Error, ex);
         } 

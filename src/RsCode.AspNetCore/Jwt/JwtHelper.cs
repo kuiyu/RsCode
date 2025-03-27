@@ -26,6 +26,7 @@ namespace RsCode.AspNetCore
 {
     public class JwtHelper
     {
+        public static bool IsRsa = false;
        static int RefreshTokenExpire { get; set; }= 60 * 24 * 366; //366
          
         public static JwtInfo GetJwtInfo()
@@ -69,18 +70,33 @@ namespace RsCode.AspNetCore
         /// <param name="claims"></param>
         /// <param name="expire">过期时间(以分钟为单位)</param>
         /// <returns></returns>
-        public  AccessTokenInfo CreateAccessToken(List<Claim>claims,int expire=-1)
+        public static AccessTokenInfo CreateAccessToken(List<Claim>claims,int expire=-1)
         {
             if (expire == -1)
                 expire =  60*24*360;
-          
-            var token= CreateToken(claims, expire);
+
+            string token = ""; string refreshToken = "";
+            if (JwtHelper.IsRsa)
+            {
+                token=CreateJwtToken(claims, expire);
+            }
+            else
+            {
+                token= CreateToken(claims, expire);
+            }
+            
 
             //refreshtoken
             claims = new List<Claim>();
-           
-            var refreshToken = CreateToken(claims, RefreshTokenExpire);
-
+            if (JwtHelper.IsRsa)
+            {
+                refreshToken = CreateJwtToken(claims, RefreshTokenExpire);
+            }
+            else
+            {
+                refreshToken = CreateToken(claims, RefreshTokenExpire);
+            }
+             
             AccessTokenInfo tokenInfo = new AccessTokenInfo();
             tokenInfo.ExpiresIn = expire*60;
             tokenInfo.AccessToken = token;
@@ -104,28 +120,35 @@ namespace RsCode.AspNetCore
         /// <param name="minutes"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public virtual  string CreateToken(List<Claim> claims, int minutes)
+        public static  string CreateToken(List<Claim> claims, int minutes)
         {
-            var jwt = GetJwtInfo();
-            string privateKey =jwt.SecurityKey;//安全码
-            string issuer =jwt.Issuer;//发行者
-            string audience =jwt.Audience;//接收者 
+            if(JwtHelper.IsRsa)
+            {
+                return CreateJwtToken(claims, minutes);
+            }else
+            {
+                var jwt = GetJwtInfo();
+                string privateKey = jwt.SecurityKey;//安全码
+                string issuer = jwt.Issuer;//发行者
+                string audience = jwt.Audience;//接收者 
 
-            if(privateKey.Length<32)
-                throw new ArgumentException("SecurityKey长度最少32位");
+                if (privateKey.Length < 32)
+                    throw new ArgumentException("SecurityKey长度最少32位");
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddMinutes(minutes)).ToUnixTimeSeconds()}"));
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(privateKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(minutes),
-                signingCredentials: creds);
+                claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"));
+                claims.Add(new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddMinutes(minutes)).ToUnixTimeSeconds()}"));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(privateKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(minutes),
+                    signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+                
         } 
         
         public   IEnumerable<Claim>GetClaims(string accessToken)
@@ -164,16 +187,16 @@ namespace RsCode.AspNetCore
         /// <param name="minutes"></param>
         /// <param name="fromPrivateKeyFile"></param>
         /// <returns></returns>
-        public virtual string CreateJwtToken(List<Claim> claims, int minutes,bool fromPrivateKeyFile=false)
+        public static  string CreateJwtToken(List<Claim> claims, int minutes,bool fromPrivateKeyFile=false)
         {
+            string ret = "";
             var jwt = GetJwtInfo();
             string pemPrivateKey = GetPrivateKey(fromPrivateKeyFile);
             string issuer = jwt.Issuer;//发行者
             string audience = jwt.Audience;//接收者 
 
             //用PEM私钥格式创建RSA密钥
-            using(var rsa= RSA.Create())
-            {
+            var rsa = RSA.Create();
                 rsa.ImportFromPem(pemPrivateKey);
                 var privateKey = new RsaSecurityKey(rsa);
                 //创建jwt 令牌
@@ -188,8 +211,10 @@ namespace RsCode.AspNetCore
                 };
 
                 var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
-            }
+                ret= tokenHandler.WriteToken(token);
+           // rsa.Dispose();
+            
+            return ret;
         }
 
         
