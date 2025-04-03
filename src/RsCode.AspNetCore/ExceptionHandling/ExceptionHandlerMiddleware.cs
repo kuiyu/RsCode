@@ -63,7 +63,8 @@ namespace RsCode.AspNetCore
             bool isAjax = IsAjax(context.Request);
 
             bool api = context.Request.Path.Value.ToLower().StartsWith("/api/");
-            if (api || isAjax)
+            context.Items.TryGetValue("IgnoreOutFormatter", out var IgnoreOutFormatter);
+            if (IgnoreOutFormatter==null&&( api || isAjax))
             {
                 await WriteExceptionAsync(context, exception).ConfigureAwait(false);
             }

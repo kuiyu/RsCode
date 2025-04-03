@@ -27,16 +27,15 @@ namespace RsCode.AspNetCore
         public static void AddRsCode(this IServiceCollection services)
         {
             services.AddLogging();
-       
-                services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
             
         
                 //         //添加内存缓存
-                services.AddMemoryCaches();
+            services.AddMemoryCaches();
             services.AddSingleton<CacheHelper>();
 
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpContextAccessor();
 
             services.TryAddSingleton<IdGenerate>();
             //解决中文被编码

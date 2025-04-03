@@ -65,8 +65,9 @@ namespace RsCode.AspNetCore
             options.WriteIndented = true;
             options.Converters.Add(new DateTimeConverter(_dateFormat));
 
+            context.HttpContext.Items.TryGetValue("IgnoreOutFormatter",out var IgnoreOutFormatter);
             bool api = context.HttpContext.Request.Path.Value.ToLower().StartsWith("/api/");
-            if(api)
+            if(api&&IgnoreOutFormatter==null)
             {
                 var resultInfo = new ReturnInfo()
                 {
