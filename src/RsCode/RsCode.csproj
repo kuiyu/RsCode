@@ -4,14 +4,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>2.3.1.0</AssemblyVersion>
-    <FileVersion>2.3.1.0</FileVersion>
+    <AssemblyVersion>2.3.2.0</AssemblyVersion>
+    <FileVersion>2.3.2.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>快速高效的开发.net就用RsCode,文档访问https://rscode.cn</Description>
     <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
     <PackageIcon>rscode64_64.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.3.1</Version>
+    <Version>2.3.2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -47,17 +47,16 @@
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.23" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PetaPoco.Compiled" Version="6.0.532" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
     <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
