@@ -1,30 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0;</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Library</OutputType>
 	  <IsPackable>true</IsPackable>
 
-	  <Version>2.3.2</Version>
+	  <Version>2.3.3</Version>
 	  <Authors>Tony</Authors>
 	  <Company>河南软商网络科技有限公司</Company>
-	  <PackageIcon>rscode64_64.png</PackageIcon>
+	  <PackageIcon>logo128-128.png</PackageIcon>
 	  <Description>https://rscode.cn</Description>
 	  <Copyright>河南软商网络科技有限公司</Copyright>
 	  <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
 	  <PackageReleaseNotes>软商网络asp.net core项目开发工具包</PackageReleaseNotes>
 	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
-	  <AssemblyVersion>2.3.2.0</AssemblyVersion>
-	  <FileVersion>2.3.2.0</FileVersion>
+	  <AssemblyVersion>2.3.3.0</AssemblyVersion>
+	  <FileVersion>2.3.3.0</FileVersion>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <RepositoryUrl>https://github.com/kuiyu/RsCode.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\logo128-128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -36,14 +40,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="README.md">
+    <ProjectReference Include="..\RsCode\RsCode.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Update="rscode64_64.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+
   </ItemGroup>
 
 </Project>

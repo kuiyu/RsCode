@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0;</TargetFrameworks>
     <Company>河南软商网络科技有限公司</Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
-    <AssemblyVersion>2.3.2.0</AssemblyVersion>
-    <FileVersion>2.3.2.0</FileVersion>
+    <AssemblyVersion>2.3.3.0</AssemblyVersion>
+    <FileVersion>2.3.3.0</FileVersion>
     <Authors>Tony</Authors>
     <Description>快速高效的开发.net就用RsCode,文档访问https://rscode.cn</Description>
     <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
-    <PackageIcon>rscode64_64.png</PackageIcon>
+    <PackageIcon>logo128-128.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.3.2</Version>
+    <Version>2.3.3</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -55,11 +55,17 @@
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.4" />
     <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+	   
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\logo128-128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -71,7 +77,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="README.md">
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

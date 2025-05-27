@@ -30,12 +30,12 @@ namespace RsCode
     public static partial class LogHelper
     {
 
-        public static void Info(string message)
+        public static void Info(string message, string tag = "")
         {
             try
             {
                 message = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + message + "\r\n";
-                WriteFile(message);
+                WriteFile(message,tag);
             }
             catch (Exception e)
             {
@@ -43,7 +43,11 @@ namespace RsCode
             }
 
         }
-        static void WriteFile(string s)
+        public static void Error(Exception ex,string tag="")
+        {
+            WriteFile(ex.Message + "\r\n" + ex.StackTrace,tag);
+        }
+        static void WriteFile(string s, string tag = "")
         {
             try
             {
@@ -53,6 +57,10 @@ namespace RsCode
                     Directory.CreateDirectory(dir);
                 }
                 var file = Path.Combine(dir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    file = Path.Combine(dir, tag + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                }
                 File.AppendAllText(file, s);
             }
             catch (Exception e)

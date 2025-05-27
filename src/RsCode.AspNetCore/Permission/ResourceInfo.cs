@@ -15,6 +15,7 @@
 
  */
 
+using FreeSql.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,11 +25,10 @@ namespace RsCode.AspNetCore.Permission
     /// <summary>
     /// 资源
     /// </summary>
-    [PetaPoco.TableName("ResourceInfo")]
-    [PetaPoco.PrimaryKey("ResourceId")]
+    [Table(Name ="ResourceInfo")]
     public partial class ResourceInfo
     {
-
+        [Column(IsPrimary = true,IsIdentity =true)]
         public int ResourceId { get; set; }
         /// <summary>
         /// 资源名称
