@@ -7,18 +7,18 @@
     <OutputType>Library</OutputType>
 	  <IsPackable>true</IsPackable>
 
-	  <Version>2.3.3</Version>
+	  <Version>2.3.5</Version>
 	  <Authors>Tony</Authors>
-	  <Company>河南软商网络科技有限公司</Company>
+	  <Company>runsoft</Company>
 	  <PackageIcon>logo128-128.png</PackageIcon>
 	  <Description>https://rscode.cn</Description>
-	  <Copyright>河南软商网络科技有限公司</Copyright>
+	  <Copyright>79599287@qq.com</Copyright>
 	  <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
 	  <PackageReleaseNotes>软商网络asp.net core项目开发工具包</PackageReleaseNotes>
 	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
-	  <AssemblyVersion>2.3.3.0</AssemblyVersion>
-	  <FileVersion>2.3.3.0</FileVersion>
+	  <AssemblyVersion>2.3.5.0</AssemblyVersion>
+	  <FileVersion>2.3.5.0</FileVersion>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <RepositoryUrl>https://github.com/kuiyu/RsCode.git</RepositoryUrl>
   </PropertyGroup>
@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspectCore.Abstractions" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
   </ItemGroup>
@@ -45,6 +46,10 @@
       <PackagePath>\</PackagePath>
     </None>
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RsCode\RsCode.csproj" />
   </ItemGroup>
 
 </Project>

@@ -40,25 +40,56 @@
         },
         open(status, plugin) {
             var pluginName=plugin.name
-            
-            if (status == 1) {
-                axios.get("/plugin/enable?pluginName=" + pluginName)
-                this.list= this.list.map((item, index) => {
-                    if (item.name == pluginName) {
-                       item.status=1
-                    }
-                    return item;
-                })
+
+            //更新
+            if (status == 'update') {
+                this.updatePlugin(pluginName);
             }
-            if (status == 0) {
-                axios.get("/plugin/disable?pluginName=" + pluginName)
-                this.list = this.list.map((item, index) => {
-                    if (item.name == pluginName) {
-                        item.status = 0
-                    }
-                    return item;
-                })
+            //启用
+            if (status == 'enable') {
+               this. enablePlugin(pluginName);
             }
+            //禁用
+            if (status == 'disable') {
+                this.disablePlugin(pluginName)
+            }
+        },
+        updatePlugin(pluginName) {
+            axios.get("/plugin/update?pluginName=" + pluginName)
+            this.list = this.list.map((item, index) => {
+                if (item.name == pluginName) {
+                    item.status =1
+                }
+                return item;
+            })
+        },
+        removePlugin(pluginName) {
+            axios.get("/plugin/remove?pluginName=" + pluginName)
+            this.list = this.list.map((item, index) => {
+                if (item.name == pluginName) {
+                    item.status = 0
+                }
+                return item;
+            })
+        },
+        disablePlugin(pluginName) {
+            axios.get("/plugin/disable?pluginName=" + pluginName)
+            this.list = this.list.map((item, index) => {
+                if (item.name == pluginName) {
+                    item.status = 0
+                }
+                return item;
+            })
+        },
+        enablePlugin(pluginName) {
+            axios.get("/plugin/enable?pluginName=" + pluginName)
+            this.list = this.list.map((item, index) => {
+                if (item.name == pluginName) {
+                    item.status = 1
+                }
+                return item;
+            })
+           
         }
     },
     mounted() {

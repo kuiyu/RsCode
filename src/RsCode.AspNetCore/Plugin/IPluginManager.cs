@@ -26,6 +26,8 @@ namespace RsCode.AspNetCore
     /// </summary>
     public interface IPluginManager
     {
+        void AddPlugin(string pluginPath);
+        void RemovePlugin(string pluginName);
         /// <summary>
         /// 获取所有插件信息
         /// </summary>

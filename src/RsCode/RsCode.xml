@@ -785,7 +785,7 @@
             
             </summary>
         </member>
-        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor">
+        <member name="M:RsCode.Domain.Uow.ApplicationDbContext.#ctor(IFreeSql,System.IServiceProvider)">
             <summary>
             数据库上下文
             </summary>

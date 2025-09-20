@@ -7,14 +7,24 @@
     <OutputType>Library</OutputType>
 	  <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\RsCode.AspNetCore\RsCode.AspNetCore.csproj" />
-  </ItemGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<OutputPath>..\..\WebApplicationDemo\Plugins\Plugin.Discount</OutputPath>
 		<OutDir>$(OutputPath)</OutDir>
-	</PropertyGroup>	
-
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\RsCode.AspNetCore\RsCode.AspNetCore.csproj" >
+			<!-- 设置不复制引用 -->
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\src\RsCode\RsCode.csproj" >
+			<!-- 设置不复制引用 -->
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+  </ItemGroup>
+	<Target Name="RemoveUnwantedDlls" AfterTargets="Build">
+		<Delete Files="$(OutputPath)\RsCode.dll" Condition="Exists('$(OutputPath)\RsCode.dll')" />
+		<Delete Files="$(OutputPath)\RsCode.AspNetCore.dll" Condition="Exists('$(OutputPath)\RsCode.AspNetCore.dll')" />
+	</Target>
 </Project>

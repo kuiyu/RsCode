@@ -17,7 +17,6 @@
 
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using RsCode.AspNetCore.Plugin;
 using System.Reflection;
 using System.Text.Json;
@@ -35,7 +34,7 @@ namespace RsCode.AspNetCore
         /// Loaded plugin list as dictionary key:plugin assembly full path, value:plugin Setup.cs
         /// </summary>
         internal static Dictionary<string, IPluginSetup> PluginSetup => _Plugins ?? (_Plugins = new Dictionary<string, IPluginSetup>());
-        static Dictionary<string, PluginLoadContext> PluginAssemblyContext = new Dictionary<string, PluginLoadContext>();
+        public static Dictionary<string, PluginLoadContext> PluginAssemblyContext = new Dictionary<string, PluginLoadContext>();
 
         public static string PluginsRootFolder = Path.Combine(AppContext.BaseDirectory, "Plugins");
         /// <summary>
@@ -46,6 +45,7 @@ namespace RsCode.AspNetCore
         /// <param name="pluginsRootFolder">Plugins root path</param>
         public static void AddPlugins(this IServiceCollection services,string[] sharedAssemblyNames=null, string pluginsRootFolder = "")
         {
+
             services.AddSingleton<IPluginManager, PluginManager>();
             services.AddSingleton<IActionDescriptorChangeProvider>(RsCodeActionDescriptionChangeProvider.Instance);
             services.AddSingleton(RsCodeActionDescriptionChangeProvider.Instance);
@@ -53,18 +53,52 @@ namespace RsCode.AspNetCore
             ReferenceLoader.AddSharedAssembly(sharedAssemblyNames);
             LoadPlugins(services, pluginsRootFolder);
 
-            foreach (var plugin in PluginSetup)
+            //foreach (var plugin in PluginSetup)
+            //{
+            //    services.LoadViews(plugin);
+            //    services.LoadControllers(plugin);
+
+            //    foreach (var pluginSetup in PluginSetup.Select(x => x.Value))
+            //        pluginSetup.ConfigureServices(services);
+
+            //}
+
+
+            // 先加载所有插件的视图和控制器
+            foreach (KeyValuePair<string, IPluginSetup> item in PluginSetup)
             {
-                services.LoadViews(plugin);
-                services.LoadControllers(plugin);
-
-                foreach (var pluginSetup in PluginSetup.Select(x => x.Value))
-                    pluginSetup.ConfigureServices(services);
-
+                services.LoadViews(item);
+                services.LoadControllers(item);
             }
 
+            // 然后为每个插件调用 ConfigureServices（只调用一次）
+            foreach (IPluginSetup pluginSetup in PluginSetup.Values)
+            {
+                pluginSetup.ConfigureServices(services);
+            }
+
+
+
             services.AddControllers().AddControllersAsServices();
+
+            // 文件监视器（单例）
+            services.AddSingleton<PluginFileWatcher>();
+
+            // 启动时加载所有插件
+            services.AddHostedService<PluginLoaderService>();
+
+            var options = new PluginOptions();
+            services.AddSingleton(options);
+
+            // 注册代理
+            services.AddSingleton<ServiceRegistrationProxy>();
+
+            // 应用插件服务注册
+            var proxy = services.LastOrDefault(s => s.ServiceType == typeof(ServiceRegistrationProxy))?.ImplementationInstance as ServiceRegistrationProxy;
+            proxy?.ApplyRegistrations(services);
         }
+        
+        
         /// <summary>
         /// Load all plugins assembly full path and plugins Setup.cs as dictionary
         /// </summary>
@@ -77,48 +111,74 @@ namespace RsCode.AspNetCore
             }
 
             var pluginInfos = GetPluginInfos(pluginsRootFolder);
+
+
+            var proxy = new ServiceRegistrationProxy(); // 创建临时代理
             foreach (var pluginInfo in pluginInfos)
             {
                 var pluginPath = pluginInfo.Key.Replace("PluginInfo.json", $"{pluginInfo.Value.Name}.dll");
                 var assembly=LoadPlugin(pluginPath);
-
                 var context = GetPluginContext(pluginPath);
+
                 
+                // 执行插件配置并捕获注册操作
+                if (PluginSetup.TryGetValue(pluginPath, out var setup))
+                {
+                    proxy.AddRegistration(s => setup.ConfigureServices(s));
+                }
             }
+
+            services.AddSingleton(proxy);
         }
 
-        private static Assembly LoadPlugin(string pluginPath)
+        public static Assembly LoadPlugin(string pluginPath)
         {
             Assembly assembly;
-            using (var fs = new FileStream(pluginPath, FileMode.Open))
-            {
-                var context = new PluginLoadContext();
-                assembly = context.LoadFromStream(fs);
-                var assemblyName = assembly.GetName().Name;
-                string dllPath = pluginPath.Replace(assemblyName + ".dll", "");
-               
-                ReferenceLoader.LoadStreamsIntoContext(context, assembly,dllPath);
-                
-               
-                PluginAssemblyContext.Add(pluginPath, context);
-            }
-
-            
             TypeInfo typeInfo;
             try
             {
-                typeInfo = assembly.DefinedTypes.FirstOrDefault((dt) => dt.ImplementedInterfaces.Any(ii => ii == typeof(IPluginSetup)));
+                using var fs = new FileStream(pluginPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                
+                    var context = new PluginLoadContext(pluginPath);
+                    assembly = context.LoadFromStream(fs);
+
+                    PluginAssemblyContext.Add(pluginPath, context);
+
+                var assemblyName = assembly.GetName().Name;
+                string dllPath = pluginPath.Replace(assemblyName + ".dll", "");
+                ReferenceLoader.LoadStreamsIntoContext(context, assembly, dllPath);
+
+
+                // 方法1：查找实现 IPluginSetup 接口的类
+                typeInfo = assembly.DefinedTypes
+                    .FirstOrDefault(dt => dt.ImplementedInterfaces
+                        .Any(ii => ii.FullName == typeof(RsCode.AspNetCore.Plugin.IPluginSetup).FullName));
+
+                // 方法2：如果方法1找不到，尝试使用更宽松的匹配
+                if (typeInfo == null)
+                {
+                    typeInfo = assembly.DefinedTypes
+                        .FirstOrDefault(dt => dt.GetInterfaces()
+                            .Any(i => i.Name == nameof(RsCode.AspNetCore.Plugin.IPluginSetup)));
+                }
+
+                //// 方法3：通过特性或命名约定查找
+                //if (typeInfo == null)
+                //{
+                //    typeInfo = assembly.DefinedTypes
+                //        .FirstOrDefault(dt => dt.Name.EndsWith("Setup") || dt.Name.EndsWith("Plugin"));
+                //}
             }
             catch (Exception ex)
             {
                 var err = ex.Message;Console.WriteLine(err);
-                throw new TypeLoadException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}", ex);
+                throw new TypeLoadException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(RsCode.AspNetCore.Plugin.IPluginSetup).Name}", ex);
             }
 
             if (typeInfo == null)
-                throw new TypeUnloadedException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(IPluginSetup).Name}");
-
-            var pluginSetup = (IPluginSetup)assembly.CreateInstance(typeInfo.FullName);
+                throw new TypeUnloadedException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(RsCode.AspNetCore.Plugin.IPluginSetup).Name}");
+            
+            var pluginSetup =(IPluginSetup) assembly.CreateInstance(typeInfo.FullName);
             PluginSetup.Add(pluginPath, pluginSetup);
 
             return assembly;
@@ -221,48 +281,73 @@ namespace RsCode.AspNetCore
         /// <returns></returns>
         public static PluginAssemblyPart GetControllerPart(string pluginName)
         {
-            var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
-            var context = new PluginLoadContext();
-            var plugin = PluginAssemblyContext.FirstOrDefault(x => x.Key == pluginPath);
+            try
+            {
+                var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
 
-            //if (plugin.Key == null)
-            //{
-            //    using (var fs = new FileStream(pluginPath, FileMode.Open))
-            //    {
-            //        var assembly = context.LoadFromStream(fs);
-            //        PluginAssemblyContext.Add(pluginPath, context);
-            //        var assemblyPart = new PluginApplicationPart(assembly);
-            //        return assemblyPart;
-            //    }
-            //}
-            //else
-            //{
-            //   var assembly = plugin.Value.Assemblies.FirstOrDefault();
-            //    return new PluginApplicationPart(assembly);
-            //}
+                // 如果上下文不存在，先加载插件
+                if (!PluginAssemblyContext.ContainsKey(pluginPath))
+                {
+                    LoadPlugin(pluginPath);
+                }
 
+                var pluginContext = GetPluginContext(pluginPath);
+                if (pluginContext == null || !pluginContext.Assemblies.Any())
+                {
+                    return null;
+                }
 
-            var pluginContext = GetPluginContext(pluginPath);
-            var assembly = pluginContext.Assemblies.First();
-
-            return new PluginAssemblyPart(assembly);
+                var assembly = pluginContext.Assemblies.First();
+                return new PluginAssemblyPart(assembly);
+            }
+            catch (Exception ex)
+            {
+                // 记录日志
+                Console.WriteLine($"Error getting controller part for {pluginName}: {ex.Message}");
+                return null;
+            }
             
         }
          
         public static IEnumerable<ApplicationPart> GetRazorPart(string pluginName)
         {
-            List<ApplicationPart> parts = new List<ApplicationPart>();
-            var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
-            var pluginContext = GetPluginContext(pluginPath);
-            var assembly=pluginContext.Assemblies.FirstOrDefault();
-            return new CompiledRazorAssemblyApplicationPartFactory().GetApplicationParts(assembly);
+            try
+            {
+                var pluginPath = Path.Combine(PluginsRootFolder, pluginName, $"{pluginName}.dll");
+
+                // 如果上下文不存在，先加载插件
+                if (!PluginAssemblyContext.ContainsKey(pluginPath))
+                {
+                    LoadPlugin(pluginPath);
+                }
+
+                var pluginContext = GetPluginContext(pluginPath);
+                if (pluginContext == null || !pluginContext.Assemblies.Any())
+                {
+                    return Enumerable.Empty<ApplicationPart>();
+                }
+
+                var assembly = pluginContext.Assemblies.First();
+                return new CompiledRazorAssemblyApplicationPartFactory().GetApplicationParts(assembly);
+            }
+            catch (Exception ex)
+            {
+                // 记录日志
+                Console.WriteLine($"Error getting razor part for {pluginName}: {ex.Message}");
+                return Enumerable.Empty<ApplicationPart>();
+            }
         }
 
         public static PluginLoadContext? GetPluginContext(string pluginPath)
         {
             try
             {
-                return PluginAssemblyContext[pluginPath];
+                if (PluginAssemblyContext.TryGetValue(pluginPath, out var context))
+                {
+                    return context;
+                }
+                return null;
+               
             }
             catch (Exception)
             {
@@ -299,6 +384,34 @@ namespace RsCode.AspNetCore
             parts.Add(GetControllerPart(pluginName));
             return parts;
         }
+
+
+
+        /// <summary>
+        /// 获取插件的所有应用部件
+        /// </summary>
+        public static List<ApplicationPart> GetPluginParts(string pluginName)
+        {
+            var parts = new List<ApplicationPart>();
+
+            // 获取控制器部件
+            var controllerPart = GetControllerPart(pluginName);
+            if (controllerPart != null)
+            {
+                parts.Add(controllerPart);
+            }
+
+            // 获取Razor部件
+            var razorParts = GetRazorPart(pluginName);
+            if (razorParts != null && razorParts.Any())
+            {
+                parts.AddRange(razorParts);
+            }
+
+            return parts;
+        }
+
+
     }
     
 

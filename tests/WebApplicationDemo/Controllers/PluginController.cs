@@ -34,5 +34,16 @@ namespace WebApplicationDemo.Controllers
             return Content("ok");
         }
 
+        public IActionResult Remove(string pluginName)
+        {
+            pluginManager.RemovePlugin(pluginName);
+            return Content("ok");
+        }
+
+        public IActionResult Update(string pluginName)
+        {
+            pluginManager.UpdatePlugin(pluginName);
+            return Content("ok");
+        }
     }
 }

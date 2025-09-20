@@ -13,8 +13,16 @@
 		<OutDir>$(OutputPath)</OutDir>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\RsCode.AspNetCore\RsCode.AspNetCore.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\RsCode.AspNetCore\RsCode.AspNetCore.csproj" >
+			<!-- 设置不复制引用 -->
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\src\RsCode\RsCode.csproj" >
+			<!-- 设置不复制引用 -->
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+	</ItemGroup>
 </Project>

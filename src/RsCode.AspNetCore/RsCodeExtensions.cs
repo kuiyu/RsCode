@@ -40,6 +40,7 @@ namespace RsCode.AspNetCore
             services.AddHttpContextAccessor();
 
             services.TryAddSingleton<IdGenerate>();
+            services.TryAddSingleton<WebHelper>();
             //解决中文被编码
             services.TryAddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 

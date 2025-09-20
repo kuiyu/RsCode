@@ -27,10 +27,10 @@ namespace RsCode.AspNetCore.Plugin
         /// https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware
         /// </summary>
         int Order { get; }
-       
+
         void ConfigureServices(IServiceCollection services);
-        
+
         void Configure(IApplicationBuilder app, IHostEnvironment env);
     }
-     
+
 }

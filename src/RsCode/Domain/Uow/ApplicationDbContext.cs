@@ -16,6 +16,8 @@
  */
 
 using FreeSql;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 
 namespace RsCode.Domain.Uow
@@ -31,10 +33,14 @@ namespace RsCode.Domain.Uow
 		/// <summary>
 		/// 数据库上下文
 		/// </summary>
-		public ApplicationDbContext()
+		public ApplicationDbContext(IFreeSql freeSql,IServiceProvider serviceProvider)
         {
-            db = DbServiceCollectionExtensions.fsql; 
-            fsqlCloud = DbServiceCollectionExtensions.fsql;
+            //db = DbServiceCollectionExtensions.fsql; 
+            //fsqlCloud = DbServiceCollectionExtensions.fsql;
+
+            db = freeSql;
+            fsqlCloud = serviceProvider.GetService<FreeSqlCloud<string>>();
+
             CallContext<string>.SetData("rswl-connName", "DefaultConnection");
             CallContext<IApplicationDbContext>.SetData("rswl-IApplicationDbContext",this);
         }

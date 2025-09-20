@@ -21,12 +21,13 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using RsCode.Domain.Uow;
 using System;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 
 namespace RsCode
 {
     public static class DbServiceCollectionExtensions
     {
-        public static FreeSqlCloud<string> fsql=new FreeSqlCloud<string>();
+       
 
         /// <summary>
         /// 添加单个数据库配置
@@ -51,11 +52,13 @@ namespace RsCode
             var Configuration = provider.GetService<IConfiguration>();
             var connString = Configuration.GetConnectionString(connName);
 
+            FreeSqlCloud<string> fsql = new FreeSqlCloud<string>();
             fsql.Register(connName, () => new FreeSqlBuilder()
                   .UseConnectionString(dataType, connString)
                   .UseAutoSyncStructure(syncStructure)
-                  .Build());    
-     
+                  .Build());
+            services.AddSingleton<IFreeSql>(fsql);
+            services.AddSingleton(fsql);
             services.TryAddScoped<IApplicationDbContext, ApplicationDbContext>();
         }
 
@@ -73,12 +76,14 @@ namespace RsCode
             var Configuration = provider.GetService<IConfiguration>();
             var connString = Configuration.GetConnectionString(connName);
 
+            FreeSqlCloud<string> fsql = new FreeSqlCloud<string>();
             fsql.Register(connName, () => new FreeSqlBuilder()
                  .UseConnectionString(dataType, connString)
                  .UseMonitorCommand(exeuting)
                  .UseAutoSyncStructure(syncStructure)
                  .Build());
-           
+            services.AddSingleton<IFreeSql>(fsql);
+            services.AddSingleton(fsql);
             services.TryAddScoped<IApplicationDbContext, ApplicationDbContext>();
         }
         

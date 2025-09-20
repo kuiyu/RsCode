@@ -17,19 +17,103 @@
 
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace RsCode.AspNetCore.Plugin
 {
     public class PluginManager : IPluginManager
     {
-        
-         ApplicationPartManager partManager;
-       
+        private readonly ConcurrentDictionary<string, PluginState> _pluginStates = new();
+        ApplicationPartManager partManager;
+      
         public PluginManager(ApplicationPartManager applicationPartManager)
         {
-            partManager = applicationPartManager; 
+            partManager = applicationPartManager;
+            
+            LoadPluginStates();
         }
+
+        public void AddPlugin(string pluginPath)
+        {
+            try
+            {
+                if (!File.Exists(pluginPath))
+                    throw new FileNotFoundException($"Plugin file not found: {pluginPath}");
+
+                var assembly = PluginExtensions.LoadPlugin(pluginPath);
+                var pluginName = Path.GetFileNameWithoutExtension(pluginPath);
+
+                // 添加应用到MVC
+                var parts = PluginExtensions.GetPluginParts(pluginName);
+                foreach (var part in parts)
+                {
+                    partManager.ApplicationParts.Add(part);
+                }
+
+                // 更新状态
+                _pluginStates[pluginName] = new PluginState
+                {
+                    Enabled = true,
+                    Loaded = true
+                };
+                SavePluginStates();
+
+                ResetControllerActions();
+            }
+            catch (Exception ex)
+            {
+               LogHelper.Info($"Failed to add plugin: {pluginPath},Error:{ex.Message}");
+                throw;
+            }
+        }
+
+        public void RemovePlugin(string pluginName)
+        {
+            try
+            {
+                DisablePlugin(pluginName);
+
+                // 获取插件上下文并卸载
+                var pluginPath = GetPluginPath(pluginName);
+                if (PluginExtensions.PluginAssemblyContext.TryGetValue(pluginPath, out var context))
+                {
+                    context.Unload();
+                    PluginExtensions.PluginAssemblyContext.Remove(pluginPath);
+                    PluginExtensions.PluginSetup.Remove(pluginPath);
+                }
+
+                _pluginStates.Remove(pluginName, out _);
+                SavePluginStates();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info($"Failed to remove plugin: {pluginName},Error:{ex.Message}");
+                throw;
+            }
+        }
+
+        private void LoadPluginStates()
+        {
+            var statesPath = Path.Combine(PluginExtensions.PluginsRootFolder, "pluginStates.json");
+            if (File.Exists(statesPath))
+            {
+                var json = File.ReadAllText(statesPath);
+                var states = JsonSerializer.Deserialize<Dictionary<string, PluginState>>(json);
+                foreach (var state in states)
+                {
+                    _pluginStates[state.Key] = state.Value;
+                }
+            }
+        }
+
+        private void SavePluginStates()
+        {
+            var statesPath = Path.Combine(PluginExtensions.PluginsRootFolder, "pluginStates.json");
+            var json = JsonSerializer.Serialize(_pluginStates);
+            File.WriteAllText(statesPath, json);
+        }
+
         /// <summary>
         /// 获取所有插件信息
         /// </summary>
@@ -80,7 +164,7 @@ namespace RsCode.AspNetCore.Plugin
                     }
                 }
                
-                ResetControllActions();
+                ResetControllerActions();
             }
         }
         /// <summary>
@@ -108,39 +192,90 @@ namespace RsCode.AspNetCore.Plugin
                 {
                     partManager.ApplicationParts.Add(controlPart);
                 }
-                ResetControllActions();
+                ResetControllerActions();
             }
             
         }
-        
+
         public void UpdatePlugin(string pluginName)
         {
-            DisablePlugin(pluginName); 
-            var parts=PluginExtensions.UpdatePlugin(pluginName);
-            foreach (var part in parts)
+            try
             {
-                partManager.ApplicationParts.Add(part);
+                DisablePlugin(pluginName);
+
+                // 卸载旧的上下文
+                var pluginPath = GetPluginPath(pluginName);
+                if (PluginExtensions.PluginAssemblyContext.TryGetValue(pluginPath, out var oldContext))
+                {
+                    oldContext.Unload();
+                    PluginExtensions.PluginAssemblyContext.Remove(pluginPath);
+                    PluginExtensions.PluginSetup.Remove(pluginPath);
+                }
+                // 3. 垃圾回收（帮助清理卸载的程序集）
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                // 重新加载插件
+                var parts = PluginExtensions.UpdatePlugin(pluginName);
+                foreach (var part in parts)
+                {
+                    // 移除可能存在的旧部件
+                    var existingPart = partManager.ApplicationParts.FirstOrDefault(p => p.Name == part.Name);
+                    if (existingPart != null)
+                    {
+                        partManager.ApplicationParts.Remove(existingPart);
+                    }
+
+                    // 添加新部件
+                    partManager.ApplicationParts.Add(part);
+                }
+                // 4. 重新执行插件配置
+                if (PluginExtensions.PluginSetup.TryGetValue(pluginPath, out var pluginSetup))
+                {
+                    // 创建临时服务集合来执行配置
+                    var tempServices = new ServiceCollection();
+                    pluginSetup.ConfigureServices(tempServices);
+
+                    // 将服务注册应用到主服务容器
+                    // 注意：这需要更复杂的实现来合并服务
+                }
+                // 更新状态
+                if (_pluginStates.ContainsKey(pluginName))
+                {
+                    _pluginStates[pluginName].Loaded = true;
+                    _pluginStates[pluginName].LastUpdated = DateTime.UtcNow;
+                }
+                else
+                {
+                    _pluginStates[pluginName] = new PluginState
+                    {
+                        Loaded = true,
+                        Enabled = true,
+                        LastUpdated = DateTime.UtcNow
+                    };
+                }
+
+                SavePluginStates();
+                ResetControllerActions();
+
+                LogHelper.Info($"Plugin updated: {pluginName}");
             }
-
-            ////加载程序集引用
-
-            //var pluginPath = $"{Path.Combine( PluginExtensions.PluginsRootFolder,pluginName)}";
-            //var pluginContext=PluginExtensions.GetPluginContext($"{Path.Combine( pluginPath,pluginName+".dll")}");
-            //var assembly = pluginContext.Assemblies.First();
-            //loader.LoadStreamsIntoContext(pluginContext,pluginPath,assembly);
-
-
-
-            ResetControllActions();
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex, $"Failed to update plugin: {pluginName}");
+                throw;
+            }
         }
         public bool IsLoad(string pluginName)
         {
             var pluginAssemblyPart = partManager.ApplicationParts.FirstOrDefault(p => p.Name == pluginName);
             return pluginAssemblyPart != null;
         }
-        
 
-        private void ResetControllActions()
+        private string GetPluginPath(string pluginName)
+        {
+            return Path.Combine(PluginExtensions.PluginsRootFolder, pluginName, $"{pluginName}.dll");
+        }
+        private void ResetControllerActions()
         {
             RsCodeActionDescriptionChangeProvider.Instance.HasChanged = true;
             RsCodeActionDescriptionChangeProvider.Instance.TokenSource?.Cancel();

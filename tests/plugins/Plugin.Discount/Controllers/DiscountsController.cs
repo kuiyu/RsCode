@@ -12,7 +12,7 @@ namespace Plugin.Discount.Controllers
                 @"this Discounts Index 
                 <br/>    
                 <p>
-                    <a href=""/plugin/Index""> 返回插件管理 </a>
+                    <a href=""/plugin/Index"">  back  plugin manager </a>
                 </p>"
              , "text/html");
         }

@@ -3,7 +3,7 @@ using RsCode.AspNetCore.Plugin;
 
 namespace Plugin.Discount
 {
-    internal class PluginSetup : IPluginSetup
+    public class PluginSetup : IPluginSetup
     {
         public int Order => 200;
 
@@ -14,7 +14,7 @@ namespace Plugin.Discount
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRsCode();
+            //services.AddRsCode();
         }
     }
 }

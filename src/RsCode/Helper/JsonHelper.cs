@@ -134,5 +134,34 @@ namespace System.Text.Json
 
             return obj as T;
         }
+
+        public static bool IsValidJson(string strInput)
+        {
+            if (string.IsNullOrWhiteSpace(strInput))
+            {
+                return false;
+            }
+            
+            strInput = strInput.Trim();
+            if ((!strInput.StartsWith("{") || !strInput.EndsWith("}")) && 
+                (!strInput.StartsWith("[") || !strInput.EndsWith("]")))
+            {
+                return false;
+            }
+
+            try
+            {
+                JsonDocument.Parse(strInput);
+                return true;
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
+            catch (Exception) // 其他异常
+            {
+                return false;
+            }
+        }
     }
 }

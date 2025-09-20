@@ -3,7 +3,7 @@ using RsCode.AspNetCore.Plugin;
 
 namespace Plugin.Doc
 {
-    internal class PluginSetup : IPluginSetup
+    public class PluginSetup : IPluginSetup
     {
         public int Order => 100;
 

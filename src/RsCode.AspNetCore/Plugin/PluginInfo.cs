@@ -42,4 +42,11 @@ namespace RsCode.AspNetCore.Plugin
         [JsonPropertyName("loaded")]
         public bool Loaded { get; set; } = false;
     }
+
+    public class PluginState
+    {
+        public bool Enabled { get; set; }
+        public bool Loaded { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+    }
 }

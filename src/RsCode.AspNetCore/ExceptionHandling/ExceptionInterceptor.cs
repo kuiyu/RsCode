@@ -23,7 +23,7 @@ using Microsoft.Extensions.Logging;
 using RsCode.AspNetCore;
 using System;
 using System.Threading.Tasks;
-
+using RsCode;
 namespace RsCode.Exceptions
 {
 	public class ExceptionInterceptor : AbstractInterceptorAttribute
@@ -36,7 +36,7 @@ namespace RsCode.Exceptions
             {
                 await next(context);
             }
-            catch (AppException e)
+            catch (RsCode.AppException e)
             {
                 log.LogInformation(System.Text.Json.JsonSerializer.Serialize(e));
                 await HandleExceptionAsync(context, next);

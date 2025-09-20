@@ -22,24 +22,23 @@
     <div id="app">
         <t-table row-key="name" :data="list" :columns="columns" lazy-load >
             <template #status="{row}">
-                <t-tag v-if="row.status==0">己禁用</t-tag>
-                <t-tag v-if="row.status==1" theme="primary">己启用</t-tag>
+                <t-tag v-if="row.status==0" variant="outline">己禁用</t-tag>
+                <t-tag v-if="row.status==1" theme="success" variant="outline">己启用</t-tag>
             </template>
             <template #opt="{row}">
-                <t-space v-if="row.status==0" size="small" align="center">
-                     <t-button variant="outline" theme="primary" @@click="open(1,row)">启用</t-button> 
-                    <a v-if="row.name=='Plugin.Discount'" href="/discounts/index" target="_blank">Discounts/Index 当前不能访问</a>
-                    <a v-if="row.name=='Plugin.Doc'" href="/api/doc/index" target="_blank">/api/doc/Index 当前不能访问</a>
+                <t-space  size="small" align="center">
+                    <t-button v-if="row.status==0"  theme="primary" @@click="open('enable',row)">启用</t-button>
+                    <t-button v-if="row.status==1"  theme="danger" @@click="open('disable',row)">禁用</t-button>
+                   @*  <t-button  theme="warning" @@click="open('update',row)">重新加载</t-button> *@
+                    <a v-if="row.name=='Plugin.Discount'" href="/discounts/index" target="_blank">Discounts/Index </a>
+                    <a v-if="row.name=='Plugin.Doc'" href="/api/doc/index" target="_blank">/api/doc/Index </a>
                 </t-space>
-                <t-space v-if="row.status==1" size="small" align="center">
-                     <t-button variant="outline" theme="danger" @@click="open(0,row)">禁用</t-button>
-                    <a v-if="row.name=='Plugin.Discount'" href="/discounts/index" target="_blank">Discounts/Index 当前正常访问</a>
-                    <a v-if="row.name=='Plugin.Doc'" href="/api/doc/index" target="_blank">/api/doc/Index 当前正常访问</a>
-                </t-space>
+               
+                
             </template>
         </t-table>
     </div>
-    <script src="~/js/site.js?v=1"></script>
+    <script src="~/js/site.js?v=1.1"></script>
 </body>
 
 </html>
