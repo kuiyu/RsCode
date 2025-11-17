@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Cryptography.Xml;
 
 
 namespace RsCode.AspNetCore.Plugin
@@ -6,29 +7,31 @@ namespace RsCode.AspNetCore.Plugin
 
     public class ReferenceLoader
     {
-        public static void LoadStreamsIntoContext(PluginLoadContext pluginContext, Assembly pluginAssembly,string pluginPath)
+        public static void LoadStreamsIntoContext(PluginLoadContext pluginContext, Assembly pluginAssembly, string pluginPath)
         {
             var references = pluginAssembly.GetReferencedAssemblies();
 
-            foreach (var item in references)
+            foreach (var reference in references)
             {
-                var name = item.Name;
-                var version = item.Version?.ToString() ?? "";
-                string path = Path.Combine(pluginPath, $"{name}.dll");
-                if (!File.Exists(path))
-                    continue;
-
-                var stream = GetStream(name, version);
-                if(stream!= null )
+                var name = reference.Name;
+                var version = reference.Version?.ToString() ?? "";
+                // 如果是共享程序集，跳过加载
+                if (IsSharedAssembly(name))
                 {
-                    pluginContext.LoadFromStream(stream);
                     continue;
                 }
 
 
-                if (IsSharedFreamwork(name))
+               string path = Path.Combine(pluginPath, $"{name}.dll");
+                if (!File.Exists(path))
                     continue;
-               
+
+                var stream = GetStream(name, version);
+                if (stream != null)
+                {
+                    pluginContext.LoadFromStream(stream);
+                    continue;
+                }
 
                 using (var fs = new FileStream(path, FileMode.Open))
                 {
@@ -42,7 +45,7 @@ namespace RsCode.AspNetCore.Plugin
                     memoryStream.Position = 0;
                     SaveStream(name, version, memoryStream);
 
-                     LoadStreamsIntoContext(pluginContext, referenceAssembly, pluginPath);
+                    LoadStreamsIntoContext(pluginContext, referenceAssembly, pluginPath);
 
                     pluginContext.LoadFromStream(memoryStream);
                 }
@@ -67,7 +70,7 @@ namespace RsCode.AspNetCore.Plugin
 
             return null;
         }
-         static void SaveStream(string name, string version, Stream stream)
+        static void SaveStream(string name, string version, Stream stream)
         {
             if (Exist(name, version))
             {
@@ -77,21 +80,21 @@ namespace RsCode.AspNetCore.Plugin
 
             _cachedReferences.Add(new CachedReferenceItemKey { ReferenceName = name, Version = version }, stream);
         }
-         static  bool Exist(string name, string version)
+        static bool Exist(string name, string version)
         {
             return _cachedReferences.Keys.Any(p => p.ReferenceName == name
                 && p.Version == version);
         }
-        private static bool IsSharedFreamwork(string name)
+        public static bool IsSharedAssembly(string name)
         {
-            if(_sharedAssemblyNames!=null)
+            if (_sharedAssemblyNames != null)
             {
                 if (_sharedAssemblyNames.Contains(name))
                     return true;
             }
 
-            if (name.StartsWith("Microsoft")
-                || name.StartsWith("System")
+            if (name.StartsWith("Microsoft.")
+                || name.StartsWith("System.")
                 || name.StartsWith("api-ms-win-core")
                 || name.StartsWith("clrcompression")
                 || name.StartsWith("clretwrc")
@@ -101,6 +104,7 @@ namespace RsCode.AspNetCore.Plugin
                 || name.StartsWith("mscordaccore")
                 || name.StartsWith("mscor")
                 || name.StartsWith("netstandard")
+                ||name.StartsWith("mscorlib")
                 || name.StartsWith("ucrtbase")
                 || name.StartsWith("WindowsBase")
                 || name.StartsWith("aspnetcorev2_inprocess")
@@ -111,6 +115,12 @@ namespace RsCode.AspNetCore.Plugin
             {
                 return true;
             }
+
+            // 增强：检查当前已加载的程序集
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            if (loadedAssemblies.Any(a => a.GetName().Name == name))
+                return true;
+
             return false;
 
         }

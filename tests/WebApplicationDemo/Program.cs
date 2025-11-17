@@ -1,5 +1,5 @@
 using AspectCore.Extensions.DependencyInjection;
-using AspectCore.Extensions.Hosting;
+using RsCode.AI;
 using RsCode.AspNetCore;
 using RsCode;
 using WebApplicationDemo.Models;
@@ -23,7 +23,7 @@ builder.Services.AddMvc()
     .AddDataAnnotationsLocalization();
 
 builder.Services.AddRsCode();
-
+builder.Services.AddDeepSeekSdk(builder.Configuration);
 //×¢²á²å¼þ
 builder.Services.AddPlugins();
 

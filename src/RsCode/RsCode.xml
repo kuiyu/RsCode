@@ -366,7 +366,9 @@
         </member>
         <member name="T:RsCode.AppSettings">
             <summary>
+            请使用ConfigurationHelper
             .netcore json config
+            
             </summary>
         </member>
         <member name="M:RsCode.AppSettings.GetValue``1(System.String,System.String)">
@@ -401,6 +403,11 @@
             </summary>
             <param name="JsonFilePath"></param>
             <returns></returns>
+        </member>
+        <member name="T:RsCode.ConfigurationHelper">
+            <summary>
+            读取json配置
+            </summary>
         </member>
         <member name="T:RsCode.DI.AttributeBasedServiceCollectionExtensions">
             <summary>

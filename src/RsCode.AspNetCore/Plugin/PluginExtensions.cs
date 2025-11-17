@@ -146,20 +146,23 @@ namespace RsCode.AspNetCore
 
                 var assemblyName = assembly.GetName().Name;
                 string dllPath = pluginPath.Replace(assemblyName + ".dll", "");
+
                 ReferenceLoader.LoadStreamsIntoContext(context, assembly, dllPath);
 
+                // 使用共享程序集中的接口类型进行查找
+                var sharedInterfaceType = typeof(IPluginSetup);
 
                 // 方法1：查找实现 IPluginSetup 接口的类
                 typeInfo = assembly.DefinedTypes
                     .FirstOrDefault(dt => dt.ImplementedInterfaces
-                        .Any(ii => ii.FullName == typeof(RsCode.AspNetCore.Plugin.IPluginSetup).FullName));
+                        .Any(ii => ii.FullName == sharedInterfaceType.FullName));
 
                 // 方法2：如果方法1找不到，尝试使用更宽松的匹配
                 if (typeInfo == null)
                 {
                     typeInfo = assembly.DefinedTypes
                         .FirstOrDefault(dt => dt.GetInterfaces()
-                            .Any(i => i.Name == nameof(RsCode.AspNetCore.Plugin.IPluginSetup)));
+                            .Any(i => i.Name == nameof(IPluginSetup)));
                 }
 
                 //// 方法3：通过特性或命名约定查找
@@ -177,8 +180,9 @@ namespace RsCode.AspNetCore
 
             if (typeInfo == null)
                 throw new TypeUnloadedException($"{nameof(LoadPlugin)}: {pluginPath} not contains a definition for {typeof(RsCode.AspNetCore.Plugin.IPluginSetup).Name}");
-            
+
             var pluginSetup =(IPluginSetup) assembly.CreateInstance(typeInfo.FullName);
+            //var pluginSetup = (IPluginSetup)Activator.CreateInstance(typeInfo);
             PluginSetup.Add(pluginPath, pluginSetup);
 
             return assembly;

@@ -28,8 +28,11 @@ namespace RsCode
 
 
     /// <summary>
+    /// 请使用ConfigurationHelper
     /// .netcore json config
+    /// 
     /// </summary>
+    [Obsolete("该类即将作废，请使用ConfigurationHelper")]
     public static class AppSettings
     {
         static Dictionary <string, IConfiguration> Configurations; 

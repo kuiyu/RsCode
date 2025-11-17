@@ -29,6 +29,18 @@ namespace RsCode.AspNetCore.Plugin
 
         protected override Assembly Load(AssemblyName assemblyName)
         {
+            // 首先检查是否为共享程序集
+            if (ReferenceLoader.IsSharedAssembly(assemblyName.Name))
+            {
+                // 尝试从默认上下文加载共享程序集
+                var sharedAssembly = AssemblyLoadContext.Default.Assemblies
+                    .FirstOrDefault(a => a.GetName().Name == assemblyName.Name);
+                if (sharedAssembly != null)
+                {
+                    return sharedAssembly;
+                }
+            }
+
             string assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
             if (assemblyPath != null)
             {

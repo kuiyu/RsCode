@@ -26,13 +26,13 @@ RsCode是开箱即用的.net工具库，可高效完成.net项目开发
 - 进入应用的项目文件夹，安装 Nuget 包
 
   ```bash
-  $ dotnet add package RsCode --version 2.3.1
+  $ dotnet add package RsCode --version 2.3.5
   ```
 
 - asp.net core项目时，安装
 
   ```bash
-  Install-Package RsCode.AspNetCore -Version 2.3.2
+  Install-Package RsCode.AspNetCore -Version 2.3.5
   ```
 
 - 引入[log4net配置](https://rscode.cn/rscode/log.html#%E9%99%84%E5%BD%951)，

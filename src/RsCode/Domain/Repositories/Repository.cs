@@ -37,40 +37,40 @@ namespace RsCode.Domain
         }
         public async Task< PageData<TEntity>> PageAsync(int page, int pageSize)
         {
-            var list =await applicationDbContext.GetRepository<TEntity>().Select
-                 .Count(out var total)
+            var pageSelect = applicationDbContext.GetRepository<TEntity>().Select;
+            var total = await pageSelect.CountAsync();
+            var list =await pageSelect
                  .Page(page, pageSize)
                  .ToListAsync();
             PageData<TEntity> pageInfo = new PageData<TEntity>
             {
                 Items = list,
-                TotalPages = 0,
+                TotalPages = (total + pageSize - 1) / pageSize,
                 CurrentPage = page,
                 TotalItems = total
             };
 
-            var totalPages = Convert.ToInt32(total / pageSize);
-            if (total % pageSize > 0) totalPages++;
-            pageInfo.TotalPages = totalPages;
+            //var totalPages = Convert.ToInt32(total / pageSize);
+            //if (total % pageSize > 0) totalPages++;
+            //pageInfo.TotalPages = totalPages;
             return pageInfo;
         }
 
         public async Task<PageData<TEntity>> PageAsync(int page, int pageSize,ISelect<TEntity> pageSelect)
-        { 
-            var list =await pageSelect
-               .Count(out var total)
-               .ToListAsync();
+        {
+            var total = await pageSelect.CountAsync();
+            var list=await pageSelect
+                .Skip((page-1)* pageSize)
+                .Take(pageSize)
+                .ToListAsync();
             PageData<TEntity> pageInfo = new PageData<TEntity>
             {
                 Items = list,
-                TotalPages = 0,
+                TotalPages = (total + pageSize - 1) / pageSize,
                 CurrentPage = page,
                 TotalItems = total
             };
-
-            var totalPages = Convert.ToInt32(total / pageSize);
-            if (total % pageSize > 0) totalPages++;
-            pageInfo.TotalPages = totalPages;
+ 
             return pageInfo;
         }
 

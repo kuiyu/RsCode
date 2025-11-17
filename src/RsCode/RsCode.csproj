@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0;</TargetFrameworks>
-    <Company>河南软商网络科技有限公司</Company>
+    <Company></Company>
     <Copyright>河南软商网络科技有限公司</Copyright>
     <AssemblyVersion>2.3.3.0</AssemblyVersion>
     <FileVersion>2.3.3.0</FileVersion>
@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
     <PackageIcon>logo128-128.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.3.4</Version>
+    <Version>2.3.5</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
